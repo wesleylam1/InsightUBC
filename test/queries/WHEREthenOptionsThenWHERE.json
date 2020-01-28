@@ -1,0 +1,26 @@
+{
+    "title": "WHERE then OPTIONS then WHERE",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_dept": "cpsc"
+            }
+        },
+
+        "OPTIONS": {
+            "ORDER": "courses_avg",
+            "COLUMNS": [
+                "courses_dept",
+                "courses_avg"
+            ]
+        },
+        "WHERE":{
+            "IS":{
+                "courses_dept":"arts"
+            }
+        }
+
+    },
+    "isQueryValid": true,
+    "result":[]}
+

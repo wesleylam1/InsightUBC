@@ -1,0 +1,22 @@
+{
+    "title": "a COLUMNS section with underscore only",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_dept":"cpsc"
+
+            }
+        },
+
+        "OPTIONS": {
+            "ORDER": "courses_avg",
+
+            "COLUMNS": [
+                "_",
+                "courses_avg"
+            ]
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

@@ -1,0 +1,23 @@
+{
+    "title": "NOT logic with invalid key",
+    "query":  {
+        "WHERE": {
+            "NOT": {
+                "courses_dept":""
+
+            }
+
+        },
+
+        "OPTIONS": {
+            "ORDER": "courses_dept",
+
+            "COLUMNS": [
+                "courses_dept",
+                "courses_avg"
+            ]
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

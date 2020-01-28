@@ -1,0 +1,15 @@
+{
+    "title": "no WHERE section",
+    "query": {
+
+        "OPTIONS": {
+            "ORDER": "courses_avg",
+            "COLUMNS": [
+                "courses_dept",
+                "courses_avg"
+            ]
+        }
+    },
+    "isQueryValid": false,
+"result":"Missing WHERE"}
+

@@ -1,0 +1,27 @@
+{
+    "title": "two datasets query",
+    "query": {
+        "WHERE": {
+
+
+            "IS":
+            {
+
+                "courses_dept": "dab"
+
+            }
+
+
+        },
+        "OPTIONS": {
+            "ORDER": "courses_avg",
+            "COLUMNS": [
+                "coursesVIV_dept",
+                "courses_avg"
+            ]
+
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

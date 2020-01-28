@@ -1,0 +1,18 @@
+{
+    "title": "seach by audit",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "courses_audit": 10
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_title",
+                "courses_instructor"
+            ],
+            "ORDER": "courses_title"
+        }
+    },
+    "isQueryValid": true,
+"result":[{"courses_title":"basic cnto 1","courses_instructor":""},{"courses_title":"beginner fren i","courses_instructor":""},{"courses_title":"dev rehab prog","courses_instructor":""},{"courses_title":"dev rehab prog","courses_instructor":""},{"courses_title":"dev rehab prog","courses_instructor":""},{"courses_title":"eval src evidenc","courses_instructor":""},{"courses_title":"eval src evidenc","courses_instructor":""},{"courses_title":"eval src evidenc","courses_instructor":""},{"courses_title":"eval src evidenc","courses_instructor":""},{"courses_title":"intr gis frs&con","courses_instructor":""},{"courses_title":"machine learn i","courses_instructor":""},{"courses_title":"machine learn i","courses_instructor":"schmidt, mark"},{"courses_title":"machine lrn mine","courses_instructor":""},{"courses_title":"machine lrn mine","courses_instructor":"schmidt, mark"},{"courses_title":"meas in practice","courses_instructor":""},{"courses_title":"meas in practice","courses_instructor":""},{"courses_title":"mult regres meth","courses_instructor":""},{"courses_title":"mult regres meth","courses_instructor":"lemay, valerie;tait, david e n"},{"courses_title":"mult regres meth","courses_instructor":""},{"courses_title":"mult regres meth","courses_instructor":""},{"courses_title":"pop & quant gene","courses_instructor":""},{"courses_title":"pop & quant gene","courses_instructor":"otto, sarah;whitlock, michael"},{"courses_title":"reas & dec-mking","courses_instructor":""},{"courses_title":"reas & dec-mking","courses_instructor":""},{"courses_title":"reas & dec-mking","courses_instructor":"tba"},{"courses_title":"reas & dec-mking","courses_instructor":""},{"courses_title":"reas & dec-mking","courses_instructor":""},{"courses_title":"rehab learning","courses_instructor":""},{"courses_title":"rehab learning","courses_instructor":""},{"courses_title":"rehab learning","courses_instructor":""}]}

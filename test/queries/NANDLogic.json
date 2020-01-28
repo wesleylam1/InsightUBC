@@ -1,0 +1,27 @@
+{
+    "title": "NAND",
+    "query": {"WHERE": {
+        "NOT":{
+            "AND" : [{
+                "LT":{
+                    "courses_pass":1000
+                }
+            },
+                {
+                    "LT":{
+                        "courses_year":1900
+                    }
+                }]
+        }
+    },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_avg",
+                "courses_dept"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": true,
+    "result": "TooLargeError"
+}

@@ -1,0 +1,15 @@
+{
+    "title": "no filter, after options",
+    "query": {"WHERE": {
+    },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_title",
+                "courses_instructor"
+            ],
+            "ORDER": "courses_title"
+        }
+    },
+    "isQueryValid": true,
+    "result": "TooLargeError"
+}

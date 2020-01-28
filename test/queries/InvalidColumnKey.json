@@ -1,0 +1,39 @@
+{
+    "title": "Invalid column key",
+    "query": {
+        "WHERE": {
+            "OR": [
+                {
+                    "AND": [
+                        {
+                            "GT": {
+                                "courses_avg": 80
+
+                            }
+                        },
+                        {
+                            "IS": {
+                                "courses_dept": "adhe"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "EQ": {
+                        "courses_avg": 95
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "ORDER": "courses_avg",
+            "COLUMNS": [
+                90,
+                "courses_avg"
+            ]
+
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

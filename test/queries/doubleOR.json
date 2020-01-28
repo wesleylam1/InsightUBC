@@ -1,0 +1,39 @@
+{
+    "title": "double OR",
+    "query": {
+        "WHERE": {
+            "OR": [
+                {
+                    "OR": [
+                        {
+                            "GT": {
+                                "courses_avg": 98
+
+                            }
+                        },
+                        {
+                            "LT": {
+                                "courses_pass": 5
+                            }
+                        }
+                    ]
+                },
+                {
+                    "GT": {
+                        "courses_avg": 95
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "ORDER": "courses_avg",
+            "COLUMNS": [
+                "courses_dept",
+                "courses_avg"
+            ]
+
+        }
+    },
+    "isQueryValid": true,
+    "result": "InsightError"
+}

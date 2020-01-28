@@ -1,0 +1,19 @@
+{
+    "title": "search by Instructor",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_instructor": "maclean, karon"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_instructor"
+            ],
+            "ORDER": "courses_dept"
+        }
+    },
+    "isQueryValid": true,
+"result":[{"courses_dept":"cpsc","courses_instructor":"maclean, karon"},{"courses_dept":"cpsc","courses_instructor":"maclean, karon"},{"courses_dept":"cpsc","courses_instructor":"maclean, karon"},{"courses_dept":"cpsc","courses_instructor":"maclean, karon"},{"courses_dept":"cpsc","courses_instructor":"maclean, karon"},{"courses_dept":"cpsc","courses_instructor":"maclean, karon"},{"courses_dept":"cpsc","courses_instructor":"maclean, karon"},{"courses_dept":"cpsc","courses_instructor":"maclean, karon"},{"courses_dept":"cpsc","courses_instructor":"maclean, karon"},{"courses_dept":"cpsc","courses_instructor":"maclean, karon"},{"courses_dept":"cpsc","courses_instructor":"maclean, karon"},{"courses_dept":"cpsc","courses_instructor":"maclean, karon"},{"courses_dept":"cpsc","courses_instructor":"maclean, karon"},{"courses_dept":"cpsc","courses_instructor":"maclean, karon"},{"courses_dept":"cpsc","courses_instructor":"maclean, karon"},{"courses_dept":"cpsc","courses_instructor":"maclean, karon"}]}
+

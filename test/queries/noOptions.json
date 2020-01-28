@@ -1,0 +1,12 @@
+{
+    "title": "query with no options",
+    "query": {"WHERE": {
+        "GT":{
+            "courses_dept": "cpsc"
+        }
+
+    }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

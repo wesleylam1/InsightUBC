@@ -1,0 +1,39 @@
+{
+    "title": "only ASTERISKS INPUT STRING",
+    "query": {
+        "WHERE": {
+            "OR": [
+                {
+                    "AND": [
+                        {
+                            "GT": {
+                                "courses_avg": 80
+                            }
+                        },
+                        {
+                            "IS": {
+                                "courses_dept": "***"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "EQ": {
+                        "courses_avg": 95
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "ORDER": "courses_avg",
+            "COLUMNS": [
+                "courses_dept",
+                "courses_avg"
+            ]
+
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}
+

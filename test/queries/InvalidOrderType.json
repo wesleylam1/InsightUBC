@@ -1,0 +1,39 @@
+{
+    "title": "invalid order type",
+    "query": {
+        "WHERE": {
+            "OR": [
+                {
+                    "AND": [
+                        {
+                            "GT": {
+                                "courses_avg": 80
+
+                            }
+                        },
+                        {
+                            "IS": {
+                                "courses_dept": "adhe"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "EQ": {
+                        "courses_avg": 95
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "ORDER": 90,
+            "COLUMNS": [
+                "courses_dept",
+                "courses_avg"
+            ]
+
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

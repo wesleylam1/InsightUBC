@@ -1,0 +1,19 @@
+{
+    "title": "Number in IS query",
+    "query": {"WHERE": {
+        "IS":{
+            "courses_avg": 90
+        }
+
+    },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_avg",
+                "courses_dept"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

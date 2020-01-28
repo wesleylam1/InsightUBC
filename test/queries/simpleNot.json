@@ -1,0 +1,20 @@
+{
+    "title": "NOT",
+    "query": {
+        "WHERE": {
+            "NOT":{
+                "GT": {
+                    "courses_avg": 30
+                }
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_year",
+                "courses_avg"
+            ],
+            "ORDER": "courses_year"
+        }
+    },
+    "isQueryValid": true,
+"result":[{"courses_year":1900,"courses_avg":1},{"courses_year":1900,"courses_avg":0},{"courses_year":1900,"courses_avg":0},{"courses_year":1900,"courses_avg":4},{"courses_year":2009,"courses_avg":0},{"courses_year":2013,"courses_avg":4.5},{"courses_year":2016,"courses_avg":4}]}

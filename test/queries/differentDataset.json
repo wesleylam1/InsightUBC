@@ -1,0 +1,21 @@
+{
+    "title": "different dataset",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "coursesVIV_dept":"cpsc"
+
+            }
+        },
+
+        "OPTIONS": {
+            "ORDER": "coursesVIV_avg",
+            "COLUMNS": [
+                "coursesVIV_dept",
+                "coursesVIV_avg"
+            ]
+        }
+    },
+    "isQueryValid": true,
+    "result": []
+}

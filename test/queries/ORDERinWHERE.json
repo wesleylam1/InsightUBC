@@ -1,0 +1,22 @@
+{
+    "title": "ORDER in WHERE section",
+    "query": {
+        "WHERE": {
+            "ORDER": "courses_avg"
+        },
+
+        "OPTIONS": {
+            "ORDER": "courses_avg",
+
+            "COLUMNS": [
+                "courses_dept",
+                "courses_avg"
+            ]
+
+
+        }
+    },
+    "isQueryValid": false,
+"result":"Invalid filter key: ORDER"}
+
+

@@ -1,0 +1,19 @@
+{
+    "title": "search by title",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_title": "hmn-cmpt intract"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_title",
+                "courses_instructor"
+            ],
+            "ORDER": "courses_title"
+        }
+    },
+    "isQueryValid": true,
+"result":[{"courses_title":"hmn-cmpt intract","courses_instructor":""},{"courses_title":"hmn-cmpt intract","courses_instructor":"booth, kellogg"},{"courses_title":"hmn-cmpt intract","courses_instructor":""},{"courses_title":"hmn-cmpt intract","courses_instructor":"maclean, karon"},{"courses_title":"hmn-cmpt intract","courses_instructor":""},{"courses_title":"hmn-cmpt intract","courses_instructor":"maclean, karon"},{"courses_title":"hmn-cmpt intract","courses_instructor":""},{"courses_title":"hmn-cmpt intract","courses_instructor":"maclean, karon"},{"courses_title":"hmn-cmpt intract","courses_instructor":""},{"courses_title":"hmn-cmpt intract","courses_instructor":"maclean, karon"},{"courses_title":"hmn-cmpt intract","courses_instructor":""},{"courses_title":"hmn-cmpt intract","courses_instructor":""},{"courses_title":"hmn-cmpt intract","courses_instructor":""},{"courses_title":"hmn-cmpt intract","courses_instructor":"maclean, karon"},{"courses_title":"hmn-cmpt intract","courses_instructor":""},{"courses_title":"hmn-cmpt intract","courses_instructor":"mcgrenere, joanna"},{"courses_title":"hmn-cmpt intract","courses_instructor":""},{"courses_title":"hmn-cmpt intract","courses_instructor":"dawson, jessica"}]}
+

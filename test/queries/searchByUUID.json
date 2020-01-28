@@ -1,0 +1,18 @@
+{
+    "title": "searchByUUID",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_uuid": "10"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_title",
+                "courses_instructor"
+            ],
+            "ORDER": "courses_title"
+        }
+    },
+    "isQueryValid" : true,
+"result":[{"courses_title":"lit review ii","courses_instructor":""}]}

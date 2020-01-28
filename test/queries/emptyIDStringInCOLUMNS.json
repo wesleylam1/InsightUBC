@@ -1,0 +1,22 @@
+{
+    "title": "empty IDString in COLUMNS",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_dept":"cpsc"
+
+            }
+        },
+
+        "OPTIONS": {
+            "ORDER": "courses_avg",
+
+            "COLUMNS": [
+                "",
+                "courses_avg"
+            ]
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

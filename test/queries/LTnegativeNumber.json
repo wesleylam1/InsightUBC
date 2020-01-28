@@ -1,0 +1,23 @@
+{
+    "title": "LT with a negative number",
+    "query":  {
+        "WHERE": {
+            "LT": {
+                "courses_pass": -98
+
+            }
+
+        },
+
+        "OPTIONS": {
+            "ORDER": "courses_dept",
+
+            "COLUMNS": [
+                "courses_dept",
+                "courses_avg"
+            ]
+        }
+    },
+    "isQueryValid": true,
+    "result": []
+}
