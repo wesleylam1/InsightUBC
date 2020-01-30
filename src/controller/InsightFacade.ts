@@ -16,7 +16,7 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
-        return Promise.reject("Not implemented.");
+       return Promise.reject("not done yet");
     }
 
     private checkDatasetIDValidity(id: string): Promise<boolean> {
@@ -25,12 +25,18 @@ export default class InsightFacade implements IInsightFacade {
            if (id.charAt(i) === "_") {
                return Promise.reject(new InsightError("dataset id contained an underscore"));
            }
-           if (!(id.charAt(i) === " ") && allWhiteSpace) {
+           if (allWhiteSpace && !(id.charAt(i) === " ")) {
                allWhiteSpace = false;
            }
         }
         if (allWhiteSpace) {
             return Promise.reject(new InsightError("dataset id all whitespace"));
+        }
+        for (let i of this.datasets) {
+            let takenID = i.id;
+            if (id === takenID) {
+                return Promise.reject(new InsightError("dataset id already taken"));
+            }
         }
         return Promise.resolve(true);
     }
