@@ -103,7 +103,7 @@ export interface IInsightFacade {
     /**
      * List all currently added datasets, their types, and number of rows.
      *
-     * @return Promise <InsightDataset[]>
+     * @return Promise <InsightDataset.ts[]>
      * The promise should fulfill an array of currently added InsightDatasets, and will only fulfill.
      */
     listDatasets(): Promise<InsightDataset[]>;
