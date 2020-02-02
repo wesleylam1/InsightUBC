@@ -16,10 +16,23 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
-       return Promise.reject("not done yet");
+        return new Promise((resolve, err) => {
+            // eslint-disable-next-line @typescript-eslint/tslint/config
+            this.checkDatasetIDValidity(id).then((resolve) => {
+                this.checkAndLoadZip(content).then((result: string ) => {
+                    return Promise.resolve();
+                });
+        });
+        });
     }
 
+    private checkAndLoadZip(content: string): Promise<string> {
+        return Promise.resolve("placeholder");
+    }
+
+
     private checkDatasetIDValidity(id: string): Promise<boolean> {
+        return new Promise((resolve, reject) => {
         let allWhiteSpace: boolean = true;
         for (let i = 0; i < id.length; i++) {
            if (id.charAt(i) === "_") {
@@ -39,6 +52,7 @@ export default class InsightFacade implements IInsightFacade {
             }
         }
         return Promise.resolve(true);
+    });
     }
 
 
