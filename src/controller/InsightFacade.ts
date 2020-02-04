@@ -29,8 +29,8 @@ export default class InsightFacade implements IInsightFacade {
                     Log.trace("then");
                     let result2 = new Array<string>();
                     resolve(result2);
-                }).catch((err: Error) => {
-                    return err;
+                }).catch((err: any) => {
+                    return reject(err);
                 });
         });
     }

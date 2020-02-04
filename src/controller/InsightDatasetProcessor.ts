@@ -24,7 +24,7 @@ export class InsightDatasetProcessor {
             for (let i = 0; i < id.length; i++) {
                 if (id.charAt(i) === "_") {
                     //     Log.trace("first if, about to reject");
-                    return reject(new InsightError("dataset id contained an underscore"));
+                     return reject(new InsightError("dataset id contained an underscore"));
                 }
                 if (allWhiteSpace && !(id.charAt(i) === " ")) {
                     allWhiteSpace = false;
@@ -63,7 +63,7 @@ export class InsightDatasetProcessor {
                     resolve(true);
                 });
             }).catch((err: Error) => {
-                reject(err);
+                 reject(err);
             });
         });
     }
@@ -72,7 +72,7 @@ export class InsightDatasetProcessor {
     private saveToDisk(id: any, result: {}): Promise<number> {
         return new Promise((resolve) => {
             Log.trace("saveToDisk");
-            resolve(2);
+            return (2);
         });
     }
 
