@@ -48,12 +48,12 @@ export class InsightDatasetProcessor {
             let result = {};
             myZip.loadAsync(content, {base64: true}).then((zip: JSZip) => {
                 Log.trace("in readzip after loadAsync");
-                for (let fn of Object.keys(zip.folder("courses").files)) {
-                    if (zip.file(fn) == null) {
+                for (let f of Object.keys(zip.folder("courses").files)) {
+                    if (zip.file(f) == null) {
                         continue;
                     } else {
-                        Log.trace(fn);
-                        coursePromises.push(zip.file(fn).async("text"));
+                        Log.trace(f);
+                        coursePromises.push(zip.file(f).async("text"));
                     }
                 }
                 Promise.all(coursePromises).then((content1: any) => {

@@ -53,6 +53,46 @@ export class IndividualDataSet {
         return this.year;
     }
 
+    public setDept(dept: string): void {
+         this.dept = dept;
+    }
+
+    public setID(id: string): void {
+         this.id = id;
+    }
+
+    public setAvg(avg: number): void {
+         this.avg = avg;
+    }
+
+    public setInstructor(instructor: string): void {
+         this.instructor = instructor;
+    }
+
+    public setTitle(title: string): void {
+         this.title = title;
+    }
+
+    public setPass(pass: number): void {
+         this.pass = pass;
+    }
+
+    public setFail(fail: number): void {
+        this.fail = fail;
+    }
+
+    public setAudit(audit: number): void {
+        this.audit = audit;
+    }
+
+    public setUUID(uuid: string): void {
+        this.uuid = uuid;
+    }
+
+    public setYear(year: number): void {
+        this.year = year;
+    }
+
     constructor(dept: string, id: string, avg: number, instructor: string,
                 title: string, pass: number, fail: number, audit: number,
                 uuid: string, year: number) {
@@ -67,6 +107,5 @@ export class IndividualDataSet {
         this.uuid = uuid;
         this.year = year;
     }
-
 
 }

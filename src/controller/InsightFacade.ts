@@ -30,9 +30,9 @@ export default class InsightFacade implements IInsightFacade {
                     let result2 = new Array<string>();
                     resolve(result2);
                 }).catch((err: Error) => {
-                    return reject(err);
+                    return err;
                 });
-            });
+        });
     }
 
 
