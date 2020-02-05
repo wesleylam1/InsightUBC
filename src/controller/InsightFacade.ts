@@ -25,10 +25,11 @@ export default class InsightFacade implements IInsightFacade {
                     return reject(new InsightError("Rooms kind is invalid"));
                 }
                 processor.validateID(id).then((result) => {
-                    processor.readZip(result, content);
-                    Log.trace("then");
-                    let result2 = new Array<string>();
-                    resolve(result2);
+                    processor.readZip(result, content).then(() => {
+                        Log.trace("then");
+                        let result2 = new Array<string>();
+                        resolve(result2);
+                    });
                 }).catch((err: any) => {
                     return reject(err);
                 });

@@ -1,6 +1,6 @@
 import {IInsightFacade, InsightDataset, InsightDatasetKind} from "./IInsightFacade";
 
-export class IndividualDataSet {
+export class DatasetSection {
     private dept: string;
     private id: string;
     private avg: number;

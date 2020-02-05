@@ -1,13 +1,16 @@
 import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightError} from "./IInsightFacade";
-import {IndividualDataSet} from "./IndividualDataSet";
+import {DatasetSection} from "./DatasetSection";
 import Log from "../Util";
 import * as JSZip from "jszip";
 import {JSZipObject} from "jszip";
+import * as fs from "fs-extra";
+import parse5 = require("parse5");
 
 
 interface InsightDatasets {
     [id: string]: {};
 }
+
 
 export class InsightDatasetProcessor {
     private path: string = __dirname + "/data";
@@ -24,7 +27,7 @@ export class InsightDatasetProcessor {
             for (let i = 0; i < id.length; i++) {
                 if (id.charAt(i) === "_") {
                     //     Log.trace("first if, about to reject");
-                     return reject(new InsightError("dataset id contained an underscore"));
+                    return reject(new InsightError("dataset id contained an underscore"));
                 }
                 if (allWhiteSpace && !(id.charAt(i) === " ")) {
                     allWhiteSpace = false;
@@ -45,9 +48,13 @@ export class InsightDatasetProcessor {
             let myZip = new JSZip();
 
             let coursePromises: Array<Promise<string>> = new Array<Promise<string>>();
-            let result = {};
+            let result: any;
             myZip.loadAsync(content, {base64: true}).then((zip: JSZip) => {
                 Log.trace("in readzip after loadAsync");
+
+                if (zip.folder("courses").length === 0) {
+                    return reject(new InsightError("no courses folder"));
+                }
                 for (let f of Object.keys(zip.folder("courses").files)) {
                     if (zip.file(f) == null) {
                         continue;
@@ -56,14 +63,16 @@ export class InsightDatasetProcessor {
                         coursePromises.push(zip.file(f).async("text"));
                     }
                 }
-                Promise.all(coursePromises).then((content1: any) => {
+                Promise.all(coursePromises).then((parsableFiles: any) => {
                     Log.trace("all promises done");
-                    result = outerThis.parse(content1);
-                    outerThis.saveToDisk(id, result);
-                    resolve(true);
+                    result = outerThis.parse(parsableFiles);
+                    outerThis.saveToDisk(id, result).then((res: number) => {
+                        Log.trace("About to resolve readZip");
+                        resolve(true);
+                    });
                 });
             }).catch((err: Error) => {
-                 reject(err);
+                reject(err);
             });
         });
     }
@@ -76,8 +85,40 @@ export class InsightDatasetProcessor {
         });
     }
 
-    private parse(content: any): {} {
-        Log.trace("parsing triggered");
-        return {};
+    private parse(content: string): any[] {
+        let sections: any[] = [];
+        for (let course of content) {
+            let currCourse: any = JSON.parse(course);
+            let parsedResult: any = currCourse["result"];
+            let currentSection: DatasetSection;
+            for (let section in parsedResult) {
+                    currentSection = this.parseSection(section);
+                    sections.push(currentSection);
+            }
+            return sections;
+        }
     }
+
+    private parseSection(section: any): DatasetSection {
+        let secYear: number;
+        let secID: string;
+        if (section["Section"] === "overall") {
+            secYear = 1900;
+        } else {
+            secYear = parseInt(section["Year"], 10);
+        }
+        secID = section["id"].toString();
+        return new DatasetSection(
+            section["Subject"],
+            section["Course"],
+            section["Avg"],
+            section["Instructor"],
+            section["Title"],
+            section["Pass"],
+            section["Fail"],
+            section["Audit"],
+            secID,
+            secYear);
+    }
+
 }
