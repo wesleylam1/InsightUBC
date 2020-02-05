@@ -32,7 +32,7 @@ export default class InsightFacade implements IInsightFacade {
                 }).catch((err: any) => {
                     return reject(err);
                 });
-        });
+            });
     }
 
 

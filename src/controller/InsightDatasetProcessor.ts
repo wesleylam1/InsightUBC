@@ -32,7 +32,7 @@ export class InsightDatasetProcessor {
             }
             if (allWhiteSpace) {
                 //    Log.trace("reject");
-                return reject(new InsightError("dataset id all whitespace"));
+                throw reject(new InsightError("dataset id all whitespace"));
             }
             Log.trace("about to return id");
             return resolve(id);
