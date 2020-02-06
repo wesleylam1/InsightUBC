@@ -262,9 +262,10 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
 
     // Test of listing added dataset
     it("Should add then list", function () {
-        const id: string = "coursesVIV";
-        const expected: InsightDataset = {id: "coursesVIV", kind: InsightDatasetKind.Courses, numRows: 1};
+        const id: string = "courses";
+        const expected: InsightDataset[] = [{id: "courses", kind: InsightDatasetKind.Courses, numRows: 64612}];
         return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses).then((res: string[]) => {
+            Log.trace("about to list");
             return insightFacade.listDatasets().then((result: InsightDataset[]) => {
                 expect(result).to.deep.equal(expected);
             }).catch((err: any) => {

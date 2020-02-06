@@ -25,6 +25,7 @@ export default class InsightFacade implements IInsightFacade {
                 if (kind === InsightDatasetKind.Rooms) {
                     return reject(new InsightError("Rooms kind is invalid"));
                 }
+                this.processor.setCurrentKind(kind);
                 processor.validateID(id).then((result) => {
                     processor.readZip(result, content).then((finalResult: string[]) => {
                         Log.trace("then");
@@ -45,6 +46,13 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     public listDatasets(): Promise<InsightDataset[]> {
-        return Promise.reject("Not implemented.");
+        return new Promise((resolve, reject) => {
+            return this.processor.listDatasets().then((result: InsightDataset[]) => {
+               return resolve(result);
+           }).catch((err: any) => {
+               return reject(err);
+           });
+        });
     }
+
 }

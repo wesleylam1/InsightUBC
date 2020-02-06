@@ -8,13 +8,22 @@ import parse5 = require("parse5");
 
 
 interface InsightDatasets {
-    [id: string]: {};
+    [id: string]: DatasetWrapper;
+}
+
+interface DatasetWrapper {
+    content: {};
+    Data: InsightDataset;
 }
 
 
 export class InsightDatasetProcessor {
 
     private datasets: InsightDatasets = {};
+    private datasetMeta: InsightDataset[];
+
+    private currentKind: InsightDatasetKind;
+    private currentNumRows: number;
 
 
     constructor() {
@@ -24,6 +33,36 @@ export class InsightDatasetProcessor {
 
     private loadDatasetsFromDisk() {
             Log.trace("Loading Datasets from disk");
+    }
+
+    public setCurrentKind(kind: InsightDatasetKind): void {
+        this.currentKind = kind;
+    }
+
+    private setCurrentNumrows(numRows: number): void {
+        this.currentNumRows = numRows;
+    }
+
+    private saveToDisk(id: string, saveData: any): Promise<any> {
+
+        return new Promise((resolve, reject) => {
+            let IsDs: InsightDataset = {
+                id: id,
+                kind: this.currentKind,
+                numRows: this.currentNumRows};
+            let dsWrapper: DatasetWrapper = {
+                content: saveData,
+                Data: IsDs};
+            this.datasets[id] = dsWrapper;
+            try {
+                fs.writeFile("./data/" + id + ".json", JSON.stringify(this.datasets[id]), () => {
+                    Log.trace("resolving writFile");
+                    resolve();
+                });
+            } catch (err) {
+                reject(err);
+            }
+        });
     }
 
 
@@ -90,24 +129,10 @@ export class InsightDatasetProcessor {
     }
 
 
-    private saveToDisk(id: string, saveData: any): Promise<any> {
-
-        return new Promise((resolve, reject) => {
-            this.datasets[id] = saveData;
-            try {
-                fs.writeFile("./data/" + id + ".json", JSON.stringify(this.datasets[id]), () => {
-                    Log.trace("resolving writFile");
-                    resolve();
-                });
-            } catch (err) {
-                reject(err);
-            }
-        });
-    }
-
     private parse(content: string): DatasetSection[] {
         let sections: any[] = [];
         Log.trace("begining parse");
+        let validSections: number = 0;
         for (let course of content) {
          //   Log.trace("Beginning parse for loop");
             let currCourse: any = JSON.parse(course);
@@ -118,11 +143,13 @@ export class InsightDatasetProcessor {
                 currentSection = section;
                 // if (this.validSection(currentSection)) {
                 resultSection = this.parseSection(currentSection);
+                validSections++;
                 sections.push(resultSection);
                // }
             }
 
         }
+        this.setCurrentNumrows(validSections);
         Log.trace("returning sections");
         return sections;
     }
@@ -166,4 +193,23 @@ export class InsightDatasetProcessor {
             subjectSection.hasOwnProperty("Year"));
     }
 
+    public listDatasets(): Promise<InsightDataset[]> {
+        return new Promise<InsightDataset[]>( (resolve) =>  {
+            let resultArray: InsightDataset[] = [];
+            for (let key in this.datasets) {
+                let indexedDataset: DatasetWrapper = this.datasets[key];
+                resultArray.push(indexedDataset.Data);
+            }
+            Log.trace(resultArray);
+            resolve(resultArray);
+        });
+    }
 }
+
+   // private makeDatasetInterface(dataset: string): InsightDataset {
+     //   let result: InsightDataset{
+   //         id: dataset;
+   //         kind:
+   //     }
+
+   // }
