@@ -19,6 +19,11 @@ export class InsightDatasetProcessor {
 
     constructor() {
         Log.trace("initializing Processor");
+        this.loadDatasetsFromDisk();
+    }
+
+    private loadDatasetsFromDisk() {
+            Log.trace("Loading Datasets from disk");
     }
 
 
@@ -43,8 +48,8 @@ export class InsightDatasetProcessor {
         });
     }
 
-    public readZip(id: string, content: string): Promise<boolean> {
-        return new Promise<boolean>((resolve, reject) => {
+    public readZip(id: string, content: string): Promise<string[]> {
+        return new Promise<string[]>((resolve, reject) => {
             let outerThis = this;
             let myZip = new JSZip();
 
@@ -68,8 +73,12 @@ export class InsightDatasetProcessor {
                     Log.trace("all promises done");
                     result = outerThis.parse(parsableFiles);
                     outerThis.saveToDisk(id, result).then((res: any) => {
+                        let datasetList: string[] = [];
+                        for (let savedID in this.datasets) {
+                            datasetList.push(savedID);
+                        }
                         Log.trace("About to resolve readZip");
-                        resolve(true);
+                        resolve(datasetList);
                     }).catch((err: Error) => {
                         reject(err);
                     });
@@ -84,9 +93,10 @@ export class InsightDatasetProcessor {
     private saveToDisk(id: string, saveData: any): Promise<any> {
 
         return new Promise((resolve, reject) => {
-            this.datasets.id = saveData;
+            this.datasets[id] = saveData;
             try {
                 fs.writeFile("../data/" + id + ".json", JSON.stringify(this.datasets[id]), () => {
+                    Log.trace("resolving writFile");
                     resolve();
                 });
             } catch (err) {

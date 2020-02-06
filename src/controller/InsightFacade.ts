@@ -12,30 +12,29 @@ import * as fs from "fs";
  *
  */
 export default class InsightFacade implements IInsightFacade {
-    private static processor = new InsightDatasetProcessor();
+    private processor = new InsightDatasetProcessor();
 
     constructor() {
         Log.trace("InsightFacadeImpl::init()");
+        this.processor = new InsightDatasetProcessor();
     }
 
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
-            let processor = InsightFacade.processor;
+            let processor = this.processor;
             return new Promise((resolve, reject) => {
                 if (kind === InsightDatasetKind.Rooms) {
                     return reject(new InsightError("Rooms kind is invalid"));
                 }
                 processor.validateID(id).then((result) => {
-                    processor.readZip(result, content).then(() => {
+                    processor.readZip(result, content).then((finalResult: string[]) => {
                         Log.trace("then");
-                        let result2 = new Array<string>();
-                        return resolve(result2);
+                        return resolve(finalResult);
                     });
                 }).catch((err: any) => {
                     return reject(err);
                 });
             });
     }
-
 
     public removeDataset(id: string): Promise<string> {
         return Promise.reject("Not implemented.");
