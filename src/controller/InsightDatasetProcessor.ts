@@ -13,7 +13,7 @@ interface InsightDatasets {
 
 
 export class InsightDatasetProcessor {
-    private path: string = __dirname + "/data";
+
     private datasets: InsightDatasets = {};
 
 
@@ -67,7 +67,7 @@ export class InsightDatasetProcessor {
                 Promise.all(coursePromises).then((parsableFiles: any) => {
                     Log.trace("all promises done");
                     result = outerThis.parse(parsableFiles);
-                    outerThis.saveToDisk(id, result).then((res: number) => {
+                    outerThis.saveToDisk(id, result).then((res: any) => {
                         Log.trace("About to resolve readZip");
                         resolve(true);
                     }).catch((err: Error) => {
@@ -85,13 +85,13 @@ export class InsightDatasetProcessor {
 
         return new Promise((resolve, reject) => {
             this.datasets.id = saveData;
-
-            fs.writeFile(this.path + id + ".json", JSON.stringify(this.datasets[id], (err) => {
-                if (err) {
-                    return reject(new Error("problem with writing file"));
-                }}));
-            Log.trace("about to resolve save");
-            resolve();
+            try {
+                fs.writeFile("../data/" + id + ".json", JSON.stringify(this.datasets[id]), () => {
+                    resolve();
+                });
+            } catch (err) {
+                reject(err);
+            }
         });
     }
 
@@ -99,21 +99,26 @@ export class InsightDatasetProcessor {
         let sections: any[] = [];
         Log.trace("begining parse");
         for (let course of content) {
-            Log.trace("Beginning parse for loop");
+         //   Log.trace("Beginning parse for loop");
             let currCourse: any = JSON.parse(course);
             let parsedResult: any = currCourse["result"];
-            let currentSection: DatasetSection;
-            for (let section in parsedResult) {
-                    currentSection = this.parseSection(section);
-                    sections.push(currentSection);
+            let currentSection: string;
+            let resultSection: DatasetSection;
+            for (let section of parsedResult) {
+                currentSection = section;
+                // if (this.validSection(currentSection)) {
+                resultSection = this.parseSection(currentSection);
+                sections.push(resultSection);
+               // }
             }
-            Log.trace("returning sections");
+
         }
+        Log.trace("returning sections");
         return sections;
     }
 
     private parseSection(section: any): DatasetSection {
-        if (this.validSection(section)) {
+
             Log.trace("making section");
             let secYear: number;
             let secID: string;
@@ -127,30 +132,28 @@ export class InsightDatasetProcessor {
                 section["Subject"],
                 section["Course"],
                 section["Avg"],
-                section["Instructor"],
+                section["Professor"],
                 section["Title"],
                 section["Pass"],
                 section["Fail"],
                 section["Audit"],
                 secID,
                 secYear);
-        } else {
-            Log.trace("section was invalid");
         }
-    }
 
-    private validSection(section: any) {
-        return (section.hasOwnProperty("Section") &&
-            section.hasOwnProperty("id") &&
-            section.hasOwnProperty("Subject") &&
-                section.hasOwnProperty("Course") &&
-                section.hasOwnProperty("Avg") &&
-                section.hasOwnProperty("Instructor") &&
-                section.hasOwnProperty("Title") &&
-                section.hasOwnProperty("Pass") &&
-                section.hasOwnProperty("Fail") &&
-                section.hasOwnProperty("Audit") &&
-                section.hasOwnProperty("Year"));
+
+    private validSection(subjectSection: any) {
+        return (subjectSection.hasOwnProperty("Section") &&
+            subjectSection.hasOwnProperty("id") &&
+            subjectSection.hasOwnProperty("Subject") &&
+            subjectSection.hasOwnProperty("Course") &&
+            subjectSection.hasOwnProperty("Avg") &&
+            subjectSection.hasOwnProperty("Instructor") &&
+            subjectSection.hasOwnProperty("Title") &&
+            subjectSection.hasOwnProperty("Pass") &&
+            subjectSection.hasOwnProperty("Fail") &&
+            subjectSection.hasOwnProperty("Audit") &&
+            subjectSection.hasOwnProperty("Year"));
     }
 
 }
