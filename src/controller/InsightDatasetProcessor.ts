@@ -95,7 +95,7 @@ export class InsightDatasetProcessor {
         return new Promise((resolve, reject) => {
             this.datasets[id] = saveData;
             try {
-                fs.writeFile("../data/" + id + ".json", JSON.stringify(this.datasets[id]), () => {
+                fs.writeFile("./data/" + id + ".json", JSON.stringify(this.datasets[id]), () => {
                     Log.trace("resolving writFile");
                     resolve();
                 });
