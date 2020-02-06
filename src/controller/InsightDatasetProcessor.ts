@@ -99,6 +99,7 @@ export class InsightDatasetProcessor {
         let sections: any[] = [];
         Log.trace("begining parse");
         for (let course of content) {
+            Log.trace("Beginning parse for loop");
             let currCourse: any = JSON.parse(course);
             let parsedResult: any = currCourse["result"];
             let currentSection: DatasetSection;
@@ -107,12 +108,12 @@ export class InsightDatasetProcessor {
                     sections.push(currentSection);
             }
             Log.trace("returning sections");
-            return sections;
         }
+        return sections;
     }
 
     private parseSection(section: any): DatasetSection {
-        if (this.validSection) {
+        if (this.validSection(section)) {
             Log.trace("making section");
             let secYear: number;
             let secID: string;
@@ -133,6 +134,8 @@ export class InsightDatasetProcessor {
                 section["Audit"],
                 secID,
                 secYear);
+        } else {
+            Log.trace("section was invalid");
         }
     }
 
