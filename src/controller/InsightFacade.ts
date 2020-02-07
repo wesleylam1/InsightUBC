@@ -30,6 +30,8 @@ export default class InsightFacade implements IInsightFacade {
                     processor.readZip(result, content).then((finalResult: string[]) => {
                         // Log.trace("then");
                         return resolve(finalResult);
+                    }).catch((err: any) => {
+                        return reject(err);
                     });
                 }).catch((err: any) => {
                     return reject(err);
