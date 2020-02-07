@@ -1,0 +1,19 @@
+{
+    "title": "InvalidOrderKey",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "courses_fail": 80
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_avg"
+            ],
+            "ORDER": "courses_fail"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}
