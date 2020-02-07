@@ -12,7 +12,7 @@ import * as fs from "fs";
  *
  */
 export default class InsightFacade implements IInsightFacade {
-    private processor = new InsightDatasetProcessor();
+    public processor = new InsightDatasetProcessor();
 
     constructor() {
         Log.trace("InsightFacadeImpl::init()");

@@ -3,7 +3,7 @@ import {DatasetSection} from "./DatasetSection";
 import Log from "../Util";
 import * as JSZip from "jszip";
 import {JSZipObject} from "jszip";
-import * as fs from "fs-extra";
+import * as fs from "fs";
 import parse5 = require("parse5");
 
 
@@ -30,10 +30,19 @@ export class InsightDatasetProcessor {
         this.loadDatasetsFromDisk();
     }
 
-    private loadDatasetsFromDisk() {
-            Log.trace("Loading Datasets from disk");
+    private loadDatasetsFromDisk(): void {
+        Log.trace("Loading Datasets from disk");
+        fs.readdirSync("./data").forEach((file) => {
+            this.loadFileToMemory(file);
+        });
+        Log.trace("loaded Datasets from disk");
     }
 
+    private loadFileToMemory(file: string) {
+        let loadedFile: any = fs.readFileSync("./data/" + file);
+        let fileJSON: DatasetWrapper = JSON.parse(loadedFile);
+        this.datasets[fileJSON.MetaData.id] = fileJSON;
+    }
     public setCurrentKind(kind: InsightDatasetKind): void {
         this.currentKind = kind;
     }
@@ -41,6 +50,7 @@ export class InsightDatasetProcessor {
     private setCurrentNumrows(numRows: number): void {
         this.currentNumRows = numRows;
     }
+
 
     private saveToDisk(id: string, saveData: any): Promise<any> {
 
@@ -183,11 +193,9 @@ export class InsightDatasetProcessor {
             let resultSection: DatasetSection;
             for (let section of parsedResult) {
                 currentSection = section;
-                // if (this.validSection(currentSection)) {
                 resultSection = this.parseSection(currentSection);
                 validSections++;
                 sections.push(resultSection);
-               // }
             }
 
         }
@@ -198,7 +206,7 @@ export class InsightDatasetProcessor {
 
     private parseSection(section: any): DatasetSection {
 
-            Log.trace("making section");
+       //     Log.trace("making section");
             let secYear: number;
             let secID: string;
             if (section["Section"] === "overall") {
@@ -220,21 +228,6 @@ export class InsightDatasetProcessor {
                 secYear);
         }
 
-
-    private validSection(subjectSection: any) {
-        return (subjectSection.hasOwnProperty("Section") &&
-            subjectSection.hasOwnProperty("id") &&
-            subjectSection.hasOwnProperty("Subject") &&
-            subjectSection.hasOwnProperty("Course") &&
-            subjectSection.hasOwnProperty("Avg") &&
-            subjectSection.hasOwnProperty("Instructor") &&
-            subjectSection.hasOwnProperty("Title") &&
-            subjectSection.hasOwnProperty("Pass") &&
-            subjectSection.hasOwnProperty("Fail") &&
-            subjectSection.hasOwnProperty("Audit") &&
-            subjectSection.hasOwnProperty("Year"));
-    }
-
     public listDatasets(): Promise<InsightDataset[]> {
         return new Promise<InsightDataset[]>( (resolve) =>  {
             let resultArray: InsightDataset[] = [];
@@ -246,12 +239,5 @@ export class InsightDatasetProcessor {
             resolve(resultArray);
         });
     }
+
 }
-
-   // private makeDatasetInterface(dataset: string): InsightDataset {
-     //   let result: InsightDataset{
-   //         id: dataset;
-   //         kind:
-   //    }
-
-   // }
