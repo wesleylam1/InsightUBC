@@ -255,6 +255,7 @@ export class InsightDatasetProcessor {
     } catch (err) {
         throw new InsightError("parsing problem"); }
     }
+}
 
     private parseSection(section: any): DatasetSection {
         //     Log.trace("making section");
