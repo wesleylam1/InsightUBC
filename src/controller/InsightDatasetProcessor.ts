@@ -210,6 +210,7 @@ export class InsightDatasetProcessor {
                     });
                 })
                 .catch((err: Error) => {
+                    Log.trace(err);
                     return reject(new InsightError("something wrong in readzip"));
                 });
         });
@@ -228,9 +229,13 @@ export class InsightDatasetProcessor {
             let resultSection: DatasetSection;
             for (let section of parsedResult) {
                 currentSection = section;
-                resultSection = this.parseSection(currentSection);
-                validSections++;
-                sections.push(resultSection);
+                try {
+                    resultSection = this.parseSection(currentSection);
+                    validSections++;
+                    sections.push(resultSection);
+                } catch (Error) {
+                    continue;
+                }
             }
         }
         this.setCurrentNumrows(validSections);
