@@ -1,4 +1,3 @@
-
 import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightError, NotFoundError} from "./IInsightFacade";
 import {DatasetSection} from "./DatasetSection";
 import Log from "../Util";
@@ -6,6 +5,7 @@ import * as JSZip from "jszip";
 import {JSZipObject} from "jszip";
 import * as fs from "fs";
 import parse5 = require("parse5");
+
 
 interface InsightDatasets {
     [id: string]: DatasetWrapper;
@@ -182,22 +182,20 @@ export class InsightDatasetProcessor {
             let coursePromises: Array<Promise<string>> = new Array<Promise<string>>();
             let result: any;
             myZip.loadAsync(content, { base64: true }).then((zip: JSZip) => {
-                    if (zip.folder("courses").length === 0) {
-                        return reject(
-                            new InsightError(
-                                "no courses folder/empty courses folder",
-                            ),
-                        );
-                    }
-                    for (let f of Object.keys(zip.folder("courses").files)) {
+                let atLeastOneFile: boolean = false;
+                for (let f of Object.keys(zip.folder("courses").files)) {
                         if (zip.file(f) == null) {
                             continue;
                         } else {
+                            atLeastOneFile = true;
                             //             Log.trace(f);
                             coursePromises.push(zip.file(f).async("text"));
                         }
                     }
-                    Promise.all(coursePromises).then((parsableFiles: any) => {
+                if (!atLeastOneFile) {
+                        return reject(new InsightError("no files in zip folder"));
+                    }
+                Promise.all(coursePromises).then((parsableFiles: any) => {
                         //        Log.trace("all promises done");
                         result = outerThis.parse(parsableFiles);
                         outerThis
@@ -223,27 +221,30 @@ export class InsightDatasetProcessor {
     }
 
     private parse(content: string): DatasetSection[] {
-        try {
+
         let sections: any[] = [];
         //    Log.trace("begining parse");
         let validSections: number = 0;
         for (let course of content) {
             //   Log.trace("Beginning parse for loop");
+            try {
+                let currCourse: any = JSON.parse(course);
+                let parsedResult: any = currCourse["result"];
+                let currentSection: string;
+                let resultSection: DatasetSection;
+                for (let section of parsedResult) {
+                    currentSection = section;
 
-            let currCourse: any = JSON.parse(course);
-            let parsedResult: any = currCourse["result"];
-            let currentSection: string;
-            let resultSection: DatasetSection;
-            for (let section of parsedResult) {
-                currentSection = section;
-
-                try {
-                    resultSection = this.parseSection(currentSection);
-                    validSections++;
-                    sections.push(resultSection);
-                } catch (Error) {
-                    continue;
+                    try {
+                        resultSection = this.parseSection(currentSection);
+                        validSections++;
+                        sections.push(resultSection);
+                    } catch (Error) {
+                        continue;
+                    }
                 }
+            } catch (Errror) {
+                continue;
             }
         }
         this.setCurrentNumrows(validSections);
@@ -252,8 +253,6 @@ export class InsightDatasetProcessor {
         }
         //   Log.trace("returning sections");
         return sections;
-    } catch (err) {
-        throw new InsightError("parsing problem"); }
     }
 
     private parseSection(section: any): DatasetSection {
