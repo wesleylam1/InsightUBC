@@ -112,7 +112,6 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         });
 
     });
-
     // test with empty dataset
     it("Should fail to add empty Dataset", function () {
         const id: string = "coursesEmpty";
