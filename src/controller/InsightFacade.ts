@@ -23,7 +23,6 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     public performQuery(query: any): Promise<any[]> {
-        return new Promise(function (resolve, reject) {
             try {
                 let isEmpty = performQueryHelper.isEmpty(query);
                 if (!isEmpty) {
@@ -42,8 +41,8 @@ export default class InsightFacade implements IInsightFacade {
                 } else {
                     return Promise.reject(new InsightError("Insight Error Found"));
                 }
-        }
-    }); }
+        }   return Promise.reject(new InsightError("Insight Error"));
+     }
 
     public listDatasets(): Promise<InsightDataset[]> {
         return Promise.reject("Not implemented.");
