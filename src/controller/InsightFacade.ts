@@ -22,31 +22,39 @@ export default class InsightFacade implements IInsightFacade {
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
             let processor = this.processor;
             return new Promise((resolve, reject) => {
-                if (kind === InsightDatasetKind.Rooms) {
-                    return reject(new InsightError("Rooms kind is invalid"));
-                }
-                this.processor.setCurrentKind(kind);
-                processor.validateID(id).then((result) => {
-                    processor.readZip(result, content).then((finalResult: string[]) => {
-                        // Log.trace("then");
-                        return resolve(finalResult);
+                if (id) {
+                    if (kind === InsightDatasetKind.Rooms) {
+                        return reject(new InsightError("Rooms kind is invalid"));
+                    }
+                    this.processor.setCurrentKind(kind);
+                    processor.validateID(id).then((result) => {
+                        processor.readZip(result, content).then((finalResult: string[]) => {
+                            // Log.trace("then");
+                            return resolve(finalResult);
 
+                        }).catch((err: any) => {
+                            return reject(err);
+                        });
                     }).catch((err: any) => {
                         return reject(err);
                     });
-                }).catch((err: any) => {
-                    return reject(err);
-                });
+                } else {
+                    return reject(new InsightError("id was null or undefined"));
+                }
             });
     }
 
     public removeDataset(id: string): Promise<string> {
         return new Promise<string>((resolve, reject) => {
-            return this.processor.removeDataset(id).then((result: string) => {
-                return resolve(result);
-            }).catch((err: any) => {
-                return reject(err);
-            });
+            if (id) {
+                return this.processor.removeDataset(id).then((result: string) => {
+                    return resolve(result);
+                }).catch((err: any) => {
+                    return reject(err);
+                });
+        } else {
+                return reject(new InsightError("id was null or undefined"));
+            }
         });
     }
 
