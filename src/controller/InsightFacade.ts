@@ -28,7 +28,7 @@ export default class InsightFacade implements IInsightFacade {
                 this.processor.setCurrentKind(kind);
                 processor.validateID(id).then((result) => {
                     processor.readZip(result, content).then((finalResult: string[]) => {
-                        Log.trace("then");
+                        // Log.trace("then");
                         return resolve(finalResult);
                     });
                 }).catch((err: any) => {

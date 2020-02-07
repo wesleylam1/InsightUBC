@@ -26,16 +26,16 @@ export class InsightDatasetProcessor {
 
 
     constructor() {
-        Log.trace("initializing Processor");
+        Log.trace("initializing DatasetProcessor");
         this.loadDatasetsFromDisk();
     }
 
     private loadDatasetsFromDisk(): void {
-        Log.trace("Loading Datasets from disk");
+        Log.trace("Loading Datasets from disk...");
         fs.readdirSync("./data").forEach((file) => {
             this.loadFileToMemory(file);
         });
-        Log.trace("loaded Datasets from disk");
+        Log.trace("Loaded Datasets from disk");
     }
 
     private loadFileToMemory(file: string) {
@@ -55,6 +55,7 @@ export class InsightDatasetProcessor {
     private saveToDisk(id: string, saveData: any): Promise<any> {
 
         return new Promise((resolve, reject) => {
+            Log.trace("Saving to disk...");
             let IsDs: InsightDataset = {
                 id: id,
                 kind: this.currentKind,
@@ -65,7 +66,7 @@ export class InsightDatasetProcessor {
             this.datasets[id] = dsWrapper;
             try {
                 fs.writeFile("./data/" + id + ".json", JSON.stringify(this.datasets[id]), () => {
-                    Log.trace("resolving writFile");
+                    Log.trace("Successfully saved to disk");
                     resolve();
                 });
             } catch (err) {
@@ -91,8 +92,10 @@ export class InsightDatasetProcessor {
 
     private deleteFromDisk(id: string): Promise<string> {
         return new Promise<string>((resolve, reject) => {
+            Log.trace("Trying to delete dataset from disk...");
             try {
                 fs.unlinkSync("./data/" + id + ".json");
+                Log.trace("Dataset removed from disk");
                 resolve(id);
             } catch (err) {
                 reject(new InsightError("something went wrong with file deletion from disk"));
@@ -134,7 +137,7 @@ export class InsightDatasetProcessor {
                 //    Log.trace("reject");
                 throw reject(new InsightError("dataset id all whitespace"));
             }
-            Log.trace("about to return id");
+       //     Log.trace("about to return id");
             return resolve(id);
         });
     }
@@ -147,7 +150,7 @@ export class InsightDatasetProcessor {
             let coursePromises: Array<Promise<string>> = new Array<Promise<string>>();
             let result: any;
             myZip.loadAsync(content, {base64: true}).then((zip: JSZip) => {
-                Log.trace("in readzip after loadAsync");
+          //      Log.trace("in readzip after loadAsync");
 
                 if (zip.folder("courses").length === 0) {
                     return reject(new InsightError("no courses folder/empty courses folder"));
@@ -156,19 +159,19 @@ export class InsightDatasetProcessor {
                     if (zip.file(f) == null) {
                         continue;
                     } else {
-                        Log.trace(f);
+           //             Log.trace(f);
                         coursePromises.push(zip.file(f).async("text"));
                     }
                 }
                 Promise.all(coursePromises).then((parsableFiles: any) => {
-                    Log.trace("all promises done");
+            //        Log.trace("all promises done");
                     result = outerThis.parse(parsableFiles);
                     outerThis.saveToDisk(id, result).then((res: any) => {
                         let datasetList: string[] = [];
                         for (let savedID in this.datasets) {
                             datasetList.push(savedID);
                         }
-                        Log.trace("About to resolve readZip");
+            //            Log.trace("About to resolve readZip");
                         resolve(datasetList);
                     }).catch((err: Error) => {
                         reject(err);
@@ -183,7 +186,7 @@ export class InsightDatasetProcessor {
 
     private parse(content: string): DatasetSection[] {
         let sections: any[] = [];
-        Log.trace("begining parse");
+    //    Log.trace("begining parse");
         let validSections: number = 0;
         for (let course of content) {
          //   Log.trace("Beginning parse for loop");
@@ -200,7 +203,7 @@ export class InsightDatasetProcessor {
 
         }
         this.setCurrentNumrows(validSections);
-        Log.trace("returning sections");
+     //   Log.trace("returning sections");
         return sections;
     }
 
@@ -230,11 +233,13 @@ export class InsightDatasetProcessor {
 
     public listDatasets(): Promise<InsightDataset[]> {
         return new Promise<InsightDataset[]>( (resolve) =>  {
+            Log.trace("Building list...");
             let resultArray: InsightDataset[] = [];
             for (let key in this.datasets) {
                 let indexedDataset: DatasetWrapper = this.datasets[key];
                 resultArray.push(indexedDataset.MetaData);
             }
+            Log.trace("Dataset list built:");
             Log.trace(resultArray);
             resolve(resultArray);
         });
