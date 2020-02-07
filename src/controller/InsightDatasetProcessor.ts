@@ -1,4 +1,3 @@
-
 import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightError, NotFoundError} from "./IInsightFacade";
 import {DatasetSection} from "./DatasetSection";
 import Log from "../Util";
@@ -6,6 +5,7 @@ import * as JSZip from "jszip";
 import {JSZipObject} from "jszip";
 import * as fs from "fs";
 import parse5 = require("parse5");
+
 
 interface InsightDatasets {
     [id: string]: DatasetWrapper;
@@ -168,6 +168,7 @@ export class InsightDatasetProcessor {
             return resolve(id);
         });
     }
+
     public readZip(id: string, content: string): Promise<string[]> {
         return new Promise<string[]>((resolve, reject) => {
             for (let key in this.datasets) {
@@ -220,12 +221,12 @@ export class InsightDatasetProcessor {
     }
 
     private parse(content: string): DatasetSection[] {
+
         let sections: any[] = [];
         //    Log.trace("begining parse");
         let validSections: number = 0;
         for (let course of content) {
             //   Log.trace("Beginning parse for loop");
-
             try {
                 let currCourse: any = JSON.parse(course);
                 let parsedResult: any = currCourse["result"];
@@ -252,10 +253,7 @@ export class InsightDatasetProcessor {
         }
         //   Log.trace("returning sections");
         return sections;
-    } catch (err) {
-        throw new InsightError("parsing problem"); }
     }
-}
 
     private parseSection(section: any): DatasetSection {
         //     Log.trace("making section");
