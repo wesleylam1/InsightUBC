@@ -326,7 +326,7 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         });
     });
 
-    // Test of listing added dataset
+    //  Test of listing added dataset
     it("Should add then list then delete then list", function () {
         const id: string = "courses";
         const expected: InsightDataset[] = [{id: "courses", kind: InsightDatasetKind.Courses, numRows: 64612}];
