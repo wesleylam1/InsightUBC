@@ -62,7 +62,7 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         const expected: string[] = [id];
         return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses).then((result: string[]) => {
             expect(result).to.deep.equal(expected);
-        }).catch((err: any) => {
+        }).catch((err: Error) => {
             expect.fail(err, expected, "Should not have rejected");
         });
 
@@ -203,7 +203,7 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses).then((result: string[]) => {
             expect.fail(result, expected, "should have rejected");
         }).catch(function (err: InsightError) {
-            expect(err).be("InsightError");
+            expect(err);
         });
     });
 
@@ -256,7 +256,8 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
                         expect.fail(re, expected, "should not have fulfilled");
                     });
                 }).catch(function (err: any) {
-                    expect(err).be("InsightError");
+
+                    expect(err);
                 });
             }
         );
@@ -269,7 +270,7 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses).then((result: string[]) => {
             expect.fail(result, expected, "should have rejected");
         }).catch(function (err: InsightError) {
-            expect(err).be("InsightError");
+            expect(err);
         });
     });
 
