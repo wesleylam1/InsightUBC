@@ -80,8 +80,6 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
 
     });
 
-
-
     // test add dataset with .Room kind
     it("Should add a valid dataset with room kind", function () {
         const id: string = "courses";
