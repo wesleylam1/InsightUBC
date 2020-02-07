@@ -34,8 +34,8 @@ export interface CourseData {
     year: number;
 
 }
-const mField = new Set (["courses_avg", "courses_pass", "courses_audit", "courses_fail", "courses_year"]);
-const sField = new Set (["courses_dept", "courses_id", "courses_instructor", "courses_title", "courses_uuid"]);
+const mField = new Set (["avg", "pass", "audit", "fail", "year"]);
+const sField = new Set (["dept", "id", "instructor", "title", "uuid"]);
 const Comparator = new Set (["LT", "GT", "EQ", "IS"]);
 const ComparatorALL = new Set (["LT", "GT", "EQ", "IS", "AND", "OR", "NOT"]);
 
