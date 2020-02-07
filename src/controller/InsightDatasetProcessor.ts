@@ -1,16 +1,13 @@
-import {
-    IInsightFacade,
-    InsightDataset,
-    InsightDatasetKind,
-    InsightError,
-    NotFoundError,
-} from "./IInsightFacade";
-import { DatasetSection } from "./DatasetSection";
+
+import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightError, NotFoundError} from "./IInsightFacade";
+import {DatasetSection} from "./DatasetSection";
 import Log from "../Util";
 import * as JSZip from "jszip";
-import { JSZipObject } from "jszip";
+import {JSZipObject} from "jszip";
 import * as fs from "fs";
 import parse5 = require("parse5");
+
+
 
 interface InsightDatasets {
     [id: string]: DatasetWrapper;
@@ -21,11 +18,14 @@ interface DatasetWrapper {
     MetaData: InsightDataset;
 }
 
+
 export class InsightDatasetProcessor {
+
     private datasets: InsightDatasets = {};
 
     private currentKind: InsightDatasetKind;
     private currentNumRows: number;
+
 
     constructor() {
         Log.trace("initializing DatasetProcessor");
@@ -53,12 +53,15 @@ export class InsightDatasetProcessor {
         this.currentNumRows = numRows;
     }
 
+
     private saveToDisk(id: string, saveData: any): Promise<any> {
+
         return new Promise((resolve, reject) => {
             Log.trace("Saving to disk...");
             let IsDs: InsightDataset = {
                 id: id,
                 kind: this.currentKind,
+
                 numRows: this.currentNumRows,
             };
             let dsWrapper: DatasetWrapper = {
@@ -85,6 +88,7 @@ export class InsightDatasetProcessor {
         });
     }
 
+
     public removeDataset(id: string): Promise<string> {
         return new Promise<string>((resolve, reject) => {
             return this.validateID(id)
@@ -98,6 +102,7 @@ export class InsightDatasetProcessor {
                 .catch((err: any) => {
                     return reject(err);
                 });
+
         });
     }
 
@@ -109,6 +114,7 @@ export class InsightDatasetProcessor {
                 Log.trace("Dataset removed from disk");
                 resolve(id);
             } catch (err) {
+
                 reject(
                     new InsightError(
                         "something went wrong with file deletion from disk",
@@ -129,6 +135,7 @@ export class InsightDatasetProcessor {
                 }
             }
             if (!found) {
+
                 return reject(
                     new NotFoundError(
                         "The id you tried to delete did not exist",
@@ -139,12 +146,14 @@ export class InsightDatasetProcessor {
         });
     }
 
+
     public validateID(id: string): Promise<string> {
         return new Promise((resolve, reject) => {
             let allWhiteSpace: boolean = true;
             for (let i = 0; i < id.length; i++) {
                 if (id.charAt(i) === "_") {
                     //     Log.trace("first if, about to reject");
+
                     return reject(
                         new InsightError("dataset id contained an underscore"),
                     );
@@ -164,6 +173,7 @@ export class InsightDatasetProcessor {
 
     public readZip(id: string, content: string): Promise<string[]> {
         return new Promise<string[]>((resolve, reject) => {
+
             for (let key in this.datasets) {
                 let indexedDataset: DatasetWrapper = this.datasets[key];
                 if (indexedDataset.MetaData.id === id) {
@@ -223,12 +233,14 @@ export class InsightDatasetProcessor {
         let validSections: number = 0;
         for (let course of content) {
             //   Log.trace("Beginning parse for loop");
+
             let currCourse: any = JSON.parse(course);
             let parsedResult: any = currCourse["result"];
             let currentSection: string;
             let resultSection: DatasetSection;
             for (let section of parsedResult) {
                 currentSection = section;
+
                 try {
                     resultSection = this.parseSection(currentSection);
                     validSections++;
@@ -274,6 +286,7 @@ export class InsightDatasetProcessor {
 
     public listDatasets(): Promise<InsightDataset[]> {
         return new Promise<InsightDataset[]>((resolve) => {
+
             Log.trace("Building list...");
             let resultArray: InsightDataset[] = [];
             for (let key in this.datasets) {
