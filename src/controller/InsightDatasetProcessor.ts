@@ -7,8 +7,6 @@ import {JSZipObject} from "jszip";
 import * as fs from "fs";
 import parse5 = require("parse5");
 
-
-
 interface InsightDatasets {
     [id: string]: DatasetWrapper;
 }
@@ -173,7 +171,6 @@ export class InsightDatasetProcessor {
 
     public readZip(id: string, content: string): Promise<string[]> {
         return new Promise<string[]>((resolve, reject) => {
-
             for (let key in this.datasets) {
                 let indexedDataset: DatasetWrapper = this.datasets[key];
                 if (indexedDataset.MetaData.id === id) {
@@ -192,7 +189,6 @@ export class InsightDatasetProcessor {
                             ),
                         );
                     }
-
                     for (let f of Object.keys(zip.folder("courses").files)) {
                         if (zip.file(f) == null) {
                             continue;
