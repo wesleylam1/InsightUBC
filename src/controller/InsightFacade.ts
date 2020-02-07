@@ -25,8 +25,8 @@ export default class InsightFacade implements IInsightFacade {
     public performQuery(query: any): Promise<any[]> {
         return new Promise(function (resolve, reject) {
             try {
-                let isValid = performQueryHelper.isValid(query);
-                if (isValid) {
+                let isEmpty = performQueryHelper.isEmpty(query);
+                if (!isEmpty) {
                     performQueryHelper.validQuery(query).then(function (result: any) {
                         return Promise.resolve(result);
                     });
