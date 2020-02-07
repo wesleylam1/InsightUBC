@@ -21,7 +21,16 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
     // automatically be loaded in the 'before' hook.
     const datasetsToLoad: { [id: string]: string } = {
         courses: "./test/data/courses.zip",
+        coursesEmpty: "./test/data/coursesEmpty.zip",
+        coursesVIV: "./test/data/coursesVIV.zip",
+        invalidType: "./test/data/invalidType",
+        TwoFolders: "./test/data/TwoFolders.zip",
+        doubleFoldered: "./test/data/doubleFoldered.zip",
+        FolderWithCourses: "./test/data/FolderWithCourses.zip",
+        corruptDataset: "./test/data/corruptDataset.zip",
+        looseCourseFiles: "./test/data/looseCourseFiles.zip"
     };
+
     let datasets: { [id: string]: string } = {};
     let insightFacade: InsightFacade;
     const cacheDir = __dirname + "/../data";
@@ -79,16 +88,13 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         });
 
     });
-
-
-
     // test add dataset with .Room kind
     it("Should add a valid dataset with room kind", function () {
         const id: string = "courses";
         const expected: string[] = [id];
         return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Rooms).then((result: string[]) => {
             expect(result).to.deep.equal(expected);
-        }).catch((err: any) => {
+        }).catch((err: InsightError) => {
             expect.fail(err, expected, "Should not have rejected");
         });
 
@@ -209,6 +215,16 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         });
     });
 
+    it("Should fail to add null string", function () {
+        const id: string = "null";
+        const expected: string[] = [id];
+        return insightFacade.addDataset(null, datasets[id], InsightDatasetKind.Courses).then((result: string[]) => {
+            expect.fail(result, expected, "should have rejected");
+        }).catch(function (err: InsightError) {
+            expect(err);
+        });
+    });
+
     // test for removing not added yet
     it("Should fail to remove not added Dataset", function () {
         const id: string = "courses";
@@ -216,6 +232,16 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         return insightFacade.removeDataset(id).then((result: string) => {
             expect.fail(result, expected, "should have rejected");
         }).catch(function (err: NotFoundError) {
+            expect(err);
+        });
+    });
+
+    it("Should fail to remove null string Dataset", function () {
+        const id: string = "courses";
+        const expected: string[] = [id];
+        return insightFacade.removeDataset(null).then((result: string) => {
+            expect.fail(result, expected, "should have rejected");
+        }).catch(function (err: InsightError) {
             expect(err);
         });
     });
