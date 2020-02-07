@@ -59,7 +59,7 @@ export default class PerformQueryHelper {
             if (e.message === "ResultTooLarge") {
                 return Promise.reject("ResultTooLarge");
             }
-            return Promise.reject("Invalid Query");
+            // return Promise.reject("Invalid Querys");
 
         }
     }
