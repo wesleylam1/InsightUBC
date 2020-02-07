@@ -38,7 +38,13 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     public removeDataset(id: string): Promise<string> {
-        return Promise.reject("Not implemented.");
+        return new Promise<string>((resolve, reject) => {
+            return this.processor.removeDataset(id).then((result: string) => {
+                return resolve(result);
+            }).catch((err: any) => {
+                return reject(err);
+            });
+        });
     }
 
     public performQuery(query: any): Promise<any[]> {

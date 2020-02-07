@@ -167,7 +167,7 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         return insightFacade.removeDataset(id).then((result: string) => {
             expect.fail(result, expected, "should have rejected");
         }).catch(function (err: InsightError) {
-            expect(err).be("InsightError");
+            expect(err);
         });
     });
 
@@ -178,7 +178,7 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         return insightFacade.removeDataset(id).then((result: string) => {
             expect.fail(result, expected, "should have rejected");
         }).catch(function (err: InsightError) {
-            expect(err).be("InsightError");
+            expect(err);
         });
     });
 
@@ -201,14 +201,14 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         return insightFacade.removeDataset(id).then((result: string) => {
             expect.fail(result, expected, "should have rejected");
         }).catch(function (err: NotFoundError) {
-            expect(err).be("NotFoundError");
+            expect(err);
         });
     });
 
     // test for removing added fixed removal chaining
     it("Should  remove added Dataset", function () {
         const id: string = "courses";
-        const expected: string[] = [id];
+        const expected: string = "courses";
         return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses).then((result: string[]) => {
                 return insightFacade.removeDataset(id).then((res: string) => {
                     expect(res).to.deep.equal(expected);

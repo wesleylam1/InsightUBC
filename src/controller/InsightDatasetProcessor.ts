@@ -1,4 +1,4 @@
-import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightError} from "./IInsightFacade";
+import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightError, NotFoundError} from "./IInsightFacade";
 import {DatasetSection} from "./DatasetSection";
 import Log from "../Util";
 import * as JSZip from "jszip";
@@ -13,14 +13,13 @@ interface InsightDatasets {
 
 interface DatasetWrapper {
     content: {};
-    Data: InsightDataset;
+    MetaData: InsightDataset;
 }
 
 
 export class InsightDatasetProcessor {
 
     private datasets: InsightDatasets = {};
-    private datasetMeta: InsightDataset[];
 
     private currentKind: InsightDatasetKind;
     private currentNumRows: number;
@@ -52,7 +51,7 @@ export class InsightDatasetProcessor {
                 numRows: this.currentNumRows};
             let dsWrapper: DatasetWrapper = {
                 content: saveData,
-                Data: IsDs};
+                MetaData: IsDs};
             this.datasets[id] = dsWrapper;
             try {
                 fs.writeFile("./data/" + id + ".json", JSON.stringify(this.datasets[id]), () => {
@@ -60,9 +59,52 @@ export class InsightDatasetProcessor {
                     resolve();
                 });
             } catch (err) {
-                reject(err);
+                reject(new InsightError("Something went wrong with saving to disk"));
             }
         });
+    }
+
+    public  removeDataset(id: string): Promise<string> {
+
+        return new Promise<string>((resolve, reject) => {
+            return(this.validateID(id)).then((result: string) => {
+                return this.findAndDeleteDataset(id).then((res2) => {
+                    return this.deleteFromDisk(id).then(() => {
+                        resolve(id);
+                    });
+                });
+            }).catch((err: any) => {
+                return reject(err);
+            });
+        });
+    }
+
+    private deleteFromDisk(id: string): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
+            try {
+                fs.unlinkSync("./data/" + id + ".json");
+                resolve(id);
+            } catch (err) {
+                reject(new InsightError("something went wrong with file deletion from disk"));
+            }
+        });
+    }
+
+    private findAndDeleteDataset(id: string): Promise<string> {
+        return new Promise((resolve, reject) => {
+            let found: boolean = false;
+            for (let key in this.datasets) {
+                let indexedDataset: DatasetWrapper = this.datasets[key];
+                if (indexedDataset.MetaData.id === id) {
+                    found = true;
+                    delete this.datasets[key];
+                }
+            }
+            if (!found) {
+                return reject(new NotFoundError("The id you tried to delete did not exist"));
+            }
+            return resolve(id);
+                });
     }
 
 
@@ -198,7 +240,7 @@ export class InsightDatasetProcessor {
             let resultArray: InsightDataset[] = [];
             for (let key in this.datasets) {
                 let indexedDataset: DatasetWrapper = this.datasets[key];
-                resultArray.push(indexedDataset.Data);
+                resultArray.push(indexedDataset.MetaData);
             }
             Log.trace(resultArray);
             resolve(resultArray);
