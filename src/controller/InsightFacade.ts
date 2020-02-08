@@ -69,6 +69,7 @@ export default class InsightFacade implements IInsightFacade {
                                 getColumnValues(col, obj, c);
                             }
                             returnArr.push(obj);
+                            return Promise.resolve(returnArr);
                         }
                         let ord = result.OPTIONS.ORDER;
                         if (mField.has(ord.split("_")[1])) {
@@ -79,7 +80,7 @@ export default class InsightFacade implements IInsightFacade {
                             returnArr.sort((a, b) => {
                                 return (a[ord]).localeCompare(b[ord]);
                             });
-                        }  // return Promise.resolve(returnArr);
+                        }
                     })
                  .catch ((err: any) => {
                 if (err === "NotFoundError") {
