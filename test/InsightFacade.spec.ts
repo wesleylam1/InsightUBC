@@ -328,6 +328,27 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         });
     });
 
+    //  Test of listing added dataset
+    it("Should add then list then delete then list", function () {
+        const id: string = "courses";
+        const expected: InsightDataset[] = [{id: "courses", kind: InsightDatasetKind.Courses, numRows: 64612}];
+        return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses).then((res: string[]) => {
+            return insightFacade.listDatasets().then((result: InsightDataset[]) => {
+                Log.trace(result);
+              //  Log.trace(insightFacade.processor.datasets);
+                return insightFacade.removeDataset("courses").then((res2: string) => {
+                    return insightFacade.listDatasets().then((resList: InsightDataset[]) => {
+                        Log.trace(resList);
+                       // Log.trace(insightFace.datasets);
+                        expect(result).to.deep.equal(expected);
+                    });
+                });
+            });
+            }).catch((err: any) => {
+                expect.fail(err, expected, "Should not have rejected");
+            });
+    });
+
 });
 
 
