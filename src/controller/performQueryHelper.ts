@@ -1,6 +1,7 @@
 import Log from "../Util";
 import {IInsightFacade, InsightDataset, InsightDatasetKind} from "./IInsightFacade";
 import {InsightError, NotFoundError} from "./IInsightFacade";
+import {ICourseData} from "./help";
 
 
 export interface Queries {
@@ -33,6 +34,18 @@ export interface CourseData {
     uuid: string;
     year: number;
 
+}
+class CourseDatabase {
+    public courseObjectList?: ICourseHash;
+    public datasetIDList?: string[];
+
+    constructor() {
+        this.courseObjectList = {};
+        this.datasetIDList = [];
+    }
+}
+interface ICourseHash {
+    [key: string]: ICourseData[];
 }
 const mField = new Set (["avg", "pass", "audit", "fail", "year"]);
 const sField = new Set (["dept", "id", "instructor", "title", "uuid"]);
@@ -213,14 +226,32 @@ export default class PerformQueryHelper {
     }
 
     public static columnsFilter (query: any[]): string[] {
-        let resultArray: string[];
+        let database: CourseDatabase;
+        let queryID = "";
+        let tempArray: string[] = [];
         if (!Array.isArray(query) || query.length === 0) {
-            throw new InsightError("Invalid Column");
-        }
-        for (let element of query) {
-            resultArray.push(element);
-        }
-        return resultArray;
-
-    }
+            throw new InsightError("Columns must contain a non-empty string array");
+        } else {
+            for (let value of query) {
+                if (typeof value === "string") {
+                    let innerID = value.substring(0, value.indexOf("_"));
+                    let innerKey = value.substring((value.indexOf("_") + 1), (value.length));
+                    if (!(database.datasetIDList.includes(innerID))) {
+                        throw new InsightError("query ID not found in dataset");
+                    }
+                    if (!((mField.has(innerKey)) || (sField.has(innerKey)))) {
+                        throw new InsightError("Invalid query key");
+                    }
+                    if (queryID === "") {
+                        queryID = innerID;
+                    } else if (queryID !== innerID) {
+                        throw new InsightError("Mismatching query IDs");
+                    }
+                    tempArray.push(value);
+                } else {
+                    throw new InsightError("Invalid type of Column Key");
+                }
+            }
+            return tempArray;
+        }}
 }
