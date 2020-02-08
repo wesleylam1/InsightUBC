@@ -2,13 +2,47 @@ import Log from "../Util";
 import {IInsightFacade, InsightDataset, InsightDatasetKind, ResultTooLargeError} from "./IInsightFacade";
 import performQueryHelper from "./performQueryHelper";
 import {InsightError, NotFoundError} from "./IInsightFacade";
+import {getColumnValues, ICourseData, searchWithFilter} from "./help";
 
 /**
  * This is the main programmatic entry point for the project.
  * Method documentation is in IInsightFacade
  *
  */
+interface Queries {
+    WHERE?: Filters;
+    OPTIONS?: {
+        COLUMNS?: string[];
+        ORDER?: string;
+    };
+}
+export interface Filters {
+    AND?: Filters[];
+    OR?: Filters[];
+    NOT?: Filters;
+    mField?: string;
+    mValue?: number;
+    sField?: string;
+    sValue?: string;
+}
+
+class CourseDatabase {
+    public courseObjectList?: ICourseHash;
+    public datasetIDList?: string[];
+
+    constructor() {
+        this.courseObjectList = {};
+        this.datasetIDList = [];
+    }
+}
+
+interface ICourseHash {
+    [key: string]: ICourseData[];
+}
+const mField = new Set (["avg", "pass", "audit", "fail", "year"]);
+const sField = new Set (["dept", "id", "instructor", "title", "uuid"]);
 export default class InsightFacade implements IInsightFacade {
+    private database: CourseDatabase;
 
     constructor() {
         Log.trace("InsightFacadeImpl::init()");
@@ -24,11 +58,33 @@ export default class InsightFacade implements IInsightFacade {
 
     public performQuery(query: any): Promise<any[]> {
             try {
+                let result: Queries;
                 let isEmpty = performQueryHelper.isEmpty(query);
                 if (!isEmpty) {
-                    return performQueryHelper.validQuery(query).then(function (result: any) {
-                        return Promise.resolve(result);
-                    });
+                    return performQueryHelper.validQuery(query); {
+                        let courseArr: ICourseData[] = searchWithFilter(result.WHERE, "none", this.database);
+                        if (courseArr.length > 5000) {
+                            return Promise.reject("ResultTooLarge");
+                        }
+                        let returnArr: any[] = [];
+                        for (let c of courseArr) {
+                            let obj: {[k: string]: any} = {};
+                            for (let col of result.OPTIONS.COLUMNS) {
+                                getColumnValues(col, obj, c);
+                            }
+                            returnArr.push(obj);
+                        }
+                        let ord = result.OPTIONS.ORDER;
+                        if (mField.has(ord.split("_")[1])) {
+                            returnArr.sort((a, b) => {
+                                return parseFloat(a[ord]) - parseFloat(b[ord]);
+                            });
+                        } else if (sField.has(ord.split("_")[1])) {
+                            returnArr.sort((a, b) => {
+                                return (a[ord]).localeCompare(b[ord]);
+                            });
+                        } // return Promise.resolve(returnArr);
+                    }
                 } else {
                     return Promise.reject("Invalid Query");
                 }
