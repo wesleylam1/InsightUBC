@@ -38,6 +38,8 @@ const mField = new Set (["avg", "pass", "audit", "fail", "year"]);
 const sField = new Set (["dept", "id", "instructor", "title", "uuid"]);
 const Comparator = new Set (["LT", "GT", "EQ", "IS"]);
 const ComparatorALL = new Set (["LT", "GT", "EQ", "IS", "AND", "OR", "NOT"]);
+const qSet = new Set(["WHERE", "OPTIONS"]);
+const TSet = new Set(["WHERE", "OPTIONS"]);
 
 export default class PerformQueryHelper {
 
@@ -46,23 +48,42 @@ export default class PerformQueryHelper {
             return false;
         }
     }
-
     public static validQuery(query: any): Promise<Queries> {
-        let result: Queries = {};
+        let whereOptions = Object.keys(query);
+        if ((whereOptions.length) === 2) {
+            for (let i = 0; i < 2; i++) {
+                if (!(qSet.has(whereOptions[i]))) {
+                    return Promise.reject("Not provided BODY/OPTIONS");
+                }
+            }
+        } else if ((whereOptions.length) === 3) {
+            for (let i = 0; i < 3; i++) {
+                if (!(TSet.has(whereOptions[i]))) {
+                    return Promise.reject("Not provided BODY/OPTIONS/TRANSFORMATIONS");
+                }
+            }
+        } else {
+            return Promise.reject("More than Body and Options/Transformation");
+        }
+        let queryFill: Queries = {};
         try {
-            let queryWhere = this.WhereFilter(query["WHERE"]);
+            let queryBody = this.WhereFilter(query["WHERE"]);
             let queryOptions = this.OptionsFilter(query["OPTIONS"]);
-            result.WHERE = queryWhere;
-            result.OPTIONS.COLUMNS = queryOptions;
-            return Promise.resolve(result);
+            queryFill.WHERE = queryBody;
+            queryFill.OPTIONS = { COLUMNS: [] };
+            if (!(queryOptions[queryOptions.length - 1] === "")) {
+                queryFill.OPTIONS.ORDER = queryOptions.pop();
+            }
+            queryFill.OPTIONS.COLUMNS = queryOptions;
+            return Promise.resolve(queryFill);
         } catch (e) {
             if (e.message === "ResultTooLarge") {
                 return Promise.reject("ResultTooLarge");
             }
-            // return Promise.reject("Invalid Querys");
-
+            return Promise.reject("Failed to create query");
         }
     }
+
 
     public static emptyQuery(query: Queries): boolean {
         if (query.OPTIONS.COLUMNS === []) {
