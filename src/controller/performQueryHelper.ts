@@ -47,7 +47,7 @@ export default class PerformQueryHelper {
         }
     }
 
-    public static validQuery(query: any): Promise<any> {
+    public static validQuery(query: any): Promise<Queries> {
         let result: Queries = {};
         try {
             let queryWhere = this.WhereFilter(query["WHERE"]);

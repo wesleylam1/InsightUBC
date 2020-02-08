@@ -57,11 +57,7 @@ export default class InsightFacade implements IInsightFacade {
     }
 
     public performQuery(query: any): Promise<any[]> {
-            try {
-                let result: Queries;
-                let isEmpty = performQueryHelper.isEmpty(query);
-                if (!isEmpty) {
-                    return performQueryHelper.validQuery(query); {
+                    return performQueryHelper.validQuery(query).then((result: Queries) => {
                         let courseArr: ICourseData[] = searchWithFilter(result.WHERE, "none", this.database);
                         if (courseArr.length > 5000) {
                             return Promise.reject("ResultTooLarge");
@@ -83,21 +79,16 @@ export default class InsightFacade implements IInsightFacade {
                             returnArr.sort((a, b) => {
                                 return (a[ord]).localeCompare(b[ord]);
                             });
-                        } // return Promise.resolve(returnArr);
-                    }
-                } else {
-                    return Promise.reject("Invalid Query");
-                }
-
-            } catch (err) {
+                        }  // return Promise.resolve(returnArr);
+                    })
+                 .catch ((err: any) => {
                 if (err === "NotFoundError") {
                     return Promise.reject(new NotFoundError("Query Not Found"));
                 } else if (err === "ResultTooLargeError") {
                     return Promise.reject(new ResultTooLargeError("Over 5000 results"));
                 } else {
                     return Promise.reject(new InsightError("Insight Error Found"));
-                }
-        }   return Promise.reject(new InsightError("Insight Error"));
+                }});
      }
 
     public listDatasets(): Promise<InsightDataset[]> {
