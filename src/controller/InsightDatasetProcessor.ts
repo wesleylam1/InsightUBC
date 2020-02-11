@@ -133,7 +133,6 @@ export class InsightDatasetProcessor {
                 }
             }
             if (!found) {
-
                 return reject(
                     new NotFoundError(
                         "The id you tried to delete did not exist",
