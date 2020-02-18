@@ -1,7 +1,15 @@
 import Log from "../Util";
-import {IInsightFacade, InsightDataset, InsightDatasetKind, ResultTooLargeError} from "./IInsightFacade";
-import performQueryHelper from "./performQueryHelper";
-import {InsightError, NotFoundError} from "./IInsightFacade";
+import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightError, NotFoundError} from "./IInsightFacade";
+import {checkDuplicates, verifyAddDataset} from "./AddDatasetHelper";
+import * as JSZip from "jszip";
+import {Course, readCourseData} from "./Course";
+import {Dataset} from "./Dataset";
+import * as fs from "fs";
+import AddDatasetController from "./AddDatasetController";
+import DatasetController from "./DatasetController";
+import QueryController from "./QueryController";
+
+
 
 /**
  * This is the main programmatic entry point for the project.
@@ -9,42 +17,31 @@ import {InsightError, NotFoundError} from "./IInsightFacade";
  *
  */
 export default class InsightFacade implements IInsightFacade {
+    private DatasetController: DatasetController;
+    private QueryController: QueryController;
+    this
 
     constructor() {
         Log.trace("InsightFacadeImpl::init()");
+        this.DatasetController = new DatasetController();
+        this.DatasetController.readFromDisk();
+        this.QueryController = new QueryController();
+        this.QueryController.setDatasetController(this.DatasetController);
     }
 
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
-        return Promise.reject("Not implemented.");
+        return this.DatasetController.addDataset(id, content, kind);
     }
 
     public removeDataset(id: string): Promise<string> {
-        return Promise.reject("Not implemented.");
+        return this.DatasetController.removeDataset(id);
     }
 
     public performQuery(query: any): Promise<any[]> {
-            try {
-                let isEmpty = performQueryHelper.isEmpty(query);
-                if (!isEmpty) {
-                    return performQueryHelper.validQuery(query).then(function (result: any) {
-                        return Promise.resolve(result);
-                    });
-                } else {
-                    return Promise.reject("Invalid Query");
-                }
-
-            } catch (err) {
-                if (err === "NotFoundError") {
-                    return Promise.reject(new NotFoundError("Query Not Found"));
-                } else if (err === "ResultTooLargeError") {
-                    return Promise.reject(new ResultTooLargeError("Over 5000 results"));
-                } else {
-                    return Promise.reject(new InsightError("Insight Error Found"));
-                }
-        }   return Promise.reject(new InsightError("Insight Error"));
-     }
+        return this.QueryController.performQuery(query);
+    }
 
     public listDatasets(): Promise<InsightDataset[]> {
-        return Promise.reject("Not implemented.");
+        return this.DatasetController.listDatasets();
     }
 }
