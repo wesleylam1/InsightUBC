@@ -140,10 +140,10 @@ export default class QueryController {
         }
     }
 
-   // private getRegex(value: string): RegExp {
-    //    let length: number = value.length;
-     //   if()
-   // }
+    private getRegex(value: string): RegExp {
+        let length: number = value.length;
+        return new RegExp("/abc$");
+    }
 
     private processLogicComparator(query: any, comparator: string): any[] {
         if (comparator === "OR") {
