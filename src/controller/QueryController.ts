@@ -1,109 +1,54 @@
-import Log from "../Util";
-import {
-    IInsightFacade,
-    InsightDataset,
-    InsightDatasetKind,
-    InsightError,
-    NotFoundError,
-    ResultTooLargeError
-} from "./IInsightFacade";
-import {checkDuplicates, verifyAddDataset} from "./AddDatasetHelper";
-import * as JSZip from "jszip";
-import {Course, readCourseData} from "./Course";
-import {Dataset} from "./Dataset";
-import * as fs from "fs";
-import AddDatasetController from "./AddDatasetController";
+import {InsightError, NotFoundError, ResultTooLargeError} from "./IInsightFacade";
 import DatasetController from "./DatasetController";
-
-
 import Log from "../Util";
-import {IInsightFacade, InsightDataset, InsightDatasetKind} from "./IInsightFacade";
-import {InsightError, NotFoundError} from "./IInsightFacade";
+import OptionsHelper from "./OptionsHelper";
 
-
-export interface Queries {
-    WHERE?: Filters;
-    OPTIONS: {
-        COLUMNS: string[];
-        ORDER?: string;
-    };
-}
-
-export interface Filters {
-    AND?: Filters[];
-    OR?: Filters[];
-    NOT?: Filters;
-    mField?: string;
-    mValue?: number;
-    sField?: string;
-    sValue?: string;
-}
-
-
-export interface CourseData {
-    dept: string;
-    id: string;
-    avg: number;
-    instructor: string;
-    title: string;
-    pass: number;
-    fail: number;
-    audit: number;
-    uuid: string;
-    year: number;
-}
-
-
-const mField = new Set (["avg", "pass", "audit", "fail", "year"]);
-const sField = new Set (["dept", "id", "instructor", "title", "uuid"]);
-const Comparator = new Set (["LT", "GT", "EQ", "IS"]);
-const ComparatorALL = new Set (["LT", "GT", "EQ", "IS", "AND", "OR", "NOT"]);
+const mField = new Set(["avg", "pass", "audit", "fail", "year"]);
+const sField = new Set(["dept", "id", "instructor", "title", "uuid"]);
+const Comparator = new Set(["LT", "GT", "EQ", "IS"]);
+const ComparatorALL = new Set(["LT", "GT", "EQ", "IS", "AND", "OR", "NOT"]);
 
 export default class QueryController {
     private datasetController: DatasetController;
     private currentDatasetID: string;
     private sections: any;
+    private optionsHelper: OptionsHelper;
 
     public setDatasetController(controller: DatasetController) {
         this.datasetController = controller;
-
+        this.currentDatasetID = null;
+        this.sections = null;
+        this.optionsHelper = new OptionsHelper();
     }
 
     public performQuery(query: any): Promise<any[]> {
         try {
             let isEmpty = this.isEmpty(query);
             if (!isEmpty) {
-                return this.validQuery(query).then(function (result: any) {
-                    return this.doQuery(query);
-                });
-            } else {
-                return Promise.reject("Invalid Query");
+                this.validQuery(query);
+                let result: any = this.processFilter(query["WHERE"]);
+                result = this.optionsHelper.doColumnsAndOrder(query, result);
+                return Promise.resolve(result);
             }
-
         } catch (err) {
-            if (err === "NotFoundError") {
-                return Promise.reject(new NotFoundError("Query Not Found"));
-            } else if (err === "ResultTooLargeError") {
-                return Promise.reject(new ResultTooLargeError("Over 5000 results"));
-            } else {
-                return Promise.reject(new InsightError("Insight Error Found"));
-            }
-        }   return Promise.reject(new InsightError("Insight Error"));
+            return Promise.reject(err);
+        }
     }
 
-    private processQuery(query: Queries): any {
+    private processFilter(query: any): any {
         try {
             Log.trace("reached doQuery");
             let comparator: any = Object.keys(query)[0];
-
             if (comparator === "GT" || comparator === "LT" || comparator === "EQ") {
-                return this.processMathComparator(query, comparator);
+                return this.processMathComparator(query[comparator], comparator);
             }
             if (comparator === "IS") {
-                return this.processStringComparator(query, comparator);
+                return this.processStringComparator(query[comparator], comparator);
             }
             if (comparator === "NOT" || comparator === "AND" || comparator === "OR") {
                 return this.processLogicComparator(query, comparator);
+            } else {
+                throw new InsightError("WHERE can only have filters");
             }
         } catch (err) {
             return err;
@@ -115,101 +60,130 @@ export default class QueryController {
         if (!this.getKeyandCheckIDValid(key)) {
             throw new InsightError("Multiple Datasets not supported");
         }
-        if (!sField.has(key)) {
+        if (!sField.has(key.split("_")[1])) {
             throw new InsightError("used String Comparator with non sField");
         }
         let value: any = query[key];
-        if (!(typeof value !== "string")) {
+        if (typeof value !== "string") {
             throw new InsightError("invalid value");
         }
         let result: any[] = [];
-        if(value)
+        let compareFunc: (str: string) => boolean = this.makeIsBoolean(value);
         for (let section of this.sections) {
-            if(this.compareString(key, value, comparator, section)) {
+            if (this.compareString(key.split("_")[1], value, comparator, section, compareFunc)) {
                 result.push(section);
             }
         }
         return result;
     }
 
-    private compareString(key: string, value: string, comparator: string, section: any) {
-        let sectionData = section[key];
-        let valueRegex: RegExp = this.getRegex(value);
+    private compareString(key: string, value: string, comparator: string, section: any,
+                          compareFunc: (str: string) => boolean): boolean {
+        let sectionData: string = section[key];
         if (comparator === "IS") {
-
+            return compareFunc(sectionData);
         }
     }
 
-    private getRegex(value: string): RegExp {
-        let length: number = value.length;
-        return new RegExp("/abc$");
+    private makeIsBoolean(val: string): (str: string) => boolean {
+        let wildCardStart: boolean = false;
+        let wildCardEnd: boolean = false;
+        let input: string;
+        if (val.startsWith("*") && !val.endsWith("*")) {
+            input = this.getValidInputString(val.split("*")[1]);
+            return (str: string) => {
+                return str.endsWith(input);
+            };
+        }
+        if (val.startsWith("*") && val.endsWith("*")) {
+            input = this.getValidInputString(val.substring(1, (val.length - 1)));
+            return (str: string) => {
+                return str.includes(input);
+            };
+        }
+        if (!val.startsWith("*") && val.endsWith("*")) {
+            input = this.getValidInputString(val.substring(0, (val.length - 1)));
+            return (str: string) => {
+                return str.startsWith(input);
+            };
+        } else {
+            input = this.getValidInputString(val);
+            return (str: string) => {
+                return str === input;
+            };
+        }
+    }
+
+    private getValidInputString(val: string): string {
+        if (val.includes("*")) {
+            throw new InsightError("Asterisks can only be beginning or end of input string");
+        }
+        return val;
     }
 
     private processLogicComparator(query: any, comparator: string): any[] {
         if (comparator === "OR") {
-            return this.processOR(query["OR"], comparator);
+            return this.processOR(query["OR"]);
         }
         if (comparator === "AND") {
-            return this.processAND(query["AND"], comparator);
+            return this.processAND(query["AND"]);
         }
         if (comparator === "NOT") {
-            return this.processNOT(query["NOT"], comparator);
+            return this.processNOT(query["NOT"]);
         }
     }
 
-    private processAND(query: any, comparator: string): any[] {
+    private processAND(query: any): any {
         let result = [];
-        if (query === [] ) {
+        if (query === []) {
             throw new InsightError("AND must have at least 1 filter");
         }
-        for (let filter in query) {
-            result.push(this.processQuery(filter));
+        for (let filter of query) {
+            result.push(this.processFilter(filter));
         }
-        if (result.length > 1) {
+        if (result.length <= 1) {
+            return result[0];
+        } else {
             result = this.getSharedResults(result);
             return result;
-        } else {
-            return result[0];
         }
     }
 
-    private getSharedResults(array: [[]]): any {
-        let result: any = [];
-        result = new Array<any[]>();
+    private getSharedResults(array: any[]): any {
+        let result: any = new Array<any>();
         result.push(array[0]);
-        for (let i = 0; i < array.length; i++) {
-            result = result.filter((x) => (array[i].includes(x)));
+        for (let i of array) {
+            result = result.filter((x: any) => (array[i].includes(x)));
         }
         return result;
     }
 
-    private processNOT(query: any, comparator: string): any[] {
+    private processNOT(query: any): any[] {
         let NOTResult: any = [];
-        if (query === [] ) {
+        if (query === []) {
             throw new InsightError("Not must have at least 1 filter");
         }
         if (Object.keys.length > 1) {
             throw new InsightError("Not cannot have more than 1 filter");
         }
-        NOTResult = this.processQuery(query);
-        return(this.excludeSections(NOTResult));
+        NOTResult = this.processFilter(query);
+        return (this.excludeSections(NOTResult));
     }
 
     private excludeSections(itemsToExclude: any[]): any {
         let result: any = [];
         result = new Array<any>();
-        result = this.sections.filter((x) => !itemsToExclude.includes(x));
+        result = this.sections.filter((x: any) => !itemsToExclude.includes(x));
         return result;
-        }
+    }
 
-
-    private processOR(query: any, comparator: string): any[] {
+    private processOR(query: any): any[] {
         let result: any[] = [];
-        if (query === [] ) {
+        if (query === []) {
             throw new InsightError("OR must have at least 1 filter");
         }
         for (let filter in query) {
-            result.push(this.processQuery(filter));
+            result.push(this.processFilter(filter));
         }
         if (result.length > 1) {
             result = this.mergeResults(result);
@@ -229,22 +203,21 @@ export default class QueryController {
         return result;
     }
 
-
     private processMathComparator(query: any, comparator: string): any {
         let key: any = Object.keys(query)[0];
         if (!this.getKeyandCheckIDValid(key)) {
             throw new InsightError("Multiple Datasets not supported");
         }
-        if (!mField.has(key)) {
+        if (!mField.has(key.split("_")[1])) {
             throw new InsightError("used Math Comparator with non mField");
         }
         let value: any = query[key];
-        if (!(typeof value !== "number")) {
+        if (typeof value !== "number") {
             throw new InsightError("invalid value");
         }
         let result: any[] = [];
         for (let section of this.sections) {
-            if (this.compareMath(key, value, comparator, section)) {
+            if (this.compareMath(key.split("_")[1], value, comparator, section)) {
                 if (result.length === 5000) {
                     throw new ResultTooLargeError("ResultTooLarge");
                 }
@@ -275,25 +248,21 @@ export default class QueryController {
     }
 
     // checks that Query has WHERE and  OPTIONS with COLUMNS
-    public validQuery(query: any): Promise<any> {
-        let result: Queries = {};
-        try {
-            let queryWhere = this.WhereFilter(query["WHERE"]);
-            let queryOptions = this.OptionsFilter(query["OPTIONS"]);
-            result.WHERE = queryWhere;
-            result.OPTIONS.COLUMNS = queryOptions;
-            return Promise.resolve(result);
-        } catch (e) {
-            if (e.message === "ResultTooLarge") {
-                return Promise.reject("ResultTooLarge");
-            }
-            // return Promise.reject("Invalid Querys");
-
+    public validQuery(query: any): boolean {
+        if (!(query.hasOwnProperty("WHERE"))) {
+            throw new InsightError("Query missing WHERE section");
         }
+        if (!(query.hasOwnProperty("OPTIONS"))) {
+            throw new InsightError("Query missing WHERE section");
+        }
+        if (!(query["OPTIONS"].hasOwnProperty("COLUMNS"))) {
+            throw new InsightError("Query missing COLUMNS");
+        }
+        return true;
     }
 
     // returns true if query is empty, false if not
-    public  emptyQuery(query: Queries): boolean {
+    public emptyQuery(query: any): boolean {
         if (query.OPTIONS.COLUMNS === []) {
             return true;
         }
@@ -307,137 +276,22 @@ export default class QueryController {
         }
     }
 
-    public CourseData(query: any): Filters {
-        let Filter = Object.keys(query)[0];
-        let FilterValue = Object.values(query)[0];
-        let key = Filter.substring((Filter.indexOf("_") + 1), (Filter.length));
-        let result: Filters = {};
-        if (!sField.has(Filter[0]) || !mField.has(Filter[0])) {
-            throw new InsightError("invalid key");
+    private getKeyandCheckIDValid(key: string): string {
+        let idstring: string = key;
+        idstring = idstring.split("_", 1)[0];
+        if (this.currentDatasetID == null) {
+            this.currentDatasetID = idstring;
         }
-        if (sField && !(typeof FilterValue === "string") || mField && !(typeof FilterValue === "number")) {
-            throw new InsightError("values do not match keys");
-        }
-        if (query === "LT" || query === "GT" || query === "EQ") {
-            result.mField = key;
-            result.mValue = FilterValue as number;
-        }
-        if (query === "IS") {
-            result.sField = key;
-            result.sValue = FilterValue as string;
-
-        }
-        return result;
-
-    }
-
-    public  WhereFilter(query: any): Filters {
-        let Filter = Object.keys(query);
-        if (Filter.length > 1) {
-            throw new InsightError("more than 1 filter");
-        }
-        if (Filter.length === 1) {
-            if (!(ComparatorALL.has(Filter[0]))) {
-                throw new InsightError("Not a valid Filter");
-            } else if (Comparator.has(Filter[0])) {
-                return this.CourseData(Filter[0]);
-            } else if (Filter[0] === "NOT") {
-                return this.NOTFilter(Filter[0]);
-            } else { return this.AndOrFilter(Filter[0]); }
-        }
-    }
-
-
-    public  NOTFilter(query: any): Filters {
-        let Filter = Object.keys(query);
-        let result = null;
-        if (Filter.length > 1) {
-            throw new InsightError("more than 1 filter");
-        }
-        if (Filter.length === 1) {
-            if (!(ComparatorALL.has(Filter[0]))) {
-                throw new InsightError("Not a valid Filter");
-            } else if (Comparator.has(Filter[0])) {
-                result = QueryController.CourseData(Filter[0]);
-            } else if (Filter[0] === "NOT") {
-                result =  QueryController.NOTFilter(Filter[0]);
-            } else { result = QueryController.AndOrFilter(Filter[0]); }
-        }
-        let results: Filters;
-        results.NOT = result;
-        return results;
-    }
-
-    public AndOrFilter(query: any): Filters {
-        let Filter = Object.keys(query);
-        let result: Filters = {};
-        let element: Filters = {};
-        if (Filter.length > 1) {
-            throw new InsightError("more than 1 filter");
-        }
-        if (Filter.length === 1) {
-            if (!(ComparatorALL.has(Filter[0]))) {
-                throw new InsightError("Not a valid Filter");
-            } else if (Comparator.has(Filter[0])) {
-                element =  this.CourseData(Filter[0]);
-            } else if (Filter[0] === "NOT") {
-                element = this.NOTFilter(Filter[0]);
-            } else { element = this.AndOrFilter(Filter[0]); }
-        }
-        if (query === "AND") {
-            result.AND.push(element);
-        } else { result.OR.push(element); }
-        return result;
-
-    }
-
-    public OptionsFilter (query: any): string[] {
-        let Filter = Object.keys(query);
-        let FilterValue = Object.values(query);
-        let resultArray: string[];
-        let resultOrder = "";
-        if (Filter.length > 2 || Filter.length === 0) {
-            throw new InsightError("invalid Options Filter");
-        }
-        if (Filter.length === 2) {
-            for (let element of Filter) {
-                if (element === "COLUMNS") {
-                    resultArray = this.columnsFilter(query["COLUMNS"]);
-                } else if (element === "ORDER") {
-                    resultOrder = this.orderFilter(query["ORDER"], query["COLUMNS"]);
-                }  else { throw new InsightError("invalid Options Filter"); }
-            }
-        }
-        resultArray.push(resultOrder);
-        return resultArray;
-
-    }
-
-    public orderFilter (order: any, columns: any): string {
-        if (columns.includes(order)) {
-            return order;
-        } else { throw new InsightError("Order not in Columns"); }
-    }
-
-    public columnsFilter (query: any[]): string[] {
-        let resultArray: string[];
-        if (!Array.isArray(query) || query.length === 0) {
-            throw new InsightError("Invalid Column");
-        }
-        for (let element of query) {
-            resultArray.push(element);
-        }
-        return resultArray;
-
-    }
-
-    private getKeyandCheckIDValid(id: string): string {
-        let idstring: string = id.split("_", 1)[0];
         if (idstring !== this.currentDatasetID) {
             throw new InsightError("Multiple Datasets not supported");
         }
+        try {
+            if (this.sections == null) {
+                this.sections = this.datasetController.getDatasetCourses(idstring);
+            }
+        } catch (err) {
+            throw err;
+        }
         return idstring;
     }
-
-
 }

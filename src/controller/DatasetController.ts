@@ -39,7 +39,11 @@ export default class DatasetController {
     }
 
     public getDatasetCourses(id: string): any {
-        return this.datasetsAdded.get(id).courses;
+        if (this.datasetsAdded.has(id) ) {
+            return this.datasetsAdded.get(id).courses;
+        } else {
+            throw new InsightError("A dataset with this id could not be found");
+        }
     }
 
     private addCourses(id: string, content: string): Promise<Dataset> {
@@ -79,7 +83,7 @@ export default class DatasetController {
                         throw new InsightError();
                     }
                 })
-                .catch(function (error) {
+                .catch((err) => {
                     reject(new InsightError("Incorrect files ( not rooms) in zip"));
                 });
         });
@@ -123,9 +127,6 @@ export default class DatasetController {
             throw new InsightError("Invalid dataset type");
         }
     }
-
-
-
 
     private checkDuplicates(id: string, map: Map<string, Dataset>) {
         if (map.has(id)) {
