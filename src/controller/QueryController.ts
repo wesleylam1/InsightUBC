@@ -138,13 +138,9 @@ export default class QueryController {
         for (let filter of query) {
             result.push(this.processFilter(filter));
         }
-        if (result.length <= 1) {
-            return result[0];
-        } else {
-            result = this.objectArrayHelper.getSharedResults(result);
-            return result;
+        result = this.objectArrayHelper.getSharedResults(result);
+        return result;
         }
-    }
 
     private processNOT(query: any): any[] {
         let NOTResult: any = [];

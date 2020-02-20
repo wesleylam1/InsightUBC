@@ -36,16 +36,24 @@ export default class ObjectArrayHelper {
 
     public getSharedResults(array: any[]): any {
         let result: any[] = [];
-        result = array[0];
-        for (let i of array) {
-            for (let section of result) {
-                if (!(this.arrayHasSection(i, section))) {
-                    result.splice( result.indexOf(section), 1 );
-                }
+        let prev: any[] = array[0];
+        for (let i = 1; i < array.length; i++) {
+            result = this.getSharedSections(prev, array[i]);
+            prev = result;
+        }
+        return result;
+    }
+
+    private getSharedSections(array1: any[], array2: any[]) {
+        let result: any[] = [];
+        for (let i of array2) {
+            if (this.arrayHasSection(array1, i) && !this.arrayHasSection(result, i)) {
+                result.push(i);
             }
         }
         return result;
     }
+
 
     public checkEquality(a: any, b: any): boolean {
         let aProps = Object.getOwnPropertyNames(a);
