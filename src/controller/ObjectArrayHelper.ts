@@ -43,6 +43,7 @@ export default class ObjectArrayHelper {
         }
         return result;
     }
+    // new commnet
 
     private getSharedSections(array1: any[], array2: any[]) {
         let result: any[] = [];
