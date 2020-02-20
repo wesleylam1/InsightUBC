@@ -50,7 +50,7 @@ export default class QueryController {
 
     private processFilter(query: any): (section: any) => boolean {
         try {
-            if (query === {}) {
+            if (Object.keys(query).length === 0) {
                 this.optionsHelper.emptyWhere(query);
                 return (sections: any) => {return true; };
             }
@@ -84,23 +84,22 @@ export default class QueryController {
         if (typeof value !== "string") {
             throw new InsightError("invalid value");
         }
-        let compareFunc: (str: string) => boolean = this.makeIsBoolean(value);
         Log.trace("About to return string comparator");
         return ((section: any) => {
-            return this.compareString(key, comparator, section, compareFunc);
+            return this.compareString(key, value, comparator, section);
         });
     }
 
-    private compareString(key: string, comparator: string, section: any,
-                          compareFunc: (str: string) => boolean): boolean {
-        let sectionData: string = section[key];
+    private compareString(key: string, value: string, comparator: string, section: any): boolean {
+        let sectionData: string = section[key.split("_")[1]];
         if (comparator === "IS") {
+            let compareFunc: (str: string) => boolean = this.makeIsBoolean(value);
             return compareFunc(sectionData);
         }
     }
 
     private makeIsBoolean(val: string): (str: string) => boolean {
-        let input: string;
+        let input: string = "";
         if (val.startsWith("*") && !val.endsWith("*")) {
             input = this.getValidInputString(val.split("*")[1]);
             return (str: string) => { return str.endsWith(input); };
