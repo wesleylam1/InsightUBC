@@ -27,18 +27,35 @@ export default class OptionsHelper {
         return result;
     }
 
-    private doOrdering(query: any, results: any) {
-        if (Object.keys(query).length === 0) {
-            throw new InsightError("no keys in ORDER");
+    private doOrdering(orderKey: any, results: any): any {
+        if (!(mField.has(orderKey.split("_")[1]) || sField.has(orderKey.split("_")[1]))) {
+            throw new InsightError("no/invalid keys in ORDER");
         }
-        if (Object.keys(query).length !== 1) {
-            throw new InsightError("too many keys in ORDER");
-        }
-        let orderKey: string = Object.keys(query)[0];
+        results = results.sort(this.compareForOrderFunc(orderKey));
+        return results;
+    }
+
+    private compareForOrderFunc(orderKey: string): (a: any, b: any) => any {
+        return (a: any, b: any) => {
+            if (a[orderKey] < b[orderKey]) {
+                return -1;
+            }
+            if (a[orderKey] > b[orderKey]) {
+                return 1;
+            } else {
+                return 0;
+            }
+        };
     }
 
     private getColumnKeys(columns: string[]): any {
         let invalidKeyFound: boolean = false;
+        if (!Array.isArray(columns)) {
+            throw new InsightError("COLUMNS is not array");
+        }
+        if (columns.length === 0) {
+            throw new InsightError("COLUMNS is empty");
+        }
         for (let key of columns) {
             this.queryController.getKeyandCheckIDValid(key);
             let columnKey: string = key.split("_")[1];

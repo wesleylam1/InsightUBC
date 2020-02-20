@@ -2,6 +2,7 @@ import {InsightError, NotFoundError, ResultTooLargeError} from "./IInsightFacade
 import DatasetController from "./DatasetController";
 import Log from "../Util";
 import OptionsHelper from "./OptionsHelper";
+import ObjectArrayHelper from "./ObjectArrayHelper";
 
 const mField = new Set(["avg", "pass", "audit", "fail", "year"]);
 const sField = new Set(["dept", "id", "instructor", "title", "uuid"]);
@@ -13,6 +14,7 @@ export default class QueryController {
     private currentDatasetID: string;
     private sections: any;
     private optionsHelper: OptionsHelper;
+    private objectArrayHelper: ObjectArrayHelper;
 
     public initialize(controller: DatasetController) {
         this.datasetController = controller;
@@ -20,6 +22,7 @@ export default class QueryController {
         this.sections = null;
         this.optionsHelper = new OptionsHelper();
         this.optionsHelper.setController(this);
+        this.objectArrayHelper = new ObjectArrayHelper();
     }
 
     public performQuery(query: any): Promise<any[]> {
@@ -27,11 +30,14 @@ export default class QueryController {
             this.validQuery(query);
             Log.trace("finished validQuery");
             let result: any[] = this.processFilter(query["WHERE"]);
+            Log.trace("About to start columns and order");
+            result = this.optionsHelper.doColumnsAndOrder(query, result);
+            Log.trace("checking result length");
+            if (result) {
             if (result.length > 5000) {
                 throw new ResultTooLargeError("Result exceeded 5000 entries");
             }
-            Log.trace("About to start columns and order");
-            result = this.optionsHelper.doColumnsAndOrder(query, result);
+        }
             return Promise.resolve(result);
         } catch (err) {
             return Promise.reject(err);
@@ -41,7 +47,7 @@ export default class QueryController {
     private processFilter(query: any): any {
         try {
             if (query === {}) {
-                throw new InsightError("empty WHERE");
+                return;
             }
             Log.trace("reached doQuery");
             let comparator: any = Object.keys(query)[0];
@@ -62,7 +68,7 @@ export default class QueryController {
     }
 
     private processStringComparator(query: any, comparator: string): any {
-        let key: any = Object.keys(query)[0];
+        let key: string = Object.keys(query)[0];
         if (!this.getKeyandCheckIDValid(key)) {
             throw new InsightError("Multiple Datasets not supported");
         }
@@ -93,31 +99,21 @@ export default class QueryController {
     }
 
     private makeIsBoolean(val: string): (str: string) => boolean {
-        let wildCardStart: boolean = false;
-        let wildCardEnd: boolean = false;
         let input: string;
         if (val.startsWith("*") && !val.endsWith("*")) {
             input = this.getValidInputString(val.split("*")[1]);
-            return (str: string) => {
-                return str.endsWith(input);
-            };
+            return (str: string) => { return str.endsWith(input); };
         }
         if (val.startsWith("*") && val.endsWith("*")) {
             input = this.getValidInputString(val.substring(1, (val.length - 1)));
-            return (str: string) => {
-                return str.includes(input);
-            };
+            return (str: string) => { return str.includes(input); };
         }
         if (!val.startsWith("*") && val.endsWith("*")) {
             input = this.getValidInputString(val.substring(0, (val.length - 1)));
-            return (str: string) => {
-                return str.startsWith(input);
-            };
+            return (str: string) => { return str.startsWith(input); };
         } else {
             input = this.getValidInputString(val);
-            return (str: string) => {
-                return str === input;
-            };
+            return (str: string) => { return str === input; };
         }
     }
 
@@ -129,20 +125,14 @@ export default class QueryController {
     }
 
     private processLogicComparator(query: any, comparator: string): any[] {
-        if (comparator === "OR") {
-            return this.processOR(query["OR"]);
-        }
-        if (comparator === "AND") {
-            return this.processAND(query["AND"]);
-        }
-        if (comparator === "NOT") {
-            return this.processNOT(query["NOT"]);
-        }
+        if (comparator === "OR") { return this.processOR(query["OR"]); }
+        if (comparator === "AND") { return this.processAND(query["AND"]); }
+        if (comparator === "NOT") { return this.processNOT(query["NOT"]); }
     }
 
-    private processAND(query: any): any {
+    private processAND(query: any[]): any {
         let result = [];
-        if (query === []) {
+        if (!Array.isArray(query)) {
             throw new InsightError("AND must have at least 1 filter");
         }
         for (let filter of query) {
@@ -151,18 +141,9 @@ export default class QueryController {
         if (result.length <= 1) {
             return result[0];
         } else {
-            result = this.getSharedResults(result);
+            result = this.objectArrayHelper.getSharedResults(result);
             return result;
         }
-    }
-
-    private getSharedResults(array: any[]): any {
-        let result: any = new Array<any>();
-        result.push(array[0]);
-        for (let i of array) {
-            result = result.filter((x: any) => (array[i].includes(x)));
-        }
-        return result;
     }
 
     private processNOT(query: any): any[] {
@@ -170,48 +151,33 @@ export default class QueryController {
         if (query === []) {
             throw new InsightError("Not must have at least 1 filter");
         }
+        if (Object.keys(query)[0] === "NOT") {
+            return this.processFilter(query["NOT"]);
+        }
         if (Object.keys.length > 1) {
             throw new InsightError("Not cannot have more than 1 filter");
         }
         NOTResult = this.processFilter(query);
-        return (this.excludeSections(NOTResult));
+        return (this.objectArrayHelper.excludeSections(NOTResult, this.sections));
     }
 
-    private excludeSections(itemsToExclude: any[]): any {
-        let result: any = [];
-        result = new Array<any>();
-        result = this.sections.filter((x: any) => !itemsToExclude.includes(x));
-        return result;
-    }
-
-    private processOR(query: any): any[] {
+    private processOR(query: any[]): any[] {
         let result: any[] = [];
+        let mergedResults: any[] = [];
         if (query === []) {
             throw new InsightError("OR must have at least 1 filter");
         }
-        for (let filter in query) {
+        for (let filter of query) {
             result.push(this.processFilter(filter));
         }
-        if (result.length > 1) {
-            result = this.mergeResults(result);
-            return result;
-        } else {
-            return result[0];
+        for (let array of result) {
+            mergedResults = this.objectArrayHelper.mergeResults(mergedResults, array);
+            }
+        return mergedResults;
         }
-    }
-
-    private mergeResults(array: any[]): any {
-        let result: any = [];
-        result = new Array<any[]>();
-        result.push(array[0]);
-        for (let i = 1; i < array.length; i++) {
-            result.concat(array[i]);
-        }
-        return result;
-    }
 
     private processMathComparator(query: any, comparator: string): any {
-        let key: any = Object.keys(query)[0];
+        let key: string = Object.keys(query)[0];
         if (!this.getKeyandCheckIDValid(key)) {
             throw new InsightError("Multiple Datasets not supported");
         }
@@ -225,9 +191,7 @@ export default class QueryController {
         let result: any[] = [];
         for (let section of this.sections) {
             if (this.compareMath(key.split("_")[1], value, comparator, section)) {
-                if (result.length === 5000) {
-                    throw new ResultTooLargeError("ResultTooLarge");
-                }
+
                 result.push(section);
             }
         }

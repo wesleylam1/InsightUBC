@@ -68,7 +68,7 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
             expect.fail(err, expected, "Should not have rejected");
         });
     });
-    it("Should add a valid dataset - whitespace name", function () {
+    /*it("Should add a valid dataset - whitespace name", function () {
         const id: string = "courses copy";
         const expected: string[] = [id];
         return insightFacade
@@ -456,7 +456,7 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
             .catch((err: any) => {
                 expect.fail(err, expected, "Should not have rejected");
             });
-    });
+    });*/
 });
 
 /*
