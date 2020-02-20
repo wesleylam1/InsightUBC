@@ -1,0 +1,20 @@
+{
+    "title": "Invalid IS - multiple values",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_instructor": "*s*",
+                "courses_dept": "*d"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_id",
+                "courses_avg"
+            ],
+            "ORDER": "courses_id"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

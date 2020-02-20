@@ -26,7 +26,10 @@ export default class QueryController {
         try {
             this.validQuery(query);
             Log.trace("finished validQuery");
-            let result: any = this.processFilter(query["WHERE"]);
+            let result: any[] = this.processFilter(query["WHERE"]);
+            if (result.length > 5000) {
+                throw new ResultTooLargeError("Result exceeded 5000 entries");
+            }
             Log.trace("About to start columns and order");
             result = this.optionsHelper.doColumnsAndOrder(query, result);
             return Promise.resolve(result);
@@ -37,6 +40,9 @@ export default class QueryController {
 
     private processFilter(query: any): any {
         try {
+            if (query === {}) {
+                throw new InsightError("empty WHERE");
+            }
             Log.trace("reached doQuery");
             let comparator: any = Object.keys(query)[0];
             if (comparator === "GT" || comparator === "LT" || comparator === "EQ") {
@@ -51,7 +57,7 @@ export default class QueryController {
                 throw new InsightError("WHERE can only have filters");
             }
         } catch (err) {
-            return err;
+            throw err;
         }
     }
 
@@ -247,10 +253,10 @@ export default class QueryController {
             throw new InsightError("Query missing WHERE section");
         }
         if (!(query.hasOwnProperty("OPTIONS"))) {
-            throw new InsightError("Query missing WHERE section");
+            throw new InsightError("Query missing OPTIONS section");
         }
         if (!(query["OPTIONS"].hasOwnProperty("COLUMNS"))) {
-            throw new InsightError("Query missing COLUMNS");
+            throw new InsightError("OPTIONS missing COLUMNS");
         }
         return true;
     }

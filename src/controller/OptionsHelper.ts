@@ -20,7 +20,21 @@ export default class OptionsHelper {
     public doColumnsAndOrder(query: any, result: any): any {
         query = query["OPTIONS"];
         this.getColumnKeys(query["COLUMNS"]);
-        this.processResultIntoColumns(result);
+        result = this.processResultIntoColumns(result);
+        if (query.hasOwnProperty("ORDER")) {
+            result = this.doOrdering(query["ORDER"], result);
+        }
+        return result;
+    }
+
+    private doOrdering(query: any, results: any) {
+        if (Object.keys(query).length === 0) {
+            throw new InsightError("no keys in ORDER");
+        }
+        if (Object.keys(query).length !== 1) {
+            throw new InsightError("too many keys in ORDER");
+        }
+        let orderKey: string = Object.keys(query)[0];
     }
 
     private getColumnKeys(columns: string[]): any {

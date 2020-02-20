@@ -1,0 +1,57 @@
+{
+    "title": "Find courses in BIOL taught by Xin and Haughn",
+    "query": {
+        "WHERE": {
+            "AND": [
+                {
+                    "AND": [
+                        {
+                            "IS": {
+                                "courses_instructor": "*xin*"
+                            }
+                        },
+                        {
+                            "IS": {
+                                "courses_instructor": "*haughn*"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "IS": {
+                        "courses_dept": "biol"
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_instructor",
+                "courses_dept"
+            ]
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        {
+            "courses_instructor": "haughn, george;kunst, ljerka;li, xin",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_instructor": "haughn, george;kunst, ljerka;li, xin",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_instructor": "haughn, george;kunst, ljerka;li, xin",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_instructor": "haughn, george;kunst, ljerka;li, xin",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_instructor": "haughn, george;kunst, ljerka;li, xin",
+            "courses_dept": "biol"
+        }
+    ]
+}

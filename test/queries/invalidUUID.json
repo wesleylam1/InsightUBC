@@ -1,0 +1,19 @@
+{
+    "title": "Invalid UUID",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_uuid": 501
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_id",
+                "courses_avg"
+            ],
+            "ORDER": "courses_id"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

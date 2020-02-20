@@ -1,0 +1,30 @@
+{
+    "title": "Find course with UUID 62475",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_uuid": "62475"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "courses_title",
+                "courses_uuid",
+                "courses_avg"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        {
+            "courses_dept": "cpsc",
+            "courses_id": "540",
+            "courses_title": "machine learn i",
+            "courses_uuid": "62475",
+            "courses_avg": 90.53
+        }
+    ]
+}

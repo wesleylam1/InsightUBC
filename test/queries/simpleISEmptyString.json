@@ -1,0 +1,19 @@
+{
+    "title": "Search for courses in empty-string DEPT",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_dept": ""
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_id",
+                "courses_avg"
+            ],
+            "ORDER": "courses_id"
+        }
+    },
+    "isQueryValid": true,
+    "result": []
+}

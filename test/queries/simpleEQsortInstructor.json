@@ -1,0 +1,35 @@
+{
+    "title": "SELECT instructor, avg WHERE avg = 98",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "courses_avg": 98
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "courses_avg",
+                "courses_instructor"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        {
+            "courses_dept": "crwr",
+            "courses_id": "599",
+            "courses_avg": 98,
+            "courses_instructor": "grady, albert wayne"
+        },
+        {
+            "courses_dept": "crwr",
+            "courses_id": "599",
+            "courses_avg": 98,
+            "courses_instructor": "maillard, keith"
+        }
+    ]
+}
+

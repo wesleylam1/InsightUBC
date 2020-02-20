@@ -1,0 +1,19 @@
+{
+    "title": "Invalid AVG",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_avg": "Fifty"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_id",
+                "courses_avg"
+            ],
+            "ORDER": "courses_id"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

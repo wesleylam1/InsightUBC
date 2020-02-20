@@ -1,0 +1,980 @@
+{
+    "title": "Find courses with any of 3 instructors",
+    "query": {
+        "WHERE": {
+            "OR": [
+                {
+                    "IS": {
+                        "courses_instructor": "*smit*"
+                    }
+                },
+                {
+                    "IS": {
+                        "courses_instructor": "*samuels*"
+                    }
+                },
+                {
+                    "IS": {
+                        "courses_instructor": "*rosado*"
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_id",
+                "courses_instructor",
+                "courses_dept"
+            ],
+            "ORDER": "courses_dept"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        {
+            "courses_id": "480",
+            "courses_instructor": "smith, tai lin",
+            "courses_dept": "arth"
+        },
+        {
+            "courses_id": "480",
+            "courses_instructor": "smith, tai lin",
+            "courses_dept": "arth"
+        },
+        {
+            "courses_id": "341",
+            "courses_instructor": "smith, tai lin",
+            "courses_dept": "arth"
+        },
+        {
+            "courses_id": "341",
+            "courses_instructor": "smith, tai lin",
+            "courses_dept": "arth"
+        },
+        {
+            "courses_id": "341",
+            "courses_instructor": "smith, tai lin",
+            "courses_dept": "arth"
+        },
+        {
+            "courses_id": "340",
+            "courses_instructor": "smith, tai lin",
+            "courses_dept": "arth"
+        },
+        {
+            "courses_id": "340",
+            "courses_instructor": "smith, tai lin",
+            "courses_dept": "arth"
+        },
+        {
+            "courses_id": "300",
+            "courses_instructor": "smith, tai lin",
+            "courses_dept": "arth"
+        },
+        {
+            "courses_id": "300",
+            "courses_instructor": "smith, tai lin",
+            "courses_dept": "arth"
+        },
+        {
+            "courses_id": "101",
+            "courses_instructor": "smith, tai lin",
+            "courses_dept": "arth"
+        },
+        {
+            "courses_id": "535",
+            "courses_instructor": "birol, gulnur;rosenberg, ellen;samuels, anne lacey",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_id": "535",
+            "courses_instructor": "berger, james;nomme, kathy margaret;samuels, anne lacey",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_id": "535",
+            "courses_instructor": "chowrira, gangamma;samuels, anne lacey",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_id": "535",
+            "courses_instructor": "chowrira, gangamma;nomme, kathy margaret;samuels, anne lacey",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_id": "447",
+            "courses_instructor": "samuels, anne lacey;taylor, eric",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_id": "447",
+            "courses_instructor": "samuels, anne lacey;taylor, eric",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_id": "447",
+            "courses_instructor": "moerman, donald;samuels, anne lacey",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_id": "352",
+            "courses_instructor": "rosado rey, abel;singh, santokh",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_id": "210",
+            "courses_instructor": "ellis, shona margaret;graham, sean;samuels, anne lacey",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_id": "112",
+            "courses_instructor": "smith, karen",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_id": "112",
+            "courses_instructor": "smith, karen",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_id": "112",
+            "courses_instructor": "smith, karen",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_id": "112",
+            "courses_instructor": "smith, karen",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_id": "112",
+            "courses_instructor": "smith, karen;spiegelman, george b",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_id": "112",
+            "courses_instructor": "smith, karen;spiegelman, george b",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_id": "112",
+            "courses_instructor": "kion, tracy;smith, karen",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_id": "112",
+            "courses_instructor": "smith, karen",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_id": "112",
+            "courses_instructor": "smith, karen",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_id": "112",
+            "courses_instructor": "smith, karen",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_id": "112",
+            "courses_instructor": "smith, karen",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_id": "112",
+            "courses_instructor": "smith, karen",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_id": "112",
+            "courses_instructor": "smith, karen",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_id": "112",
+            "courses_instructor": "smith, karen",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_id": "501",
+            "courses_instructor": "bradfield, gary;rosado rey, abel",
+            "courses_dept": "bota"
+        },
+        {
+            "courses_id": "501",
+            "courses_instructor": "bradfield, gary;rosado rey, abel",
+            "courses_dept": "bota"
+        },
+        {
+            "courses_id": "599",
+            "courses_instructor": "smith, kevin",
+            "courses_dept": "chbe"
+        },
+        {
+            "courses_id": "563",
+            "courses_instructor": "smith, kevin",
+            "courses_dept": "chbe"
+        },
+        {
+            "courses_id": "563",
+            "courses_instructor": "smith, kevin",
+            "courses_dept": "chbe"
+        },
+        {
+            "courses_id": "563",
+            "courses_instructor": "smith, kevin",
+            "courses_dept": "chbe"
+        },
+        {
+            "courses_id": "456",
+            "courses_instructor": "smith, kevin",
+            "courses_dept": "chbe"
+        },
+        {
+            "courses_id": "456",
+            "courses_instructor": "smith, kevin",
+            "courses_dept": "chbe"
+        },
+        {
+            "courses_id": "456",
+            "courses_instructor": "smith, kevin",
+            "courses_dept": "chbe"
+        },
+        {
+            "courses_id": "456",
+            "courses_instructor": "smith, kevin",
+            "courses_dept": "chbe"
+        },
+        {
+            "courses_id": "456",
+            "courses_instructor": "smith, kevin",
+            "courses_dept": "chbe"
+        },
+        {
+            "courses_id": "456",
+            "courses_instructor": "smith, kevin",
+            "courses_dept": "chbe"
+        },
+        {
+            "courses_id": "454",
+            "courses_instructor": "baldwin, susan;posarac, dusko;smith, kevin",
+            "courses_dept": "chbe"
+        },
+        {
+            "courses_id": "454",
+            "courses_instructor": "baldwin, susan;forbes, michael;lim, choon jim;smith, kevin",
+            "courses_dept": "chbe"
+        },
+        {
+            "courses_id": "454",
+            "courses_instructor": "smith, kevin",
+            "courses_dept": "chbe"
+        },
+        {
+            "courses_id": "453",
+            "courses_instructor": "baldwin, susan;posarac, dusko;smith, kevin",
+            "courses_dept": "chbe"
+        },
+        {
+            "courses_id": "453",
+            "courses_instructor": "baldwin, susan;forbes, michael;lim, choon jim;smith, kevin",
+            "courses_dept": "chbe"
+        },
+        {
+            "courses_id": "346",
+            "courses_instructor": "smith, kevin",
+            "courses_dept": "chbe"
+        },
+        {
+            "courses_id": "346",
+            "courses_instructor": "smith, kevin",
+            "courses_dept": "chbe"
+        },
+        {
+            "courses_id": "524",
+            "courses_instructor": "samuels, brian",
+            "courses_dept": "civl"
+        },
+        {
+            "courses_id": "524",
+            "courses_instructor": "samuels, brian",
+            "courses_dept": "civl"
+        },
+        {
+            "courses_id": "524",
+            "courses_instructor": "samuels, brian",
+            "courses_dept": "civl"
+        },
+        {
+            "courses_id": "524",
+            "courses_instructor": "samuels, brian",
+            "courses_dept": "civl"
+        },
+        {
+            "courses_id": "524",
+            "courses_instructor": "samuels, brian",
+            "courses_dept": "civl"
+        },
+        {
+            "courses_id": "524",
+            "courses_instructor": "samuels, brian",
+            "courses_dept": "civl"
+        },
+        {
+            "courses_id": "524",
+            "courses_instructor": "samuels, brian",
+            "courses_dept": "civl"
+        },
+        {
+            "courses_id": "524",
+            "courses_instructor": "samuels, brian",
+            "courses_dept": "civl"
+        },
+        {
+            "courses_id": "504",
+            "courses_instructor": "smith, gillian",
+            "courses_dept": "cnps"
+        },
+        {
+            "courses_id": "362",
+            "courses_instructor": "smith, barbara ann",
+            "courses_dept": "cnps"
+        },
+        {
+            "courses_id": "508",
+            "courses_instructor": "smith, mary gale",
+            "courses_dept": "edcp"
+        },
+        {
+            "courses_id": "508",
+            "courses_instructor": "smith, mary",
+            "courses_dept": "edcp"
+        },
+        {
+            "courses_id": "500",
+            "courses_instructor": "smith, mary gale",
+            "courses_dept": "educ"
+        },
+        {
+            "courses_id": "500",
+            "courses_instructor": "smith, mary",
+            "courses_dept": "educ"
+        },
+        {
+            "courses_id": "500",
+            "courses_instructor": "smith, mary gale",
+            "courses_dept": "educ"
+        },
+        {
+            "courses_id": "535",
+            "courses_instructor": "smith, james leslie",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "535",
+            "courses_instructor": "smith, james leslie",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "535",
+            "courses_instructor": "smith, james leslie",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "535",
+            "courses_instructor": "smith, james leslie",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "535",
+            "courses_instructor": "smith, james leslie",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "535",
+            "courses_instructor": "smith, james leslie",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "535",
+            "courses_instructor": "smith, james leslie",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "535",
+            "courses_instructor": "smith, james leslie",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "532",
+            "courses_instructor": "beckie, roger;mayer, ulrich;smith, james leslie",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "532",
+            "courses_instructor": "mayer, ulrich;smith, james leslie",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "532",
+            "courses_instructor": "beckie, roger;mayer, ulrich;smith, james leslie",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "532",
+            "courses_instructor": "beckie, roger;mayer, ulrich;smith, james leslie",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "429",
+            "courses_instructor": "smith, james leslie",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "429",
+            "courses_instructor": "smith, james leslie",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "429",
+            "courses_instructor": "pedretti, daniele;smith, james leslie",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "429",
+            "courses_instructor": "smith, james leslie",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "429",
+            "courses_instructor": "pedretti, daniele;smith, james leslie",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "429",
+            "courses_instructor": "smith, james leslie",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "429",
+            "courses_instructor": "smith, james leslie;tba",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "429",
+            "courses_instructor": "smith, james leslie;tba",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "428",
+            "courses_instructor": "beckie, roger;mayer, ulrich;smith, james leslie",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "428",
+            "courses_instructor": "mayer, ulrich;smith, james leslie",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "428",
+            "courses_instructor": "beckie, roger;mayer, ulrich;smith, james leslie",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "428",
+            "courses_instructor": "beckie, roger;mayer, ulrich;smith, james leslie",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "428",
+            "courses_instructor": "beckie, roger;mayer, ulrich;smith, james leslie",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "428",
+            "courses_instructor": "beckie, roger;mayer, ulrich;smith, james leslie",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "425",
+            "courses_instructor": "golding, martyn;smith, paul laurence",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "425",
+            "courses_instructor": "golding, martyn;smith, paul laurence",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "425",
+            "courses_instructor": "smith, paul laurence;sutherland, stuart",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "328",
+            "courses_instructor": "gilley, brett;kennedy, lori;porritt, lucy;russell, james kelly;sherman, sarah;smit, matthijs",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "328",
+            "courses_instructor": "hickey, kenneth;kennedy, lori;russell, james kelly;scoates, james stewart;smit, matthijs",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "326",
+            "courses_instructor": "smith, paul laurence;sutherland, stuart",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "223",
+            "courses_instructor": "bevier, mary lou;bustin, robert marc;mortensen, james;simpson, kirsten anne;smith, paul laurence",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "223",
+            "courses_instructor": "bevier, mary lou;bustin, robert marc;golding, martyn;mortensen, james;smith, paul laurence",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "223",
+            "courses_instructor": "bevier, mary lou;harris, sara;phillips, steve;smith, paul laurence",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "223",
+            "courses_instructor": "bevier, mary lou;mindell, randal;mortensen, james;smith, paul laurence",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "222",
+            "courses_instructor": "longridge, louise;smith, paul laurence",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "222",
+            "courses_instructor": "smith, paul laurence",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "222",
+            "courses_instructor": "smith, paul laurence",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "222",
+            "courses_instructor": "smith, paul laurence",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "222",
+            "courses_instructor": "smith, paul laurence",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "220",
+            "courses_instructor": "scoates, james stewart;smit, matthijs",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "220",
+            "courses_instructor": "bevier, mary lou;smit, matthijs",
+            "courses_dept": "eosc"
+        },
+        {
+            "courses_id": "606",
+            "courses_instructor": "smith, veronica",
+            "courses_dept": "epse"
+        },
+        {
+            "courses_id": "449",
+            "courses_instructor": "smith, laurie",
+            "courses_dept": "epse"
+        },
+        {
+            "courses_id": "432",
+            "courses_instructor": "smith, gillian",
+            "courses_dept": "epse"
+        },
+        {
+            "courses_id": "432",
+            "courses_instructor": "smith, laurie",
+            "courses_dept": "epse"
+        },
+        {
+            "courses_id": "432",
+            "courses_instructor": "smith, gillian",
+            "courses_dept": "epse"
+        },
+        {
+            "courses_id": "432",
+            "courses_instructor": "smith, gillian",
+            "courses_dept": "epse"
+        },
+        {
+            "courses_id": "432",
+            "courses_instructor": "smith, gillian",
+            "courses_dept": "epse"
+        },
+        {
+            "courses_id": "432",
+            "courses_instructor": "smith, gillian",
+            "courses_dept": "epse"
+        },
+        {
+            "courses_id": "432",
+            "courses_instructor": "smith, laurie",
+            "courses_dept": "epse"
+        },
+        {
+            "courses_id": "312",
+            "courses_instructor": "lester-smith, donna",
+            "courses_dept": "fmst"
+        },
+        {
+            "courses_id": "232",
+            "courses_instructor": "smith, gregory",
+            "courses_dept": "frst"
+        },
+        {
+            "courses_id": "232",
+            "courses_instructor": "smith, gregory",
+            "courses_dept": "frst"
+        },
+        {
+            "courses_id": "467",
+            "courses_instructor": "smith, lauren a",
+            "courses_dept": "libe"
+        },
+        {
+            "courses_id": "465",
+            "courses_instructor": "smith, lauren a",
+            "courses_dept": "libe"
+        },
+        {
+            "courses_id": "574",
+            "courses_instructor": "smith, trevor",
+            "courses_dept": "libr"
+        },
+        {
+            "courses_id": "300",
+            "courses_instructor": "samuels, charles",
+            "courses_dept": "math"
+        },
+        {
+            "courses_id": "255",
+            "courses_instructor": "smith, matthew",
+            "courses_dept": "math"
+        },
+        {
+            "courses_id": "215",
+            "courses_instructor": "smith, matthew",
+            "courses_dept": "math"
+        },
+        {
+            "courses_id": "200",
+            "courses_instructor": "samuels, charles",
+            "courses_dept": "math"
+        },
+        {
+            "courses_id": "200",
+            "courses_instructor": "smith, jefferey",
+            "courses_dept": "math"
+        },
+        {
+            "courses_id": "152",
+            "courses_instructor": "smith, jefferey",
+            "courses_dept": "math"
+        },
+        {
+            "courses_id": "100",
+            "courses_instructor": "smith, jefferey",
+            "courses_dept": "math"
+        },
+        {
+            "courses_id": "418",
+            "courses_instructor": "smit, john kenneth",
+            "courses_dept": "micb"
+        },
+        {
+            "courses_id": "418",
+            "courses_instructor": "smit, john kenneth",
+            "courses_dept": "micb"
+        },
+        {
+            "courses_id": "418",
+            "courses_instructor": "smit, john kenneth",
+            "courses_dept": "micb"
+        },
+        {
+            "courses_id": "418",
+            "courses_instructor": "smit, john kenneth",
+            "courses_dept": "micb"
+        },
+        {
+            "courses_id": "418",
+            "courses_instructor": "smit, john kenneth",
+            "courses_dept": "micb"
+        },
+        {
+            "courses_id": "418",
+            "courses_instructor": "smit, john kenneth",
+            "courses_dept": "micb"
+        },
+        {
+            "courses_id": "418",
+            "courses_instructor": "smit, john kenneth",
+            "courses_dept": "micb"
+        },
+        {
+            "courses_id": "418",
+            "courses_instructor": "smit, john kenneth",
+            "courses_dept": "micb"
+        },
+        {
+            "courses_id": "353",
+            "courses_instructor": "nomellini, john;smith, karen",
+            "courses_dept": "micb"
+        },
+        {
+            "courses_id": "353",
+            "courses_instructor": "smith, karen",
+            "courses_dept": "micb"
+        },
+        {
+            "courses_id": "353",
+            "courses_instructor": "smith, karen",
+            "courses_dept": "micb"
+        },
+        {
+            "courses_id": "353",
+            "courses_instructor": "smith, karen",
+            "courses_dept": "micb"
+        },
+        {
+            "courses_id": "353",
+            "courses_instructor": "smith, karen",
+            "courses_dept": "micb"
+        },
+        {
+            "courses_id": "353",
+            "courses_instructor": "smith, karen",
+            "courses_dept": "micb"
+        },
+        {
+            "courses_id": "353",
+            "courses_instructor": "smith, karen",
+            "courses_dept": "micb"
+        },
+        {
+            "courses_id": "353",
+            "courses_instructor": "smith, karen",
+            "courses_dept": "micb"
+        },
+        {
+            "courses_id": "353",
+            "courses_instructor": "smith, karen",
+            "courses_dept": "micb"
+        },
+        {
+            "courses_id": "203",
+            "courses_instructor": "smith, karen",
+            "courses_dept": "micb"
+        },
+        {
+            "courses_id": "203",
+            "courses_instructor": "smith, karen",
+            "courses_dept": "micb"
+        },
+        {
+            "courses_id": "203",
+            "courses_instructor": "smith, karen",
+            "courses_dept": "micb"
+        },
+        {
+            "courses_id": "203",
+            "courses_instructor": "smith, karen",
+            "courses_dept": "micb"
+        },
+        {
+            "courses_id": "203",
+            "courses_instructor": "smith, karen",
+            "courses_dept": "micb"
+        },
+        {
+            "courses_id": "203",
+            "courses_instructor": "smith, karen",
+            "courses_dept": "micb"
+        },
+        {
+            "courses_id": "203",
+            "courses_instructor": "smith, karen",
+            "courses_dept": "micb"
+        },
+        {
+            "courses_id": "203",
+            "courses_instructor": "smith, karen",
+            "courses_dept": "micb"
+        },
+        {
+            "courses_id": "306",
+            "courses_instructor": "dhasi, sonny;sedgwick, ted;smith, craig;thomson, stephanie",
+            "courses_dept": "path"
+        },
+        {
+            "courses_id": "303",
+            "courses_instructor": "doheny, g. james;dyck, helen;park, carol;smith, brenda",
+            "courses_dept": "path"
+        },
+        {
+            "courses_id": "536",
+            "courses_instructor": "korbelik, mladen;minchinton, andrew;moiseenko, vitali;reinsberg, stefan;smith, craig",
+            "courses_dept": "phys"
+        },
+        {
+            "courses_id": "405",
+            "courses_instructor": "korbelik, mladen;minchinton, andrew;moiseenko, vitali;reinsberg, stefan;smith, craig",
+            "courses_dept": "phys"
+        },
+        {
+            "courses_id": "113",
+            "courses_instructor": "fox, joanne alison;han, andrea;samuels, anne lacey",
+            "courses_dept": "scie"
+        },
+        {
+            "courses_id": "113",
+            "courses_instructor": "oberg, gunilla;rosado rey, abel",
+            "courses_dept": "scie"
+        },
+        {
+            "courses_id": "113",
+            "courses_instructor": "rosado rey, abel;steyn, douw gerbrand",
+            "courses_dept": "scie"
+        },
+        {
+            "courses_id": "113",
+            "courses_instructor": "fox, joanne alison;hallam, steven;samuels, anne lacey",
+            "courses_dept": "scie"
+        },
+        {
+            "courses_id": "113",
+            "courses_instructor": "fox, joanne alison;ng, david;samuels, anne lacey",
+            "courses_dept": "scie"
+        },
+        {
+            "courses_id": "113",
+            "courses_instructor": "berger, james;fox, joanne alison;samuels, anne lacey",
+            "courses_dept": "scie"
+        },
+        {
+            "courses_id": "113",
+            "courses_instructor": "fox, joanne alison;samuels, anne lacey",
+            "courses_dept": "scie"
+        },
+        {
+            "courses_id": "113",
+            "courses_instructor": "de wreede, robert;fox, joanne alison;samuels, anne lacey",
+            "courses_dept": "scie"
+        },
+        {
+            "courses_id": "113",
+            "courses_instructor": "fox, joanne alison;samuels, anne lacey",
+            "courses_dept": "scie"
+        },
+        {
+            "courses_id": "113",
+            "courses_instructor": "fox, joanne alison;peacock, simon;samuels, anne lacey",
+            "courses_dept": "scie"
+        },
+        {
+            "courses_id": "113",
+            "courses_instructor": "fox, joanne alison;hoos, holger;samuels, anne lacey",
+            "courses_dept": "scie"
+        },
+        {
+            "courses_id": "113",
+            "courses_instructor": "fox, joanne alison;han, andrea;samuels, anne lacey",
+            "courses_dept": "scie"
+        },
+        {
+            "courses_id": "526",
+            "courses_instructor": "smith, robert",
+            "courses_dept": "spph"
+        },
+        {
+            "courses_id": "526",
+            "courses_instructor": "smith, robert",
+            "courses_dept": "spph"
+        },
+        {
+            "courses_id": "526",
+            "courses_instructor": "smith, robert",
+            "courses_dept": "spph"
+        },
+        {
+            "courses_id": "526",
+            "courses_instructor": "smith, robert",
+            "courses_dept": "spph"
+        },
+        {
+            "courses_id": "526",
+            "courses_instructor": "smailes, elizabeth;smith, robert",
+            "courses_dept": "spph"
+        },
+        {
+            "courses_id": "526",
+            "courses_instructor": "smailes, elizabeth;smith, robert",
+            "courses_dept": "spph"
+        },
+        {
+            "courses_id": "526",
+            "courses_instructor": "smailes, elizabeth;smith, robert",
+            "courses_dept": "spph"
+        },
+        {
+            "courses_id": "526",
+            "courses_instructor": "smailes, elizabeth;smith, robert",
+            "courses_dept": "spph"
+        },
+        {
+            "courses_id": "487",
+            "courses_instructor": "smith, gregory",
+            "courses_dept": "wood"
+        },
+        {
+            "courses_id": "487",
+            "courses_instructor": "smith, gregory",
+            "courses_dept": "wood"
+        },
+        {
+            "courses_id": "487",
+            "courses_instructor": "smith, gregory",
+            "courses_dept": "wood"
+        },
+        {
+            "courses_id": "487",
+            "courses_instructor": "smith, gregory",
+            "courses_dept": "wood"
+        },
+        {
+            "courses_id": "487",
+            "courses_instructor": "smith, gregory",
+            "courses_dept": "wood"
+        },
+        {
+            "courses_id": "487",
+            "courses_instructor": "smith, gregory",
+            "courses_dept": "wood"
+        },
+        {
+            "courses_id": "241",
+            "courses_instructor": "smith, gregory",
+            "courses_dept": "wood"
+        },
+        {
+            "courses_id": "241",
+            "courses_instructor": "smith, gregory",
+            "courses_dept": "wood"
+        }
+    ]
+}

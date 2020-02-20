@@ -1,0 +1,19 @@
+{
+    "title": "Invalid FAIL",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_fail": "zero"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_id",
+                "courses_avg"
+            ],
+            "ORDER": "courses_id"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}
