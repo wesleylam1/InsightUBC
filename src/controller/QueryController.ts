@@ -29,25 +29,30 @@ export default class QueryController {
         try {
             this.validQuery(query);
             Log.trace("finished validQuery");
-            let result: any[] = this.processFilter(query["WHERE"]);
-            Log.trace("About to start columns and order");
-            result = this.optionsHelper.doColumnsAndOrder(query, result);
-            Log.trace("checking result length");
-            if (result) {
-            if (result.length > 5000) {
-                throw new ResultTooLargeError("Result exceeded 5000 entries");
+            let condition: (section: any) => boolean = this.processFilter(query["WHERE"]);
+            let result: any[] = [];
+            for (let section of this.sections) {
+                if (condition(section)) {
+                    Log.trace("adding section");
+                    result.push(section);
+                    if (result.length > 5000) {
+                        throw new ResultTooLargeError("Result exceeded 5000 entries");
+                    }
+                }
             }
-        }
+            Log.trace("done filtering");
+            result = this.optionsHelper.doColumnsAndOrder(query, result);
             return Promise.resolve(result);
         } catch (err) {
             return Promise.reject(err);
         }
     }
 
-    private processFilter(query: any): any {
+    private processFilter(query: any): (section: any) => boolean {
         try {
             if (query === {}) {
-                return;
+                this.optionsHelper.emptyWhere(query);
+                return (sections: any) => {return true; };
             }
             Log.trace("reached doQuery");
             let comparator: any = Object.keys(query)[0];
@@ -67,7 +72,7 @@ export default class QueryController {
         }
     }
 
-    private processStringComparator(query: any, comparator: string): any {
+    private processStringComparator(query: any, comparator: string): (section: any) => boolean {
         let key: string = Object.keys(query)[0];
         if (!this.getKeyandCheckIDValid(key)) {
             throw new InsightError("Multiple Datasets not supported");
@@ -79,18 +84,14 @@ export default class QueryController {
         if (typeof value !== "string") {
             throw new InsightError("invalid value");
         }
-        let result: any[] = [];
         let compareFunc: (str: string) => boolean = this.makeIsBoolean(value);
-        for (let section of this.sections) {
-            if (this.compareString(key.split("_")[1], value, comparator, section, compareFunc)) {
-                result.push(section);
-            }
-        }
         Log.trace("About to return string comparator");
-        return result;
+        return ((section: any) => {
+            return this.compareString(key, comparator, section, compareFunc);
+        });
     }
 
-    private compareString(key: string, value: string, comparator: string, section: any,
+    private compareString(key: string, comparator: string, section: any,
                           compareFunc: (str: string) => boolean): boolean {
         let sectionData: string = section[key];
         if (comparator === "IS") {
@@ -124,26 +125,35 @@ export default class QueryController {
         return val;
     }
 
-    private processLogicComparator(query: any, comparator: string): any[] {
+    private processLogicComparator(query: any, comparator: string): (section: any) => boolean {
         if (comparator === "OR") { return this.processOR(query["OR"]); }
         if (comparator === "AND") { return this.processAND(query["AND"]); }
         if (comparator === "NOT") { return this.processNOT(query["NOT"]); }
     }
 
-    private processAND(query: any[]): any {
-        let result = [];
+    private processAND(query: any[]): (section: any) => boolean {
+        let conditions: Array<(section: any) => boolean>;
+        conditions = new Array<(section: any) => boolean>();
         if (!Array.isArray(query)) {
             throw new InsightError("AND must have at least 1 filter");
         }
         for (let filter of query) {
-            result.push(this.processFilter(filter));
+            Log.trace("pushing in and");
+            conditions.push(this.processFilter(filter));
         }
-        result = this.objectArrayHelper.getSharedResults(result);
-        return result;
-        }
+        return ((section: any) => {
+            let noFalse: boolean = true;
+            for (let c of conditions) {
+                if (!(c(section))) {
+                    noFalse = false;
+                }
+            }
+            return noFalse;
+        });
+    }
 
-    private processNOT(query: any): any[] {
-        let NOTResult: any = [];
+    private processNOT(query: any): (section: any) => boolean {
+        let condition: (section: any) => boolean;
         if (query === []) {
             throw new InsightError("Not must have at least 1 filter");
         }
@@ -153,26 +163,34 @@ export default class QueryController {
         if (Object.keys.length > 1) {
             throw new InsightError("Not cannot have more than 1 filter");
         }
-        NOTResult = this.processFilter(query);
-        return (this.objectArrayHelper.excludeSections(NOTResult, this.sections));
+        condition = this.processFilter(query);
+        return ((section: any) => {
+            return !condition;
+        });
     }
 
-    private processOR(query: any[]): any[] {
-        let result: any[] = [];
-        let mergedResults: any[] = [];
+    private processOR(query: any[]): (section: any) => boolean {
         if (query === []) {
             throw new InsightError("OR must have at least 1 filter");
         }
+        let conditions: Array<(section: any) => boolean>;
+        conditions = new Array<(section: any) => boolean>();
         for (let filter of query) {
-            result.push(this.processFilter(filter));
+            Log.trace("pushing in OR");
+            conditions.push(this.processFilter(filter));
         }
-        for (let array of result) {
-            mergedResults = this.objectArrayHelper.mergeResults(mergedResults, array);
+        return ((section: any) => {
+            let anyTrue: boolean = false;
+            for (let c of conditions) {
+                if (c (section)) {
+                    anyTrue = true;
+                }
             }
-        return mergedResults;
+            return anyTrue;
+        });
         }
 
-    private processMathComparator(query: any, comparator: string): any {
+    private processMathComparator(query: any, comparator: string): (section: any) => boolean {
         let key: string = Object.keys(query)[0];
         if (!this.getKeyandCheckIDValid(key)) {
             throw new InsightError("Multiple Datasets not supported");
@@ -184,14 +202,9 @@ export default class QueryController {
         if (typeof value !== "number") {
             throw new InsightError("invalid value");
         }
-        let result: any[] = [];
-        for (let section of this.sections) {
-            if (this.compareMath(key.split("_")[1], value, comparator, section)) {
-
-                result.push(section);
-            }
-        }
-        return result;
+        return ((section: any) => {
+            return this.compareMath(key.split("_")[1], value, comparator, section); }
+            );
     }
 
     private compareMath(key: any, value: number, comparator: string, section: any): boolean {

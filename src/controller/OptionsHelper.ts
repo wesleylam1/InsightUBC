@@ -84,4 +84,8 @@ export default class OptionsHelper {
         }
         return columnizedResult;
         }
+
+    public emptyWhere(query: any): any {
+        return false;
     }
+}
