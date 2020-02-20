@@ -14,22 +14,22 @@ export default class QueryController {
     private sections: any;
     private optionsHelper: OptionsHelper;
 
-    public setDatasetController(controller: DatasetController) {
+    public initialize(controller: DatasetController) {
         this.datasetController = controller;
         this.currentDatasetID = null;
         this.sections = null;
         this.optionsHelper = new OptionsHelper();
+        this.optionsHelper.setController(this);
     }
 
     public performQuery(query: any): Promise<any[]> {
         try {
-            let isEmpty = this.isEmpty(query);
-            if (!isEmpty) {
-                this.validQuery(query);
-                let result: any = this.processFilter(query["WHERE"]);
-                result = this.optionsHelper.doColumnsAndOrder(query, result);
-                return Promise.resolve(result);
-            }
+            this.validQuery(query);
+            Log.trace("finished validQuery");
+            let result: any = this.processFilter(query["WHERE"]);
+            Log.trace("About to start columns and order");
+            result = this.optionsHelper.doColumnsAndOrder(query, result);
+            return Promise.resolve(result);
         } catch (err) {
             return Promise.reject(err);
         }
@@ -55,7 +55,7 @@ export default class QueryController {
         }
     }
 
-    private processStringComparator(query: any, comparator: string) {
+    private processStringComparator(query: any, comparator: string): any {
         let key: any = Object.keys(query)[0];
         if (!this.getKeyandCheckIDValid(key)) {
             throw new InsightError("Multiple Datasets not supported");
@@ -74,6 +74,7 @@ export default class QueryController {
                 result.push(section);
             }
         }
+        Log.trace("About to return string comparator");
         return result;
     }
 
@@ -240,13 +241,6 @@ export default class QueryController {
         }
     }
 
-    // returns true if query is empty
-    public isEmpty(query: any): boolean {
-        if (this.emptyQuery(query)) {
-            return false;
-        }
-    }
-
     // checks that Query has WHERE and  OPTIONS with COLUMNS
     public validQuery(query: any): boolean {
         if (!(query.hasOwnProperty("WHERE"))) {
@@ -261,22 +255,7 @@ export default class QueryController {
         return true;
     }
 
-    // returns true if query is empty, false if not
-    public emptyQuery(query: any): boolean {
-        if (query.OPTIONS.COLUMNS === []) {
-            return true;
-        }
-        if (query.OPTIONS.ORDER === "") {
-            return true;
-        }
-        if (query.WHERE === []) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private getKeyandCheckIDValid(key: string): string {
+    public getKeyandCheckIDValid(key: string): string {
         let idstring: string = key;
         idstring = idstring.split("_", 1)[0];
         if (this.currentDatasetID == null) {

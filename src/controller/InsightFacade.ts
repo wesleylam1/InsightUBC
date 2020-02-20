@@ -21,7 +21,7 @@ export default class InsightFacade implements IInsightFacade {
         this.DatasetController = new DatasetController();
         this.DatasetController.readFromDisk();
         this.QueryController = new QueryController();
-        this.QueryController.setDatasetController(this.DatasetController);
+        this.QueryController.initialize(this.DatasetController);
     }
 
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
