@@ -1,17 +1,17 @@
 {
-    "title": "Invalid title",
+    "title": "InvalidTitle",
     "query": {
         "WHERE": {
             "IS": {
-                "courses_title": 501
+                "courses_title": 97
             }
         },
         "OPTIONS": {
             "COLUMNS": [
-                "courses_id",
+                "courses_title",
                 "courses_avg"
             ],
-            "ORDER": "courses_id"
+            "ORDER": "courses_avg"
         }
     },
     "isQueryValid": false,

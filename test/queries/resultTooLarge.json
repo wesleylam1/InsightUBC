@@ -1,17 +1,17 @@
 {
-    "title": "Result too large query",
+    "title": "resulttoolarge",
     "query": {
         "WHERE": {
             "GT": {
-                "courses_avg": 1
+                "courses_year": 2007
             }
         },
         "OPTIONS": {
             "COLUMNS": [
                 "courses_dept",
-                "courses_avg"
+                "courses_year"
             ],
-            "ORDER": "courses_avg"
+            "ORDER": "courses_year"
         }
     },
     "isQueryValid": false,

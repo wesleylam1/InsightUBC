@@ -53,7 +53,9 @@ export default class QueryController {
         try {
             if (Object.keys(query).length === 0) {
                 this.optionsHelper.emptyWhere(query);
-                return (sections: any) => {return true; };
+                return (sections: any) => {
+                    return true;
+                };
             }
             Log.trace("reached doQuery");
             let comparator: any = Object.keys(query)[0];
@@ -103,18 +105,26 @@ export default class QueryController {
         let input: string = "";
         if (val.startsWith("*") && !val.endsWith("*")) {
             input = this.getValidInputString(val.split("*")[1]);
-            return (str: string) => { return str.endsWith(input); };
+            return (str: string) => {
+ return str.endsWith(input);
+};
         }
         if (val.startsWith("*") && val.endsWith("*")) {
             input = this.getValidInputString(val.substring(1, (val.length - 1)));
-            return (str: string) => { return str.includes(input); };
+            return (str: string) => {
+ return str.includes(input);
+};
         }
         if (!val.startsWith("*") && val.endsWith("*")) {
             input = this.getValidInputString(val.substring(0, (val.length - 1)));
-            return (str: string) => { return str.startsWith(input); };
+            return (str: string) => {
+ return str.startsWith(input);
+};
         } else {
             input = this.getValidInputString(val);
-            return (str: string) => { return str === input; };
+            return (str: string) => {
+ return str === input;
+};
         }
     }
 
@@ -126,9 +136,15 @@ export default class QueryController {
     }
 
     private processLogicComparator(query: any, comparator: string): (section: any) => boolean {
-        if (comparator === "OR") { return this.processOR(query["OR"]); }
-        if (comparator === "AND") { return this.processAND(query["AND"]); }
-        if (comparator === "NOT") { return this.processNOT(query["NOT"]); }
+        if (comparator === "OR") {
+ return this.processOR(query["OR"]);
+}
+        if (comparator === "AND") {
+ return this.processAND(query["AND"]);
+}
+        if (comparator === "NOT") {
+ return this.processNOT(query["NOT"]);
+}
     }
 
     private processAND(query: any[]): (section: any) => boolean {
@@ -203,7 +219,8 @@ export default class QueryController {
             throw new InsightError("invalid value");
         }
         return ((section: any) => {
-            return this.compareMath(key.split("_")[1], value, comparator, section); }
+            return this.compareMath(key.split("_")[1], value, comparator, section);
+}
             );
     }
 

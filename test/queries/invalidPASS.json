@@ -1,17 +1,17 @@
 {
-    "title": "Invalid PASS",
+    "title": "InvalidPass",
     "query": {
         "WHERE": {
-            "IS": {
-                "courses_pass": "zero"
+            "GT": {
+                "courses_pass": "hello"
             }
         },
         "OPTIONS": {
             "COLUMNS": [
-                "courses_id",
+                "courses_pass",
                 "courses_avg"
             ],
-            "ORDER": "courses_id"
+            "ORDER": "courses_avg"
         }
     },
     "isQueryValid": false,
