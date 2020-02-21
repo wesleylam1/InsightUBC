@@ -1,0 +1,19 @@
+{
+    "title": "Invalid Sidstring - underscore",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "_courses_avg": 50
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_id",
+                "courses_avg"
+            ],
+            "ORDER": "courses_id"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

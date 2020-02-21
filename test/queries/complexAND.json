@@ -1,0 +1,70 @@
+{
+    "title": "Find courses in BIOL with avg > 80 taught by Samuels",
+    "query": {
+        "WHERE": {
+            "AND": [
+                {
+                    "IS": {
+                        "courses_dept": "biol"
+                    }
+                },
+                {
+                    "IS": {
+                        "courses_instructor": "*samuels*"
+                    }
+                },
+                {
+                    "GT": {
+                        "courses_avg": 80
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_id",
+                "courses_instructor",
+                "courses_dept"
+            ],
+            "ORDER": "courses_dept"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        {
+            "courses_id": "535",
+            "courses_instructor": "birol, gulnur;rosenberg, ellen;samuels, anne lacey",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_id": "535",
+            "courses_instructor": "berger, james;nomme, kathy margaret;samuels, anne lacey",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_id": "535",
+            "courses_instructor": "chowrira, gangamma;samuels, anne lacey",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_id": "535",
+            "courses_instructor": "chowrira, gangamma;nomme, kathy margaret;samuels, anne lacey",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_id": "447",
+            "courses_instructor": "samuels, anne lacey;taylor, eric",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_id": "447",
+            "courses_instructor": "samuels, anne lacey;taylor, eric",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_id": "447",
+            "courses_instructor": "moerman, donald;samuels, anne lacey",
+            "courses_dept": "biol"
+        }
+    ]
+}

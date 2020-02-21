@@ -1,0 +1,20 @@
+{
+    "title": "Invalid GT - multiple values",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "courses_avg": 50,
+                "courses_pass": 70
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_id",
+                "courses_avg"
+            ],
+            "ORDER": "courses_id"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

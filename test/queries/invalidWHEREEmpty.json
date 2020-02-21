@@ -1,0 +1,15 @@
+{
+    "title": "Invalid empty WHERE",
+    "query": {
+        "WHERE": {},
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_id",
+                "courses_avg"
+            ],
+            "ORDER": "courses_id"
+        }
+    },
+    "isQueryValid": false,
+    "result": "ResultTooLargeError"
+}

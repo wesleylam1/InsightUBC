@@ -1,0 +1,19 @@
+{
+    "title": "Invalid AUDIT",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_audit": "zero"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_id",
+                "courses_avg"
+            ],
+            "ORDER": "courses_id"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

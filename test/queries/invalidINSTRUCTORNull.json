@@ -1,0 +1,19 @@
+{
+    "title": "Invalid INSTRUCTOR is null",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_instructor": null
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_id",
+                "courses_avg"
+            ],
+            "ORDER": "courses_id"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

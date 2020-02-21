@@ -1,0 +1,19 @@
+{
+    "title": "Invalid grade query (NaN)",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "courses_avg": "five"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_avg"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

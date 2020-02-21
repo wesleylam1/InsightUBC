@@ -1,0 +1,19 @@
+{
+    "title": "InvalidORDER",
+    "query": {
+        "WHERE": {
+            "EQ": {
+                "courses_avg": 98
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_avg"
+            ],
+            "ORDER": "courses_id"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

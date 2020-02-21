@@ -1,0 +1,19 @@
+{
+    "title": "Invalid database query",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "testdatabase_avg": 97
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "testdatabase_dept",
+                "testdatabase_avg"
+            ],
+            "ORDER": "testdatabase_avg"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

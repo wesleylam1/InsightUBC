@@ -1,0 +1,19 @@
+{
+    "title": "Invalid DEPT",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_dept": 50
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_id",
+                "courses_avg"
+            ],
+            "ORDER": "courses_id"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

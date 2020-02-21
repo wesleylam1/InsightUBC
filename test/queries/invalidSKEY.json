@@ -1,0 +1,19 @@
+{
+    "title": "Invalid SKEY",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "courses_title": "counterpoint"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_id",
+                "courses_avg"
+            ],
+            "ORDER": "courses_id"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}
