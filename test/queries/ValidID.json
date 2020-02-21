@@ -1,0 +1,19 @@
+{
+    "title": "SELECT dept, id WHERE id = 590",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_id": "590"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id"
+            ],
+            "ORDER": "courses_id"
+        }
+    },
+    "isQueryValid": true,
+     "result":[{"courses_dept":"phar","courses_id":"590"},{"courses_dept":"phar","courses_id":"590"},{"courses_dept":"phar","courses_id":"590"},{"courses_dept":"phar","courses_id":"590"},{"courses_dept":"phar","courses_id":"590"},{"courses_dept":"phar","courses_id":"590"},{"courses_dept":"phar","courses_id":"590"},{"courses_dept":"phar","courses_id":"590"},{"courses_dept":"phar","courses_id":"590"},{"courses_dept":"phar","courses_id":"590"},{"courses_dept":"phar","courses_id":"590"},{"courses_dept":"phar","courses_id":"590"},{"courses_dept":"phar","courses_id":"590"},{"courses_dept":"phar","courses_id":"590"},{"courses_dept":"phar","courses_id":"590"},{"courses_dept":"phar","courses_id":"590"},{"courses_dept":"medi","courses_id":"590"},{"courses_dept":"medi","courses_id":"590"},{"courses_dept":"medi","courses_id":"590"},{"courses_dept":"medi","courses_id":"590"},{"courses_dept":"medi","courses_id":"590"},{"courses_dept":"medi","courses_id":"590"},{"courses_dept":"medi","courses_id":"590"},{"courses_dept":"medi","courses_id":"590"},{"courses_dept":"medi","courses_id":"590"},{"courses_dept":"medi","courses_id":"590"},{"courses_dept":"medi","courses_id":"590"},{"courses_dept":"medi","courses_id":"590"},{"courses_dept":"medi","courses_id":"590"},{"courses_dept":"medi","courses_id":"590"},{"courses_dept":"frst","courses_id":"590"},{"courses_dept":"frst","courses_id":"590"},{"courses_dept":"frst","courses_id":"590"},{"courses_dept":"frst","courses_id":"590"},{"courses_dept":"frst","courses_id":"590"},{"courses_dept":"frst","courses_id":"590"}]
+}
