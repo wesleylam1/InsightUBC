@@ -1,17 +1,17 @@
 {
-    "title": "Invalid AUDIT",
+    "title": "InvalidAudit",
     "query": {
         "WHERE": {
-            "IS": {
-                "courses_audit": "zero"
+            "GT": {
+                "courses_audit": "hello"
             }
         },
         "OPTIONS": {
             "COLUMNS": [
-                "courses_id",
-                "courses_avg"
+                "courses_dept",
+                "courses_audit"
             ],
-            "ORDER": "courses_id"
+            "ORDER": "courses_audit"
         }
     },
     "isQueryValid": false,

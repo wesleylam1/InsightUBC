@@ -1,17 +1,17 @@
 {
-    "title": "Invalid UUID",
+    "title": "Invaliduuid",
     "query": {
         "WHERE": {
             "IS": {
-                "courses_uuid": 501
+                "courses_uuid": 97
             }
         },
         "OPTIONS": {
             "COLUMNS": [
-                "courses_id",
+                "courses_uuid",
                 "courses_avg"
             ],
-            "ORDER": "courses_id"
+            "ORDER": "courses_avg"
         }
     },
     "isQueryValid": false,

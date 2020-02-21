@@ -1,17 +1,17 @@
 {
-    "title": "Invalid YEAR",
+    "title": "InvalidYear",
     "query": {
         "WHERE": {
-            "IS": {
-                "courses_year": "apple"
+            "GT": {
+                "courses_year": "hello"
             }
         },
         "OPTIONS": {
             "COLUMNS": [
-                "courses_id",
+                "courses_year",
                 "courses_avg"
             ],
-            "ORDER": "courses_id"
+            "ORDER": "courses_avg"
         }
     },
     "isQueryValid": false,

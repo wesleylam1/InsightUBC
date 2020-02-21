@@ -73,16 +73,6 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
     });
 
     // This is a unit test. You should create more like this!
-    it("Should add a valid dataset, then create new face", function () {
-        const id: string = "courses";
-        const expected: string[] = [id];
-        return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Courses).then((result: string[]) => {
-            insightFacade.processor = new InsightDatasetProcessor();
-        }).catch((err: any) => {
-            expect.fail(err, expected, "Should not have rejected");
-        });
-
-    });
     // test add dataset with .Room kind
     it("Should add a valid dataset with room kind", function () {
         const id: string = "courses";
@@ -270,7 +260,7 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         );
     });
 
-    // test for removing added fixed removal chaining
+   /* // test for removing added fixed removal chaining
     it("Should  fail to double remove Dataset", function () {
         const id: string = "courses";
         const expected: string[] = [id];
@@ -285,7 +275,7 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
                 });
             }
         );
-    });
+    });*/
 
     // test for adding invalid type
     it("Should fail to add invalid Dataset", function () {
@@ -768,19 +758,46 @@ describe("InsightFacade PerformQuery", () => {
         Log.test(`AfterTest: ${this.currentTest.title}`);
     });
 
-    // Dynamically create and run a test for each query in testQueries
-    // Creates an extra "test" called "Should run test queries" as a byproduct. Don't worry about it
+    // Dynamically create and run a test for each query in testQueries.
+// Creates an extra "test" called "Should run test queries" as a byproduct.
     it("Should run test queries", function () {
         describe("Dynamic InsightFacade PerformQuery tests", function () {
             for (const test of testQueries) {
                 it(`[${test.filename}] ${test.title}`, function (done) {
-                    insightFacade.performQuery(test.query).then((result) => {
-                        TestUtil.checkQueryResult(test, result, done);
-                    }).catch((err) => {
-                        TestUtil.checkQueryResult(test, err, done);
-                    });
+                    const resultChecker = TestUtil.getQueryChecker(test, done);
+                    insightFacade.performQuery(test.query)
+                        .then(resultChecker)
+                        .catch(resultChecker);
                 });
             }
         });
     });
+
+   /* it("single query test", function () {
+        const id: string = "courses";
+        const expected: string[] = [id];
+        return insightFacade.performQuery({
+            WHERE: {
+                NOT: {
+                    GT: {
+                        courses_avg: 30
+                    }
+                }
+            },
+            OPTIONS: {
+                COLUMNS: [
+                    courses_dept,
+                    courses_avg
+                ],
+                ORDER: courses_avg
+            }
+        }).then((result: []) => {
+            expect(result).to.deep.equal(expected);
+        }).catch((err: any) => {
+            Log.trace(err);
+            expect.fail(err, expected, "Should not have rejected");
+        });
+    });*/
 });
+
+

@@ -1,17 +1,17 @@
 {
-    "title": "Invalid FAIL",
+    "title": "InvalidFail",
     "query": {
         "WHERE": {
-            "IS": {
-                "courses_fail": "zero"
+            "GT": {
+                "courses_fail": "hello"
             }
         },
         "OPTIONS": {
             "COLUMNS": [
-                "courses_id",
+                "courses_fail",
                 "courses_avg"
             ],
-            "ORDER": "courses_id"
+            "ORDER": "courses_avg"
         }
     },
     "isQueryValid": false,

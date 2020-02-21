@@ -8,6 +8,7 @@ const mField = new Set(["avg", "pass", "audit", "fail", "year"]);
 const sField = new Set(["dept", "id", "instructor", "title", "uuid"]);
 const Comparator = new Set(["LT", "GT", "EQ", "IS"]);
 const ComparatorALL = new Set(["LT", "GT", "EQ", "IS", "AND", "OR", "NOT"]);
+const options = new Set(["COLUMNS", "ORDER"]);
 
 export default class QueryController {
     private datasetController: DatasetController;
@@ -52,7 +53,9 @@ export default class QueryController {
         try {
             if (Object.keys(query).length === 0) {
                 this.optionsHelper.emptyWhere(query);
-                return (sections: any) => {return true; };
+                return (sections: any) => {
+                    return true;
+                };
             }
             Log.trace("reached doQuery");
             let comparator: any = Object.keys(query)[0];
@@ -102,18 +105,26 @@ export default class QueryController {
         let input: string = "";
         if (val.startsWith("*") && !val.endsWith("*")) {
             input = this.getValidInputString(val.split("*")[1]);
-            return (str: string) => { return str.endsWith(input); };
+            return (str: string) => {
+ return str.endsWith(input);
+};
         }
         if (val.startsWith("*") && val.endsWith("*")) {
             input = this.getValidInputString(val.substring(1, (val.length - 1)));
-            return (str: string) => { return str.includes(input); };
+            return (str: string) => {
+ return str.includes(input);
+};
         }
         if (!val.startsWith("*") && val.endsWith("*")) {
             input = this.getValidInputString(val.substring(0, (val.length - 1)));
-            return (str: string) => { return str.startsWith(input); };
+            return (str: string) => {
+ return str.startsWith(input);
+};
         } else {
             input = this.getValidInputString(val);
-            return (str: string) => { return str === input; };
+            return (str: string) => {
+ return str === input;
+};
         }
     }
 
@@ -125,9 +136,15 @@ export default class QueryController {
     }
 
     private processLogicComparator(query: any, comparator: string): (section: any) => boolean {
-        if (comparator === "OR") { return this.processOR(query["OR"]); }
-        if (comparator === "AND") { return this.processAND(query["AND"]); }
-        if (comparator === "NOT") { return this.processNOT(query["NOT"]); }
+        if (comparator === "OR") {
+ return this.processOR(query["OR"]);
+}
+        if (comparator === "AND") {
+ return this.processAND(query["AND"]);
+}
+        if (comparator === "NOT") {
+ return this.processNOT(query["NOT"]);
+}
     }
 
     private processAND(query: any[]): (section: any) => boolean {
@@ -164,7 +181,7 @@ export default class QueryController {
         }
         condition = this.processFilter(query);
         return ((section: any) => {
-            return !condition;
+            return !condition(section);
         });
     }
 
@@ -202,7 +219,8 @@ export default class QueryController {
             throw new InsightError("invalid value");
         }
         return ((section: any) => {
-            return this.compareMath(key.split("_")[1], value, comparator, section); }
+            return this.compareMath(key.split("_")[1], value, comparator, section);
+}
             );
     }
 
@@ -224,11 +242,23 @@ export default class QueryController {
         if (!(query.hasOwnProperty("WHERE"))) {
             throw new InsightError("Query missing WHERE section");
         }
+
+        if (!(typeof query["WHERE"] === "object" && query["WHERE"] !== null)) {
+            throw new InsightError("WHERE has wrong type");
+        }
         if (!(query.hasOwnProperty("OPTIONS"))) {
             throw new InsightError("Query missing OPTIONS section");
         }
         if (!(query["OPTIONS"].hasOwnProperty("COLUMNS"))) {
             throw new InsightError("OPTIONS missing COLUMNS");
+        }
+        if (!Array.isArray(query["OPTIONS"]["COLUMNS"])) {
+            throw new InsightError("COLUMNS must be an array");
+        }
+        for (let i of Object.keys(query["OPTIONS"])) {
+            if (!options.has(i)) {
+                throw new InsightError("Invalid key in options");
+            }
         }
         return true;
     }
