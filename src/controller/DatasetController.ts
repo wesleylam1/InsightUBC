@@ -170,7 +170,6 @@ export default class DatasetController {
             return Promise.reject(new InsightError());
         }
     }
-
     public listDatasets(): Promise<InsightDataset[]> {
         let result: InsightDataset[] = [];
         this.datasetsAdded.forEach((value: Dataset) => {

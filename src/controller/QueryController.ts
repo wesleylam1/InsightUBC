@@ -242,6 +242,7 @@ export default class QueryController {
         if (!(query.hasOwnProperty("WHERE"))) {
             throw new InsightError("Query missing WHERE section");
         }
+
         if (!(typeof query["WHERE"] === "object" && query["WHERE"] !== null)) {
             throw new InsightError("WHERE has wrong type");
         }
