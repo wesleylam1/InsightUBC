@@ -528,4 +528,32 @@ describe("InsightFacade PerformQuery", () => {
             }
         });
     });
+
+   /* it("single query test", function () {
+        const id: string = "courses";
+        const expected: string[] = [id];
+        return insightFacade.performQuery({
+            WHERE: {
+                NOT: {
+                    GT: {
+                        courses_avg: 30
+                    }
+                }
+            },
+            OPTIONS: {
+                COLUMNS: [
+                    courses_dept,
+                    courses_avg
+                ],
+                ORDER: courses_avg
+            }
+        }).then((result: []) => {
+            expect(result).to.deep.equal(expected);
+        }).catch((err: any) => {
+            Log.trace(err);
+            expect.fail(err, expected, "Should not have rejected");
+        });
+    });*/
 });
+
+

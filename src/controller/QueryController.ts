@@ -8,6 +8,7 @@ const mField = new Set(["avg", "pass", "audit", "fail", "year"]);
 const sField = new Set(["dept", "id", "instructor", "title", "uuid"]);
 const Comparator = new Set(["LT", "GT", "EQ", "IS"]);
 const ComparatorALL = new Set(["LT", "GT", "EQ", "IS", "AND", "OR", "NOT"]);
+const options = new Set(["COLUMNS", "ORDER"]);
 
 export default class QueryController {
     private datasetController: DatasetController;
@@ -164,7 +165,7 @@ export default class QueryController {
         }
         condition = this.processFilter(query);
         return ((section: any) => {
-            return !condition;
+            return !condition(section);
         });
     }
 
@@ -224,11 +225,22 @@ export default class QueryController {
         if (!(query.hasOwnProperty("WHERE"))) {
             throw new InsightError("Query missing WHERE section");
         }
+        if (!(typeof query["WHERE"] === "object" && query["WHERE"] !== null)) {
+            throw new InsightError("WHERE has wrong type");
+        }
         if (!(query.hasOwnProperty("OPTIONS"))) {
             throw new InsightError("Query missing OPTIONS section");
         }
         if (!(query["OPTIONS"].hasOwnProperty("COLUMNS"))) {
             throw new InsightError("OPTIONS missing COLUMNS");
+        }
+        if (!Array.isArray(query["OPTIONS"]["COLUMNS"])) {
+            throw new InsightError("COLUMNS must be an array");
+        }
+        for (let i of Object.keys(query["OPTIONS"])) {
+            if (!options.has(i)) {
+                throw new InsightError("Invalid key in options");
+            }
         }
         return true;
     }

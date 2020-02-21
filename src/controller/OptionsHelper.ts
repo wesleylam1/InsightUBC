@@ -5,6 +5,7 @@ import QueryController from "./QueryController";
 
 const mField = new Set (["avg", "pass", "audit", "fail", "year"]);
 const sField = new Set (["dept", "id", "instructor", "title", "uuid"]);
+const options = new Set(["COLUMNS", "ORDER"]);
 export default class OptionsHelper {
     private columns: string[];
     private queryController: QueryController;
@@ -50,9 +51,6 @@ export default class OptionsHelper {
 
     private getColumnKeys(columns: string[]): any {
         let invalidKeyFound: boolean = false;
-        if (!Array.isArray(columns)) {
-            throw new InsightError("COLUMNS is not array");
-        }
         if (columns.length === 0) {
             throw new InsightError("COLUMNS is empty");
         }
