@@ -18,17 +18,9 @@ export default class OptionsHelper {
         this.columns = new Array<string>();
     }
 
-    public doColumnsAndOrder(query: any, result: any): any {
-        query = query["OPTIONS"];
-        this.getColumnKeys(query["COLUMNS"]);
-        result = this.processResultIntoColumns(result);
-        if (query.hasOwnProperty("ORDER")) {
-            result = this.doOrdering(query["ORDER"], result);
-        }
-        return result;
-    }
 
-    private doOrdering(orderKey: any, results: any): any {
+    public doOrdering(orderKey: any, results: any): any {
+        Log.trace("about to split in doOrdering");
         if (!(mField.has(orderKey.split("_")[1]) || sField.has(orderKey.split("_")[1]))) {
             throw new InsightError("no/invalid keys in ORDER");
         }
@@ -49,7 +41,8 @@ export default class OptionsHelper {
         };
     }
 
-    private getColumnKeys(columns: string[]): any {
+    public getColumnKeys(columns: string[]): any {
+        this.columns = [];
         let invalidKeyFound: boolean = false;
         if (columns.length === 0) {
             throw new InsightError("COLUMNS is empty");
@@ -70,20 +63,50 @@ export default class OptionsHelper {
         }
     }
 
-    private processResultIntoColumns(result: any): any {
-        let columnizedResult: any = [];
-        let current: any = {};
-        for (let section of result) {
-            current = {};
+    public getColumnizeFunction(): (section: any) => any {
+        return ((section: any) => {
+            let columnizedResult: any = {};
             for (let columnKey of this.columns) {
-                current[columnKey] = section[columnKey.split("_")[1]];
+                columnizedResult[columnKey] = section[columnKey.split("_")[1]];
             }
-            columnizedResult.push(current);
-        }
-        return columnizedResult;
-        }
+            return columnizedResult;
+        });
+    }
 
     public emptyWhere(query: any): any {
         return false;
+    }
+
+    // checks that Query has WHERE and  OPTIONS with COLUMNS
+    public validQuery(query: any): boolean {
+        for (let i of Object.keys(query)) {
+            if (! (i === "WHERE" || i === "OPTIONS")) {
+                throw new InsightError("Query can only have WHERE and OPTIONS");
+            }
+        }
+        if (!(query.hasOwnProperty("WHERE"))) {
+            throw new InsightError("Query missing WHERE section");
+        }
+        if (!(typeof query["WHERE"] === "object" && query["WHERE"] !== null)) {
+            throw new InsightError("WHERE has wrong type");
+        }
+        if (!(query.hasOwnProperty("OPTIONS"))) {
+            throw new InsightError("Query missing OPTIONS section");
+        }
+        if (query.hasOwnProperty("ORDER")) {
+            throw new InsightError("ORDER not in OPTIONS");
+        }
+        if (!(query["OPTIONS"].hasOwnProperty("COLUMNS"))) {
+            throw new InsightError("OPTIONS missing COLUMNS");
+        }
+        if (!Array.isArray(query["OPTIONS"]["COLUMNS"])) {
+            throw new InsightError("COLUMNS must be an array");
+        }
+        for (let i of Object.keys(query["OPTIONS"])) {
+            if (!options.has(i)) {
+                throw new InsightError("Invalid key in options");
+            }
+        }
+        return true;
     }
 }
