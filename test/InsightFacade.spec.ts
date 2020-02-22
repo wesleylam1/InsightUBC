@@ -815,5 +815,25 @@ describe("InsightFacade PerformQuery", () => {
             }
         });
     });
+    /*it("single query test", function () {
+        const id: string = "courses";
+        const expected: string[] = [id];
+        return insightFacade.performQuery({
+            "WHERE": [],
+            "OPTIONS": {
+                "COLUMNS": [
+                    "courses_id",
+                    "courses_avg"
+                ],
+                "ORDER": "courses_id"
+            }
+        }).then((result: []) => {
+            expect(result).to.deep.equal(expected);
+        }).catch((err: any) => {
+            Log.trace(err);
+            expect.fail(err, expected, "Should not have rejected");
+        });
+    });*/
+
 });
 
