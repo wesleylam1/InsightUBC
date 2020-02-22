@@ -773,23 +773,17 @@ describe("InsightFacade PerformQuery", () => {
         });
     });
 
-   /* it("single query test", function () {
+    /*it("single query test", function () {
         const id: string = "courses";
         const expected: string[] = [id];
         return insightFacade.performQuery({
-            "WHERE": {
-                "NOT": {
-                    "GT": {
-                        "courses_avg": 30
-                    }
-                }
-            },
+            "WHERE": [],
             "OPTIONS": {
                 "COLUMNS": [
-                    "courses_dept",
+                    "courses_id",
                     "courses_avg"
                 ],
-                "ORDER": "courses_avg"
+                "ORDER": "courses_id"
             }
         }).then((result: []) => {
             expect(result).to.deep.equal(expected);

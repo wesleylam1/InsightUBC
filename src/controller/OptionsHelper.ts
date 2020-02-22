@@ -21,12 +21,30 @@ export default class OptionsHelper {
 
 
     public doOrdering(orderKey: any, results: any): any {
-        Log.trace("about to split in doOrdering");
+        if (!orderKey) {
+            throw new InsightError("ORDER key cannot be null");
+        }
+        if (!(typeof orderKey === "string" && orderKey !== null)) {
+            throw new InsightError("wrong type of key in ORDER");
+        }
         if (!(mField.has(orderKey.split("_")[1]) || sField.has(orderKey.split("_")[1]))) {
             throw new InsightError("no/invalid keys in ORDER");
         }
+        if (!(this.containsKey(orderKey))) {
+            throw new InsightError("ORDER key must be in columns");
+        }
         results = results.sort(this.compareForOrderFunc(orderKey));
         return results;
+    }
+
+    private containsKey(orderKey: string): boolean {
+        let hasKey: boolean = false;
+        for (let key of this.columns) {
+            if (key === orderKey) {
+                hasKey = true;
+            }
+        }
+        return hasKey;
     }
 
     private compareForOrderFunc(orderKey: string): (a: any, b: any) => any {
@@ -49,11 +67,16 @@ export default class OptionsHelper {
             throw new InsightError("COLUMNS is empty");
         }
         for (let key of columns) {
-            this.queryController.getKeyandCheckIDValid(key);
-            let columnKey: string = key.split("_")[1];
-            this.columns.push(key);
-            if (! (mField.has(columnKey) || sField.has(columnKey))) {
-                invalidKeyFound = true;
+            if (!(typeof key === "string")) {
+                throw new InsightError("COLUMNS values must be strings");
+            }
+            if (!this.containsKey(key)) {
+                this.queryController.getKeyandCheckIDValid(key);
+                let columnKey: string = key.split("_")[1];
+                this.columns.push(key);
+                if (!(mField.has(columnKey) || sField.has(columnKey))) {
+                    invalidKeyFound = true;
+                }
             }
         }
         if (invalidKeyFound) {
