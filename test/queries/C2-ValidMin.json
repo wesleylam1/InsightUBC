@@ -1,0 +1,572 @@
+{
+    "title": "C2 - Valid earliest year of BIOL courses",
+    "query": {
+        "WHERE": {
+            "AND": [
+                {
+                    "IS": {
+                        "courses_dept": "biol"
+                    }
+                },
+                {
+                    "NOT": {
+                        "EQ": {
+                            "courses_year": 1900
+                        }
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "earliestYear",
+                "courses_title",
+                "courses_id"
+            ],
+            "ORDER": "earliestYear"
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": [
+                "courses_title",
+                "courses_id"
+            ],
+            "APPLY": [
+                {
+                    "earliestYear": {
+                        "MIN": "courses_year"
+                    }
+                }
+            ]
+        }
+    },
+    "isQueryValid": true,
+    "isSorted": true,
+    "sortedBy": "courses_year",
+    "result": [
+        {
+            "earliestYear": 2007,
+            "courses_title": "cell & orgsml bio",
+            "courses_id": "111"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "biol bact cell",
+            "courses_id": "112"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "eco gen evol",
+            "courses_id": "121"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "lab inv life sc",
+            "courses_id": "140"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "human biology",
+            "courses_id": "153"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "human biology",
+            "courses_id": "155"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "cell biology 1",
+            "courses_id": "200"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "cell biology 2",
+            "courses_id": "201"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "vert struct&func",
+            "courses_id": "204"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "comp invertbrat",
+            "courses_id": "205"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "non vasc plants",
+            "courses_id": "209"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "vascular plants",
+            "courses_id": "210"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "biometrics",
+            "courses_id": "300"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "biomathematics",
+            "courses_id": "301"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "animal behaviour",
+            "courses_id": "310"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "weed science",
+            "courses_id": "317"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "survey of algae",
+            "courses_id": "320"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "bryophyta",
+            "courses_id": "321"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "struc&repr fungi",
+            "courses_id": "323"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "intro seed plnts",
+            "courses_id": "324"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "intro anml mech",
+            "courses_id": "325"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "biol invertebrat",
+            "courses_id": "326"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "intro entomology",
+            "courses_id": "327"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "int parasitology",
+            "courses_id": "328"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "developmtal biol",
+            "courses_id": "331"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "molecular gen",
+            "courses_id": "335"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "evolutionary gen",
+            "courses_id": "336"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "intr genetcs lab",
+            "courses_id": "337"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "plants & peoples",
+            "courses_id": "343"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "human hrdty evol",
+            "courses_id": "344"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "human ecology",
+            "courses_id": "345"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "prin&meth rsch i",
+            "courses_id": "347"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "plnt phyl 1:nutr",
+            "courses_id": "351"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "plnt phyl 2:devt",
+            "courses_id": "352"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "intro to physio",
+            "courses_id": "361"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "cellular physio",
+            "courses_id": "362"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "lab animal physi",
+            "courses_id": "363"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "animal physiol",
+            "courses_id": "364"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "insect ecology",
+            "courses_id": "411"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "zoogeography",
+            "courses_id": "413"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "evol procss plnt",
+            "courses_id": "415"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "pr conservt biol",
+            "courses_id": "416"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "evolutionary eco",
+            "courses_id": "418"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "plnt-micr inter",
+            "courses_id": "421"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "biomechanics",
+            "courses_id": "425"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "ornith&herpetlgy",
+            "courses_id": "427"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "evolut genetics",
+            "courses_id": "430"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "adv cell biology",
+            "courses_id": "431"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "plant genetics",
+            "courses_id": "433"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "populatn genetcs",
+            "courses_id": "434"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "integ func genom",
+            "courses_id": "436"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "anim cell molec",
+            "courses_id": "437"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "anim cell biol",
+            "courses_id": "441"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "darwin's fishes",
+            "courses_id": "445"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "meth bio rsch ii",
+            "courses_id": "447"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "biology research",
+            "courses_id": "449"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "molec adap animl",
+            "courses_id": "450"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "compar physiolgy",
+            "courses_id": "454"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "comp neurobiolgy",
+            "courses_id": "455"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "compar endocrin",
+            "courses_id": "456"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "comp env physiol",
+            "courses_id": "457"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "devlpmt neurbiol",
+            "courses_id": "458"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "ecolg plant bioc",
+            "courses_id": "462"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "gene regl devl",
+            "courses_id": "463"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "animal dvl gntcs",
+            "courses_id": "464"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "div evol fishes",
+            "courses_id": "465"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "pop & quant gene",
+            "courses_id": "509"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "biol of the cell",
+            "courses_id": "530"
+        },
+        {
+            "earliestYear": 2007,
+            "courses_title": "teach life sci",
+            "courses_id": "535"
+        },
+        {
+            "earliestYear": 2008,
+            "courses_title": "unicellular life",
+            "courses_id": "112"
+        },
+        {
+            "earliestYear": 2008,
+            "courses_title": "gentcs ecol&evol",
+            "courses_id": "121"
+        },
+        {
+            "earliestYear": 2008,
+            "courses_title": "microbes & socty",
+            "courses_id": "346"
+        },
+        {
+            "earliestYear": 2008,
+            "courses_title": "ecol methodology",
+            "courses_id": "404"
+        },
+        {
+            "earliestYear": 2008,
+            "courses_title": "plant ecology i",
+            "courses_id": "406"
+        },
+        {
+            "earliestYear": 2008,
+            "courses_title": "phytogeography",
+            "courses_id": "412"
+        },
+        {
+            "earliestYear": 2008,
+            "courses_title": "phylogenetic bio",
+            "courses_id": "417"
+        },
+        {
+            "earliestYear": 2009,
+            "courses_title": "advanced ecology",
+            "courses_id": "306"
+        },
+        {
+            "earliestYear": 2009,
+            "courses_title": "plant genomics",
+            "courses_id": "440"
+        },
+        {
+            "earliestYear": 2010,
+            "courses_title": "intr modern bio",
+            "courses_id": "111"
+        },
+        {
+            "earliestYear": 2010,
+            "courses_title": "fund cell bio",
+            "courses_id": "200"
+        },
+        {
+            "earliestYear": 2010,
+            "courses_title": "intro biochem",
+            "courses_id": "201"
+        },
+        {
+            "earliestYear": 2010,
+            "courses_title": "fund of biostats",
+            "courses_id": "300"
+        },
+        {
+            "earliestYear": 2010,
+            "courses_title": "exp bio invertbr",
+            "courses_id": "326"
+        },
+        {
+            "earliestYear": 2010,
+            "courses_title": "evolutionary bio",
+            "courses_id": "336"
+        },
+        {
+            "earliestYear": 2011,
+            "courses_title": "fund ecology",
+            "courses_id": "230"
+        },
+        {
+            "earliestYear": 2011,
+            "courses_title": "fund genetics",
+            "courses_id": "234"
+        },
+        {
+            "earliestYear": 2011,
+            "courses_title": "fund physiology",
+            "courses_id": "260"
+        },
+        {
+            "earliestYear": 2011,
+            "courses_title": "intgrt'd bio lab",
+            "courses_id": "342"
+        },
+        {
+            "earliestYear": 2012,
+            "courses_title": "biology of cell",
+            "courses_id": "112"
+        },
+        {
+            "earliestYear": 2012,
+            "courses_title": "bryophytes",
+            "courses_id": "321"
+        },
+        {
+            "earliestYear": 2012,
+            "courses_title": "int cell bio lab",
+            "courses_id": "340"
+        },
+        {
+            "earliestYear": 2012,
+            "courses_title": "int mole bio lab",
+            "courses_id": "341"
+        },
+        {
+            "earliestYear": 2012,
+            "courses_title": "q mth ecol&evol",
+            "courses_id": "501"
+        },
+        {
+            "earliestYear": 2013,
+            "courses_title": "eukaryot microbi",
+            "courses_id": "203"
+        },
+        {
+            "earliestYear": 2013,
+            "courses_title": "ocean cons&sustn",
+            "courses_id": "420"
+        },
+        {
+            "earliestYear": 2013,
+            "courses_title": "evl mor mar invr",
+            "courses_id": "428"
+        },
+        {
+            "earliestYear": 2013,
+            "courses_title": "zoologic physics",
+            "courses_id": "438"
+        },
+        {
+            "earliestYear": 2013,
+            "courses_title": "hist&phil biol",
+            "courses_id": "446"
+        },
+        {
+            "earliestYear": 2013,
+            "courses_title": "neurobi sens&mot",
+            "courses_id": "459"
+        },
+        {
+            "earliestYear": 2014,
+            "courses_title": "bio alg,fung&bry",
+            "courses_id": "209"
+        },
+        {
+            "earliestYear": 2014,
+            "courses_title": "phys sns nrv msc",
+            "courses_id": "361"
+        },
+        {
+            "earliestYear": 2015,
+            "courses_title": "genetics life",
+            "courses_id": "233"
+        },
+        {
+            "earliestYear": 2015,
+            "courses_title": "evo cell biology",
+            "courses_id": "431"
+        },
+        {
+            "earliestYear": 2015,
+            "courses_title": "strat&techn cell",
+            "courses_id": "432"
+        },
+        {
+            "earliestYear": 2016,
+            "courses_title": "cell biol intrfk",
+            "courses_id": "441"
+        }
+    ]
+}

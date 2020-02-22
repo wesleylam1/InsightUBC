@@ -5,8 +5,8 @@ import QueryController from "./QueryController";
 
 const mField = new Set (["avg", "pass", "audit", "fail", "year"]);
 const sField = new Set (["dept", "id", "instructor", "title", "uuid"]);
-
 const options = new Set(["COLUMNS", "ORDER"]);
+
 export default class OptionsHelper {
     private columns: string[];
     private queryController: QueryController;
@@ -134,3 +134,4 @@ export default class OptionsHelper {
         return true;
     }
 }
+
