@@ -72,7 +72,8 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
 
     });
 
-    // This is a unit test. You should create more like this!
+
+  /*  // This is a unit test. You should create more like this!
     // test add dataset with .Room kind
     it("Should add a valid dataset with room kind", function () {
         const id: string = "courses";
@@ -260,7 +261,7 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         );
     });
 
-   /* // test for removing added fixed removal chaining
+   /!* // test for removing added fixed removal chaining
     it("Should  fail to double remove Dataset", function () {
         const id: string = "courses";
         const expected: string[] = [id];
@@ -275,7 +276,7 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
                 });
             }
         );
-    });*/
+    });*!/
 
     // test for adding invalid type
     it("Should fail to add invalid Dataset", function () {
@@ -311,7 +312,7 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         }).catch((err: any) => {
             expect.fail(err, expected, "Should not have rejected");
         });
-    });
+    });*/
     /*it("Should add a valid dataset - whitespace name", function () {
         const id: string = "courses copy";
         const expected: string[] = [id];
@@ -777,19 +778,19 @@ describe("InsightFacade PerformQuery", () => {
         const id: string = "courses";
         const expected: string[] = [id];
         return insightFacade.performQuery({
-            WHERE: {
-                NOT: {
-                    GT: {
-                        courses_avg: 30
+            "WHERE": {
+                "NOT": {
+                    "GT": {
+                        "courses_avg": 30
                     }
                 }
             },
-            OPTIONS: {
-                COLUMNS: [
-                    courses_dept,
-                    courses_avg
+            "OPTIONS": {
+                "COLUMNS": [
+                    "courses_dept",
+                    "courses_avg"
                 ],
-                ORDER: courses_avg
+                "ORDER": "courses_avg"
             }
         }).then((result: []) => {
             expect(result).to.deep.equal(expected);

@@ -28,21 +28,25 @@ export default class QueryController {
 
     public performQuery(query: any): Promise<any[]> {
         try {
-            this.validQuery(query);
+            this.optionsHelper.validQuery(query);
             Log.trace("finished validQuery");
             let condition: (section: any) => boolean = this.processFilter(query["WHERE"]);
             let result: any[] = [];
+            this.optionsHelper.getColumnKeys(query["OPTIONS"]["COLUMNS"]);
+            let columnize: (section: any) => any = this.optionsHelper.getColumnizeFunction();
             for (let section of this.sections) {
-                if (condition(section)) {
-                    Log.trace("adding section");
-                    result.push(section);
-                    if (result.length > 5000) {
-                        throw new ResultTooLargeError("Result exceeded 5000 entries");
+                    if (condition(section)) {
+                        Log.trace("adding section");
+                        result.push(columnize(section));
+                        if (result.length > 5000) {
+                            throw new ResultTooLargeError("Result exceeded 5000 entries");
+                        }
                     }
-                }
+            }
+            if (query["OPTIONS"].hasOwnProperty("ORDER")) {
+                result = this.optionsHelper.doOrdering(query["OPTIONS"]["ORDER"], result);
             }
             Log.trace("done filtering");
-            result = this.optionsHelper.doColumnsAndOrder(query, result);
             return Promise.resolve(result);
         } catch (err) {
             return Promise.reject(err);
@@ -76,10 +80,14 @@ export default class QueryController {
     }
 
     private processStringComparator(query: any, comparator: string): (section: any) => boolean {
+        if (Object.values(query).length !== 1) {
+            throw new InsightError("wrong number of values in " + comparator);
+        }
         let key: string = Object.keys(query)[0];
         if (!this.getKeyandCheckIDValid(key)) {
             throw new InsightError("Multiple Datasets not supported");
         }
+        Log.trace("splitting in processStringComparator");
         if (!sField.has(key.split("_")[1])) {
             throw new InsightError("used String Comparator with non sField");
         }
@@ -94,6 +102,7 @@ export default class QueryController {
     }
 
     private compareString(key: string, value: string, comparator: string, section: any): boolean {
+        Log.trace("splitting in compareString");
         let sectionData: string = section[key.split("_")[1]];
         if (comparator === "IS") {
             let compareFunc: (str: string) => boolean = this.makeIsBoolean(value);
@@ -104,12 +113,14 @@ export default class QueryController {
     private makeIsBoolean(val: string): (str: string) => boolean {
         let input: string = "";
         if (val.startsWith("*") && !val.endsWith("*")) {
+            Log.trace("splitting in makeISBoolean branch 1");
             input = this.getValidInputString(val.split("*")[1]);
             return (str: string) => {
  return str.endsWith(input);
 };
         }
         if (val.startsWith("*") && val.endsWith("*")) {
+            Log.trace("splitting in makeISBoolean branch 2");
             input = this.getValidInputString(val.substring(1, (val.length - 1)));
             return (str: string) => {
  return str.includes(input);
@@ -211,17 +222,21 @@ export default class QueryController {
         if (!this.getKeyandCheckIDValid(key)) {
             throw new InsightError("Multiple Datasets not supported");
         }
-        if (!mField.has(key.split("_")[1])) {
+        Log.trace("splitting in mathComparator");
+        let keyWithoutID: string = key.split("_")[1];
+        if (!mField.has(keyWithoutID)) {
             throw new InsightError("used Math Comparator with non mField");
+        }
+        if (Object.values(query).length !== 1) {
+            throw new InsightError("wrong number of values in " + comparator);
         }
         let value: any = query[key];
         if (typeof value !== "number") {
             throw new InsightError("invalid value");
         }
         return ((section: any) => {
-            return this.compareMath(key.split("_")[1], value, comparator, section);
-}
-            );
+                    return this.compareMath(keyWithoutID, value, comparator, section);
+});
     }
 
     private compareMath(key: any, value: number, comparator: string, section: any): boolean {
@@ -237,34 +252,9 @@ export default class QueryController {
         }
     }
 
-    // checks that Query has WHERE and  OPTIONS with COLUMNS
-    public validQuery(query: any): boolean {
-        if (!(query.hasOwnProperty("WHERE"))) {
-            throw new InsightError("Query missing WHERE section");
-        }
-
-        if (!(typeof query["WHERE"] === "object" && query["WHERE"] !== null)) {
-            throw new InsightError("WHERE has wrong type");
-        }
-        if (!(query.hasOwnProperty("OPTIONS"))) {
-            throw new InsightError("Query missing OPTIONS section");
-        }
-        if (!(query["OPTIONS"].hasOwnProperty("COLUMNS"))) {
-            throw new InsightError("OPTIONS missing COLUMNS");
-        }
-        if (!Array.isArray(query["OPTIONS"]["COLUMNS"])) {
-            throw new InsightError("COLUMNS must be an array");
-        }
-        for (let i of Object.keys(query["OPTIONS"])) {
-            if (!options.has(i)) {
-                throw new InsightError("Invalid key in options");
-            }
-        }
-        return true;
-    }
-
     public getKeyandCheckIDValid(key: string): string {
         let idstring: string = key;
+        Log.trace("Splitting in getKeyandCheckIDValid");
         idstring = idstring.split("_", 1)[0];
         if (this.currentDatasetID == null) {
             this.currentDatasetID = idstring;
