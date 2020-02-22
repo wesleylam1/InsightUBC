@@ -1,0 +1,45 @@
+{
+    "title": "C2 - Invalid, COLUMN key not in GROUP or APPLY",
+    "query": {
+        "WHERE": {
+            "AND": [
+                {
+                    "IS": {
+                        "courses_dept": "biol"
+                    }
+                },
+                {
+                    "NOT": {
+                        "EQ": {
+                            "courses_year": 1900
+                        }
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "earliestYear",
+                "courses_title",
+                "courses_id",
+                "courses_avg"
+            ],
+            "ORDER": "earliestYear"
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": [
+                "courses_title",
+                "courses_id"
+            ],
+            "APPLY": [
+                {
+                    "earliestYear": {
+                        "MIN": "courses_year"
+                    }
+                }
+            ]
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

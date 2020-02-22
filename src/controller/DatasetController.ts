@@ -1,35 +1,36 @@
 import {InsightDataset, InsightDatasetKind, InsightError, NotFoundError} from "./IInsightFacade";
-import {Dataset} from "./Dataset";
+import {CourseDataset, Dataset, RoomDataset} from "./Dataset";
 import Log from "../Util";
 import {Course, readCourseData} from "./Course";
 import * as JSZip from "jszip";
 import * as fs from "fs";
-
+import {parseIndex} from "./RoomParser";
+import {Room} from "./Room";
+import {JSZipObject} from "jszip";
 
 export default class DatasetController {
-    private datasetsAdded: Map<string, Dataset>;
+    private datasetsAdded: Map<string, Dataset> = new Map<string, Dataset>();
     private directory: string = "./data";
 
     constructor() {
         Log.trace("InsightFacadeImpl::init()");
-        this.datasetsAdded = new Map<string, Dataset>();
         this.readFromDisk();
     }
 
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
         let self = this;
-        return new Promise(function (resolve, reject) {
+        return new Promise((resolve, reject) => {
             try {
                 self.checkDuplicates(id, self.datasetsAdded);
                 self.verifyAddDataset(id, content, kind);
                 self.initiateDataset(id, content, kind)
-                    .then(function (dataset: Dataset) {
+                    .then((dataset: Dataset) => {
                         self.addToDisk(id, dataset);
                         self.datasetsAdded.set(id, dataset);
                         let ids = Array.from(self.datasetsAdded.keys());
                         resolve(ids);
                     })
-                    .catch(function (err) {
+                    .catch((err) => {
                         reject(err);
                     });
             } catch (err) {
@@ -40,52 +41,68 @@ export default class DatasetController {
 
     public getDatasetCourses(id: string): any {
         if (this.datasetsAdded.has(id) ) {
-            return this.datasetsAdded.get(id).courses;
+            return this.datasetsAdded.get(id).data;
         } else {
             throw new InsightError("A dataset with this id could not be found");
         }
     }
 
-    private addCourses(id: string, content: string): Promise<Dataset> {
-        return new Promise(function (resolve, reject) {
+    private addCourses(id: string, content: string): Promise<CourseDataset> {
+        return new Promise((resolve, reject) => {
             let courses: Course[] = [];
             JSZip.loadAsync(content, {base64: true})
                 .then((zip: JSZip) => {
                     let promisesList: Array<Promise<any>> = new Array<Promise<any>>();
-
                     if (!("courses/" in zip.files)) {
                         throw new InsightError();
                     }
-                    zip.forEach(function (relativePath, file) {
+                    zip.forEach((relativePath: string, file: JSZipObject) => {
                         promisesList.push(file.async("text"));
                     });
-
                     Promise.all(promisesList)
-                        .then(function (files: any) {
+                        .then((files: any) => {
                             courses = readCourseData(files);
-                            let dataset: Dataset = new Dataset(id, InsightDatasetKind.Courses, courses);
+                            if (courses.length === 0) {
+                                reject(new InsightError("No courses found"));
+                            }
+                            let dataset: CourseDataset = new CourseDataset(id, InsightDatasetKind.Courses, courses);
                             resolve(dataset);
                         }).catch(function (error) {
                         reject(new InsightError(error));
                     });
                 })
-                .catch(function (err) {
+                .catch(() => {
                     reject(new InsightError("Incorrect files (not courses) in zip"));
                 });
         });
     }
 
-    private addRooms(id: string, content: string): Promise<Dataset> {
-        return new Promise(function (resolve, reject) {
+    private addRooms(id: string, content: string): Promise<RoomDataset> {
+        return new Promise((resolve, reject) => {
+            let promisesList: Array<Promise<any>> = new Array<Promise<any>>();
             JSZip.loadAsync(content, {base64: true})
                 .then((zip: JSZip) => {
                     if (!("rooms/" in zip.files)) {
-                        throw new InsightError();
+                        throw new InsightError("No rooms folder found");
                     }
-                })
-                .catch((err) => {
-                    reject(new InsightError("Incorrect files ( not rooms) in zip"));
-                });
+                    promisesList.push(zip.folder("rooms").file("index.htm").async("text"));
+                    Promise.all(promisesList)
+                        .then((files: any[]) => {
+                        return parseIndex(files, content);
+                        })
+                        .then((result: Room[]) => {
+                            if (result.length === 0) {
+                                reject(new InsightError("No rooms found"));
+                            }
+                            let dataset: RoomDataset = new RoomDataset(id, InsightDatasetKind.Rooms, result);
+                            resolve(dataset);
+                        })
+                        .catch((err) => {
+                            reject(new InsightError(err));
+                        });
+                    }).catch((error) => {
+                reject(new InsightError(error));
+            });
         });
     }
 
@@ -108,8 +125,7 @@ export default class DatasetController {
         if (kind === InsightDatasetKind.Courses) {
             return this.addCourses(id, content);
         } else if (kind === InsightDatasetKind.Rooms) {
-            return Promise.reject(new InsightError("Rooms not valid"));
-            // return this.addRooms(id, content);
+            return this.addRooms(id, content);
         } else {
             throw (new InsightError("Invalid datatype"));
         }
@@ -144,9 +160,17 @@ export default class DatasetController {
                     let parsedData = JSON.parse(data.toString());
                     let id: string = parsedData["id"];
                     let datatype: InsightDatasetKind = parsedData["datatype"];
-                    let courses: Course[] = parsedData["courses"];
-                    let dataset = new Dataset(id, datatype, courses);
-                    this.datasetsAdded.set(id, dataset);
+                    if (datatype === InsightDatasetKind.Courses) {
+                        let courses: Course[] = parsedData["data"];
+                        let dataset = new CourseDataset(id, datatype, courses);
+                        this.datasetsAdded.set(id, dataset);
+                    } else if (datatype === InsightDatasetKind.Rooms) {
+                        let rooms: Room[] = parsedData["data"];
+                        let dataset = new RoomDataset(id, datatype, rooms);
+                        this.datasetsAdded.set(id, dataset);
+                    } else {
+                        throw new InsightError("Failed to load datasets from disk");
+                    }
                 }
             }
         }

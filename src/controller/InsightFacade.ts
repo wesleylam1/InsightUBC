@@ -1,10 +1,5 @@
 import Log from "../Util";
-
-import {IInsightFacade, InsightDataset, InsightDatasetKind, InsightError, NotFoundError} from "./IInsightFacade";
-import * as JSZip from "jszip";
-import {Course, readCourseData} from "./Course";
-import {Dataset} from "./Dataset";
-import * as fs from "fs";
+import {IInsightFacade, InsightDataset, InsightDatasetKind} from "./IInsightFacade";
 import DatasetController from "./DatasetController";
 import QueryController from "./QueryController";
 
