@@ -34,18 +34,16 @@ export default class QueryController {
             this.optionsHelper.getColumnKeys(query["OPTIONS"]["COLUMNS"]);
             let columnize: (section: any) => any = this.optionsHelper.getColumnizeFunction();
             for (let section of this.sections) {
-                    if (condition(section)) {
-                        result.push(columnize(section));
-                        if (result.length > 5000) {
-                            throw new ResultTooLargeError("Result exceeded 5000 entries");
-                        }
+                if (condition(section)) {
+                    result.push(columnize(section));
+                    if (result.length > 5000) {
+                        throw new ResultTooLargeError("Result exceeded 5000 entries");
                     }
                 }
             }
             if (query["OPTIONS"].hasOwnProperty("ORDER")) {
                 result = this.optionsHelper.doOrdering(query["OPTIONS"]["ORDER"], result);
             }
-            Log.trace("done filtering");
             return Promise.resolve(result);
         } catch (err) {
             return Promise.reject(err);
@@ -62,7 +60,6 @@ export default class QueryController {
                     return true;
                 };
             }
-            Log.trace("reached doQuery");
             let comparator: any = Object.keys(query)[0];
             if (comparator === "GT" || comparator === "LT" || comparator === "EQ") {
                 return this.processMathComparator(query[comparator], comparator);
@@ -257,7 +254,6 @@ export default class QueryController {
         }
     }
 
-    // checks that Query has WHERE and  OPTIONS with COLUMNS
     public validQuery(query: any): boolean {
         if (!(query.hasOwnProperty("WHERE"))) {
             throw new InsightError("Query missing WHERE section");
