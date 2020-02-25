@@ -71,7 +71,7 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
 
     });
 
-    it("Should add a valid dataset (rooms)", function () {
+  /*  it("Should add a valid dataset (rooms)", function () {
         const id: string = "rooms";
         const expected: string[] = [id];
         return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Rooms).then((result: string[]) => {
@@ -743,7 +743,7 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         }).catch((err: any) => {
             expect.fail(err, expected, "Should not have rejected");
         });
-    });
+    });*/
 });
 
 
@@ -815,17 +815,22 @@ describe("InsightFacade PerformQuery", () => {
             }
         });
     });
+
     /*it("single query test", function () {
         const id: string = "courses";
         const expected: string[] = [id];
         return insightFacade.performQuery({
-            "WHERE": [],
+            "WHERE": {
+                "GT": {
+                    "courses_year": 2007
+                }
+            },
             "OPTIONS": {
                 "COLUMNS": [
-                    "courses_id",
-                    "courses_avg"
+                    "courses_dept",
+                    "courses_year"
                 ],
-                "ORDER": "courses_id"
+                "ORDER": "courses_year"
             }
         }).then((result: []) => {
             expect(result).to.deep.equal(expected);
