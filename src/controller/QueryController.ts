@@ -1,12 +1,13 @@
-import {InsightError, NotFoundError, ResultTooLargeError} from "./IInsightFacade";
+import {InsightDatasetKind, InsightError, ResultTooLargeError} from "./IInsightFacade";
 import DatasetController from "./DatasetController";
-import Log from "../Util";
-import OptionsHelper from "./OptionsHelper";
-import ObjectArrayHelper from "./ObjectArrayHelper";
+import OptionsProcessor from "./OptionsProcessor";
 import FilterProcessor from "./FilterProcessor";
+import TransformationProcessor from "./TransformationProcessor";
 
-const mField = new Set(["avg", "pass", "audit", "fail", "year"]);
-const sField = new Set(["dept", "id", "instructor", "title", "uuid"]);
+const coursesMField = new Set(["avg", "pass", "audit", "fail", "year"]);
+const coursesSField = new Set(["dept", "id", "instructor", "title", "uuid"]);
+const roomsSField = new Set(["fullname", "shortname", "number", "name", "address", "type", "furniture", "href"]);
+const roomsMField = new Set(["lat", "lon", "seats"]);
 const Comparator = new Set(["LT", "GT", "EQ", "IS"]);
 const ComparatorALL = new Set(["LT", "GT", "EQ", "IS", "AND", "OR", "NOT"]);
 const options = new Set(["COLUMNS", "ORDER"]);
@@ -14,22 +15,25 @@ const options = new Set(["COLUMNS", "ORDER"]);
 export default class QueryController {
     private datasetController: DatasetController;
     private currentDatasetID: string;
+    private currentKind: InsightDatasetKind;
     private sections: any;
-    private optionsHelper: OptionsHelper;
+    private optionsHelper: OptionsProcessor;
     private filterProcessor: FilterProcessor;
+    private transformationProcessor: TransformationProcessor;
 
     public initialize(controller: DatasetController) {
+        this.currentKind = null;
         this.datasetController = controller;
         this.currentDatasetID = null;
         this.sections = null;
-        this.optionsHelper = new OptionsHelper();
-        this.optionsHelper.setController(this);
+        this.optionsHelper = new OptionsProcessor(this);
         this.filterProcessor = new FilterProcessor(this);
+        this.transformationProcessor = new TransformationProcessor(this);
     }
 
     public performQuery(query: any): Promise<any[]> {
         try {
-            this.optionsHelper.validQuery(query);
+            this.validQuery(query);
             let condition: (section: any) => boolean = this.filterProcessor.processFilter(query["WHERE"]);
             let result: any[] = [];
             this.optionsHelper.getColumnKeys(query["OPTIONS"]["COLUMNS"]);
@@ -44,6 +48,9 @@ export default class QueryController {
             }
             if (query["OPTIONS"].hasOwnProperty("ORDER")) {
                 result = this.optionsHelper.doOrdering(query["OPTIONS"]["ORDER"], result);
+            }
+            if (query.hasOwnProperty("TRANSFORMATIONS")) {
+                result  = this.transformationProcessor.processTransformations(query["TRANSFORMATION"]);
             }
             return Promise.resolve(result);
         } catch (err) {
@@ -87,10 +94,44 @@ export default class QueryController {
         try {
             if (this.sections == null) {
                 this.sections = this.datasetController.getDatasetCourses(idstring);
+                this.currentKind = this.datasetController.getDatasetKind(idstring);
             }
         } catch (err) {
             throw err;
         }
         return idstring;
+    }
+
+    public checkValidKey(key: string): boolean {
+        if (this.currentKind === InsightDatasetKind.Rooms) {
+            return roomsMField.has(key) || roomsSField.has(key);
+        }
+        if (this.currentKind === InsightDatasetKind.Courses) {
+            return coursesMField.has(key) || coursesSField.has(key);
+        } else {
+            return false;
+        }
+    }
+
+    public checkValidSKey(key: string): boolean {
+        if (this.currentKind === InsightDatasetKind.Rooms) {
+            return roomsSField.has(key);
+        }
+        if (this.currentKind === InsightDatasetKind.Courses) {
+            return coursesSField.has(key);
+        } else {
+            return false;
+        }
+    }
+
+    public checkValidMKey(key: string): boolean {
+        if (this.currentKind === InsightDatasetKind.Rooms) {
+            return roomsMField.has(key);
+        }
+        if (this.currentKind === InsightDatasetKind.Courses) {
+            return coursesMField.has(key);
+        } else {
+            return false;
+        }
     }
 }

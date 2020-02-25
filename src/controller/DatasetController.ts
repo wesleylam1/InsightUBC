@@ -47,6 +47,14 @@ export default class DatasetController {
         }
     }
 
+    public getDatasetKind(id: string): any {
+        if (this.datasetsAdded.has(id) ) {
+            return this.datasetsAdded.get(id).datatype;
+        } else {
+            throw new InsightError("A dataset with this id could not be found");
+        }
+    }
+
     private addCourses(id: string, content: string): Promise<CourseDataset> {
         return new Promise((resolve, reject) => {
             let courses: Course[] = [];

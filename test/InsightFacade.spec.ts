@@ -71,7 +71,7 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
 
     });
 
-  /*  it("Should add a valid dataset (rooms)", function () {
+    it("Should add a valid dataset (rooms)", function () {
         const id: string = "rooms";
         const expected: string[] = [id];
         return insightFacade.addDataset(id, datasets[id], InsightDatasetKind.Rooms).then((result: string[]) => {
@@ -80,6 +80,7 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
             expect.fail(err, expected, "Should not have rejected");
         });
     });
+    /*
 
     // test with empty dataset
     it("Should fail to add empty Dataset", function () {

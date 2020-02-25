@@ -1,8 +1,7 @@
 import {InsightError, NotFoundError, ResultTooLargeError} from "./IInsightFacade";
 import DatasetController from "./DatasetController";
 import Log from "../Util";
-import OptionsHelper from "./OptionsHelper";
-import ObjectArrayHelper from "./ObjectArrayHelper";
+import OptionsProcessor from "./OptionsProcessor";
 import QueryController from "./QueryController";
 
 const mField = new Set(["avg", "pass", "audit", "fail", "year"]);
@@ -56,7 +55,7 @@ export default class FilterProcessor {
         if (Object.keys(query).length !== 1) {
             throw new InsightError("wrong number of keys in " + comparator);
         }
-        if (!sField.has(key.split("_")[1])) {
+        if (!this.controller.checkValidSKey(key.split("_")[1])) {
             throw new InsightError("used String Comparator with non sField");
         }
         let value: any = query[key];
@@ -197,7 +196,7 @@ export default class FilterProcessor {
             throw new InsightError("Multiple Datasets not supported");
         }
         let keyWithoutID: string = key.split("_")[1];
-        if (!mField.has(keyWithoutID)) {
+        if (!this.controller.checkValidMKey(keyWithoutID)) {
             throw new InsightError("used Math Comparator with non mField");
         }
         let value: any = query[key];
