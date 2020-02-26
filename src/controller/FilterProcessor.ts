@@ -49,7 +49,7 @@ export default class FilterProcessor {
             throw new InsightError("wrong number of values in " + comparator);
         }
         let key: string = Object.keys(query)[0];
-        if (!this.controller.getKeyandCheckIDValid(key)) {
+        if (!this.controller.checkIDValid(key)) {
             throw new InsightError("Multiple Datasets not supported");
         }
         if (Object.keys(query).length !== 1) {
@@ -192,7 +192,7 @@ export default class FilterProcessor {
             throw new InsightError("wrong number of keys in " + comparator);
         }
         let key: string = Object.keys(query)[0];
-        if (!this.controller.getKeyandCheckIDValid(key)) {
+        if (!this.controller.checkIDValid(key)) {
             throw new InsightError("Multiple Datasets not supported");
         }
         let keyWithoutID: string = key.split("_")[1];

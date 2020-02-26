@@ -33,6 +33,7 @@ export default class QueryController {
 
     public performQuery(query: any): Promise<any[]> {
         try {
+            this.initialize(this.datasetController);
             this.validQuery(query);
             let condition: (section: any) => boolean = this.filterProcessor.processFilter(query["WHERE"]);
             let result: any[] = [];
@@ -82,7 +83,7 @@ export default class QueryController {
         return true;
     }
 
-    public getKeyandCheckIDValid(key: string): string {
+    public checkIDValid(key: string): string {
         let idstring: string = key;
         idstring = idstring.split("_", 1)[0];
         if (this.currentDatasetID == null) {

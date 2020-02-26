@@ -823,15 +823,15 @@ describe("InsightFacade PerformQuery", () => {
         return insightFacade.performQuery({
             "WHERE": {
                 "GT": {
-                    "courses_year": 2007
+                    "courses_avg": 98
                 }
             },
             "OPTIONS": {
                 "COLUMNS": [
                     "courses_dept",
-                    "courses_year"
+                    "courses_avg"
                 ],
-                "ORDER": "courses_year"
+                "ORDER": "courses_avg"
             }
         }).then((result: []) => {
             expect(result).to.deep.equal(expected);

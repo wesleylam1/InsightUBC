@@ -68,7 +68,7 @@ export default class OptionsProcessor {
                 throw new InsightError("COLUMNS values must be strings");
             }
             if (!this.containsKey(key)) {
-                this.queryController.getKeyandCheckIDValid(key);
+                this.queryController.checkIDValid(key);
                 let columnKey: string = key.split("_")[1];
                 this.columns.push(key);
                 if (!(this.queryController.checkValidKey(columnKey))) {
