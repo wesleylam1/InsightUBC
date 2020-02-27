@@ -17,7 +17,7 @@ export default class QueryController {
     private currentDatasetID: string;
     private currentKind: InsightDatasetKind;
     private sections: any;
-    private optionsHelper: OptionsProcessor;
+    private optionsProcessor: OptionsProcessor;
     private filterProcessor: FilterProcessor;
     private transformationProcessor: TransformationProcessor;
 
@@ -26,7 +26,7 @@ export default class QueryController {
         this.datasetController = controller;
         this.currentDatasetID = null;
         this.sections = null;
-        this.optionsHelper = new OptionsProcessor(this);
+        this.optionsProcessor = new OptionsProcessor(this);
         this.filterProcessor = new FilterProcessor(this);
         this.transformationProcessor = new TransformationProcessor(this);
     }
@@ -37,8 +37,12 @@ export default class QueryController {
             this.validQuery(query);
             let condition: (section: any) => boolean = this.filterProcessor.processFilter(query["WHERE"]);
             let result: any[] = [];
-            this.optionsHelper.getColumnKeys(query["OPTIONS"]["COLUMNS"]);
-            let columnize: (section: any) => any = this.optionsHelper.getColumnizeFunction();
+            if (query.hasOwnProperty("TRANSFORMATIONS")) {
+                let applyKeys = this.transformationProcessor.getApplyKeys(query["TRANSFORMATIONS"]);
+            }
+            this.optionsProcessor.getColumnKeys(query["OPTIONS"]["COLUMNS"]);
+            let columnize: (section: any) => any = this.optionsProcessor.getColumnizeFunction();
+
             for (let section of this.sections) {
                 if (condition(section)) {
                     result.push(columnize(section));
@@ -48,10 +52,7 @@ export default class QueryController {
                 }
             }
             if (query["OPTIONS"].hasOwnProperty("ORDER")) {
-                result = this.optionsHelper.doOrdering(query["OPTIONS"]["ORDER"], result);
-            }
-            if (query.hasOwnProperty("TRANSFORMATIONS")) {
-                result  = this.transformationProcessor.processTransformations(query["TRANSFORMATION"]);
+                result = this.optionsProcessor.doOrdering(query["OPTIONS"]["ORDER"], result);
             }
             return Promise.resolve(result);
         } catch (err) {
