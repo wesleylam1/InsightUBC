@@ -4,10 +4,15 @@ import {InsightError} from "./IInsightFacade";
 const applyTokens = new Set(["MAX", "MIN", "AVG", "COUNT", "SUM"]);
 const numericFields = new Set(["lat", "lon", "seats", "avg", "pass", "fail", "audit", "year"]);
 
-interface ApplyRule {
-    applyKey: string;
+export interface ApplyRule {
+    aKey: string;
     applyToken: string;
     key: string;
+}
+
+export interface InterMediaryGroup {
+    groupVals: any[];
+    groupContent: any[];
 }
 
 export default class TransformationProcessor {
@@ -41,16 +46,20 @@ export default class TransformationProcessor {
     }
 
     private doGroup(group: any) {
-        if (!Array.isArray(group)) {
-            throw new InsightError("GROUP must be an array");
-        }
-        if (group.length === 0) {
-            throw new InsightError("GROUP cannot be empty");
-        }
+        this.checkValidGroup(group);
         let groupKeys: string[] = this.getGroupKeys(group);
 
 
     }
+
+    private formGroups( individualResults: any[], groupKeys: string[]) {
+        individualResults.reduce((objectsByKeyValue: any[], obj: any) => {
+            let value: any = groupKeys.map((key) => obj[key]).join("_");
+            objectsByKeyValue[value] = (objectsByKeyValue[value] || []).concat(obj);
+            return objectsByKeyValue;
+        }, {});
+    }
+
 
     private getGroupKeys(group: string[]): string[] {
         let result: string[] = [];
@@ -62,7 +71,6 @@ export default class TransformationProcessor {
             result.push(key);
         }
         return result;
-
     }
 
     public getApplyKeys(transformations: any) {
@@ -70,7 +78,7 @@ export default class TransformationProcessor {
         let apply: any  = transformations["APPLY"];
         this.checkValidApply(apply);
         for (let applyrule of transformations["APPLY"]) {
-            this.processApplyRule(applyrule);
+            this.applyRules.push(this.processApplyRule(applyrule));
         }
     }
 
@@ -83,10 +91,16 @@ export default class TransformationProcessor {
         }
     }
 
-    private processApplyRule(applyrule: any) {
+    private processApplyRule(applyrule: any): ApplyRule {
         this.checkValidApplyRule(applyrule);
-        let applyKey = Object.keys(applyrule)[0];
+        let applyKey: string = Object.keys(applyrule)[0].toString();
         this.applyKeys.push(applyKey);
+        let newApplyRule: ApplyRule = {
+            aKey: applyKey,
+        applyToken: Object.keys(applyrule[applyKey])[0],
+        key: Object.values(applyrule[applyKey])[0].toString()
+    };
+        return newApplyRule;
     }
 
     private checkValidApplyRule(applyrule: any) {
@@ -136,4 +150,12 @@ export default class TransformationProcessor {
     }
 
 
+    private checkValidGroup(group: any) {
+        if (!Array.isArray(group)) {
+            throw new InsightError("GROUP must be an array");
+        }
+        if (group.length === 0) {
+            throw new InsightError("GROUP cannot be empty");
+        }
+    }
 }

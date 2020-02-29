@@ -30,7 +30,7 @@ export default class OptionsProcessor {
         if (!(this.containsKey(orderKey))) {
             throw new InsightError("ORDER key must be in columns");
         }
-        results = results.sort(this.compareForOrderFunc(orderKey));
+        results = results.sort(this.compareForOrderAscending(orderKey));
         return results;
     }
 
@@ -44,12 +44,25 @@ export default class OptionsProcessor {
         return hasKey;
     }
 
-    private compareForOrderFunc(orderKey: string): (a: any, b: any) => any {
+    private compareForOrderAscending(orderKey: string): (a: any, b: any) => any {
         return (a: any, b: any) => {
             if (a[orderKey] < b[orderKey]) {
                 return -1;
             }
             if (a[orderKey] > b[orderKey]) {
+                return 1;
+            } else {
+                return 0;
+            }
+        };
+    }
+
+    private compareForOrderDescending(orderKey: string): (a: any, b: any) => any {
+        return (a: any, b: any) => {
+            if (a[orderKey] > b[orderKey]) {
+                return -1;
+            }
+            if (a[orderKey] < b[orderKey]) {
                 return 1;
             } else {
                 return 0;
@@ -94,41 +107,5 @@ export default class OptionsProcessor {
         });
     }
 
-    public emptyWhere(query: any): any {
-        return false;
-    }
-
-    // checks that Query has WHERE and  OPTIONS with COLUMNS
-    public validQuery(query: any): boolean {
-        for (let i of Object.keys(query)) {
-            if (! (i === "WHERE" || i === "OPTIONS")) {
-                throw new InsightError("Query can only have WHERE and OPTIONS");
-            }
-        }
-        if (!(query.hasOwnProperty("WHERE"))) {
-            throw new InsightError("Query missing WHERE section");
-        }
-        if (!(typeof query["WHERE"] === "object" && query["WHERE"] !== null)) {
-            throw new InsightError("WHERE has wrong type");
-        }
-        if (!(query.hasOwnProperty("OPTIONS"))) {
-            throw new InsightError("Query missing OPTIONS section");
-        }
-        if (query.hasOwnProperty("ORDER")) {
-            throw new InsightError("ORDER not in OPTIONS");
-        }
-        if (!(query["OPTIONS"].hasOwnProperty("COLUMNS"))) {
-            throw new InsightError("OPTIONS missing COLUMNS");
-        }
-        if (!Array.isArray(query["OPTIONS"]["COLUMNS"])) {
-            throw new InsightError("COLUMNS must be an array");
-        }
-        for (let i of Object.keys(query["OPTIONS"])) {
-            if (!options.has(i)) {
-                throw new InsightError("Invalid key in options");
-            }
-        }
-        return true;
-    }
 }
 
