@@ -38,18 +38,9 @@ export default class QueryController {
             let condition: (section: any) => boolean = this.filterProcessor.processFilter(query["WHERE"]);
             let result: any[] = [];
             if (query.hasOwnProperty("TRANSFORMATIONS")) {
-                let applyKeys = this.transformationProcessor.getApplyKeys(query["TRANSFORMATIONS"]);
-            }
-            this.optionsProcessor.getColumnKeys(query["OPTIONS"]["COLUMNS"]);
-            let columnize: (section: any) => any = this.optionsProcessor.getColumnizeFunction();
-
-            for (let section of this.sections) {
-                if (condition(section)) {
-                    result.push(columnize(section));
-                    if (result.length > 5000) {
-                        throw new ResultTooLargeError("Result exceeded 5000 entries");
-                    }
-                }
+                 result = this.getResultsWithTRANSFORMATIONS(query, condition);
+            } else {
+                result = this.getResultsNoTRANSFORMATIONS(query, condition);
             }
             if (query["OPTIONS"].hasOwnProperty("ORDER")) {
                 result = this.optionsProcessor.doOrdering(query["OPTIONS"]["ORDER"], result);
@@ -58,6 +49,37 @@ export default class QueryController {
         } catch (err) {
             return Promise.reject(err);
         }
+    }
+
+    private getResultsWithTRANSFORMATIONS(query: any, condition: (section: any) => boolean): any[] {
+        let result: any[] = [];
+        let applyKeys: string[] = this.transformationProcessor.getApplyKeys(query["TRANSFORMATIONS"]);
+        let groupKeys: string[] = this.transformationProcessor.getGroupKeys(query["TRANSFORMATIONS"]["GROUP"]);
+        this.optionsProcessor.getColumnKeysWithTRANSFORMATION(query["OPTIONS"]["COLUMNS"], applyKeys, groupKeys);
+        let columnize: (section: any) => any = this.optionsProcessor.getColumnizeFunction();
+        for (let section of this.sections) {
+            if (condition(section)) {
+                result.push(section);
+            }
+        }
+        result = this.transformationProcessor.processGroup(query["TRANSFORMATIONS"]["GROUP"], result);
+
+        return result;
+    }
+
+    private getResultsNoTRANSFORMATIONS(query: any, condition: (section: any) => boolean ): any[] {
+        let result: any[] = [];
+        this.optionsProcessor.getColumnKeysNoTRANSFORMATIONS(query["OPTIONS"]["COLUMNS"]);
+        let columnize: (section: any) => any = this.optionsProcessor.getColumnizeFunction();
+        for (let section of this.sections) {
+            if (condition(section)) {
+                result.push(columnize(section));
+                if (result.length > 5000) {
+                    throw new ResultTooLargeError("Result exceeded 5000 entries");
+                }
+            }
+        }
+        return result;
     }
 
     public validQuery(query: any): boolean {

@@ -821,19 +821,47 @@ describe("InsightFacade PerformQuery", () => {
         const id: string = "courses";
         const expected: string[] = [id];
         return insightFacade.performQuery({
-            "WHERE": {
-                "GT": {
-                    "courses_avg": 98
+                "WHERE": {
+                    "AND": [
+                        {
+                            "IS": {
+                                "rooms_furniture": "*Tables*"
+                            }
+                        },
+                        {
+                            "GT": {
+                                "rooms_seats": 50
+                            }
+                        }
+                    ]
+                },
+                "OPTIONS": {
+                    "COLUMNS": [
+                        "rooms_fullname",
+                        "sumSeats"
+                    ],
+                    "ORDER": {
+                        "dir": "DOWN",
+                        "keys": [
+                            "sumSeats"
+                        ]
+                    }
+                },
+                "TRANSFORMATIONS": {
+                    "GROUP": [
+                        "rooms_fullname"
+                    ],
+                    "APPLY": [
+                        {
+                            "sumSeats": {
+                                "SUM": "rooms_seats"
+                            }
+                        }
+                    ]
                 }
-            },
-            "OPTIONS": {
-                "COLUMNS": [
-                    "courses_dept",
-                    "courses_avg"
-                ],
-                "ORDER": "courses_avg"
             }
-        }).then((result: []) => {
+
+        ).then((result: []) => {
             expect(result).to.deep.equal(expected);
         }).catch((err: any) => {
             Log.trace(err);

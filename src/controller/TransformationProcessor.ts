@@ -1,5 +1,6 @@
 import QueryController from "./QueryController";
 import {InsightError} from "./IInsightFacade";
+import Log from "../Util";
 
 const applyTokens = new Set(["MAX", "MIN", "AVG", "COUNT", "SUM"]);
 const numericFields = new Set(["lat", "lon", "seats", "avg", "pass", "fail", "audit", "year"]);
@@ -11,8 +12,8 @@ export interface ApplyRule {
 }
 
 export interface InterMediaryGroup {
-    groupVals: any[];
-    groupContent: any[];
+    groupName?: string;
+    groupContent?: any[];
 }
 
 export default class TransformationProcessor {
@@ -29,7 +30,6 @@ export default class TransformationProcessor {
 
     public processTransformations(transformations: any): any {
         this.checkValidTransformations(transformations);
-        this.doGroup(transformations["GROUP"]);
         return [];
     }
 
@@ -45,24 +45,85 @@ export default class TransformationProcessor {
         }
     }
 
-    private doGroup(group: any) {
+    public processGroup(group: any, resultSoFar: any[]): any[] {
         this.checkValidGroup(group);
         let groupKeys: string[] = this.getGroupKeys(group);
-
+        let groupedResult = this.formGroups(resultSoFar, groupKeys);
+        return groupedResult;
+        Log.trace("process group");
 
     }
 
-    private formGroups( individualResults: any[], groupKeys: string[]) {
-        individualResults.reduce((objectsByKeyValue: any[], obj: any) => {
+    /*private formGroups( individualResults: any[], groupKeys: string[]): any {
+        return individualResults.reduce((objectsByKeyValue: any[], obj: any) => {
             let value: any = groupKeys.map((key) => obj[key]).join("_");
             objectsByKeyValue[value] = (objectsByKeyValue[value] || []).concat(obj);
             return objectsByKeyValue;
         }, {});
+    }*/
+    private formGroups(array: any[], keys: string[]): any[] {
+        let result: InterMediaryGroup[] = [];
+        let current: InterMediaryGroup = {};
+        for (let i of array) {
+            current = {};
+            current = (this.getGroupForIndividual(i, result, keys));
+            this.processIntoGroup(current, i, keys);
+            if (this.groupDoesNotExistYet(current.groupName, result)) {
+            result.push(current);
+        }
+        }
+        return result;
     }
 
+    private processIntoGroup(group: InterMediaryGroup, individual: any, keys: string[]) {
+        if (group.groupName === null) {
+            group.groupName = this.makeGroupName(individual, keys);
+        }
+        group.groupContent.push(individual);
+    }
 
-    private getGroupKeys(group: string[]): string[] {
+    private makeGroupName(individual: any, keys: string[]): string {
+        let groupName = "";
+        for (let key of keys) {
+            let value: any = individual[key.split("_")[1]];
+            if ( typeof value !== "string") {
+                value = value.toString();
+            }
+            groupName = groupName + "_" + value;
+        }
+        return groupName;
+    }
+
+    private getGroupForIndividual(indivualResult: any, resultsSoFar: InterMediaryGroup[], keys: string[]): any {
+        let result: InterMediaryGroup = {};
+        result.groupName = null;
+        result.groupContent = [];
+        for (let i of resultsSoFar) {
+            if (this.groupHasMatchingValues(i, indivualResult, keys)) {
+                result = i;
+                return result;
+            }
+            }
+        return result;
+        }
+
+
+    private groupHasMatchingValues(group: InterMediaryGroup, individualResult: any, keys: string[]): boolean {
+        for (let key of keys) {
+            let gVal: any = group.groupContent[0][key.split("_")[1]];
+            let iVal: any = individualResult[key.split("_")[1]];
+            if (!(gVal === iVal)) {
+                Log.trace("values dont match");
+                return false;
+            }
+        }
+        Log.trace("matching values");
+        return true;
+    }
+
+    public getGroupKeys(group: string[]): string[] {
         let result: string[] = [];
+        Log.trace("starting for in get Group keys");
         for (let key of group) {
             this.controller.checkIDValid(key);
             if (!this.controller.checkValidKey(key.split("_")[1])) {
@@ -70,16 +131,18 @@ export default class TransformationProcessor {
             }
             result.push(key);
         }
+        Log.trace("about to return getGroupKeys");
         return result;
     }
 
-    public getApplyKeys(transformations: any) {
+    public getApplyKeys(transformations: any): string[] {
         this.checkValidTransformations(transformations);
         let apply: any  = transformations["APPLY"];
         this.checkValidApply(apply);
         for (let applyrule of transformations["APPLY"]) {
             this.applyRules.push(this.processApplyRule(applyrule));
         }
+        return this.applyKeys;
     }
 
     private checkValidApply(apply: any[]): void {
@@ -157,5 +220,14 @@ export default class TransformationProcessor {
         if (group.length === 0) {
             throw new InsightError("GROUP cannot be empty");
         }
+    }
+
+    private groupDoesNotExistYet(groupName: string, result: InterMediaryGroup[]): boolean {
+        for (let i of result) {
+            if (groupName === i.groupName) {
+                return false;
+            }
+        }
+        return true;
     }
 }

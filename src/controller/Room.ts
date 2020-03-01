@@ -1,8 +1,8 @@
 import {InsightError} from "./IInsightFacade";
 
 export class Room {
-    public fullName: string;
-    public shortName: string;
+    public fullname: string;
+    public shortname: string;
     public number: string;
     public address: string;
     public lat: number;
@@ -13,8 +13,8 @@ export class Room {
     public href: string;
 
     constructor() {
-        this.fullName = null;
-        this.shortName = null;
+        this.fullname = null;
+        this.shortname = null;
         this.number = null;
         this.address = null;
         this.lat = null;
@@ -35,8 +35,8 @@ interface GeoResponse {
 export function makeRoom(parsedRoom: any, node: any, geoLocation: any): Room {
     let room: Room = new Room();
     try {
-        room.shortName = node.childNodes[3].childNodes[0].value.trim();
-        room.fullName = node.childNodes[5].childNodes[1].childNodes[0].value.trim();
+        room.shortname = node.childNodes[3].childNodes[0].value.trim();
+        room.fullname = node.childNodes[5].childNodes[1].childNodes[0].value.trim();
         room.number = parsedRoom.childNodes[1].childNodes[1].childNodes[0].value;
         room.address = node.childNodes[7].childNodes[0].value.trim();
         room.lat = geoLocation.lat;

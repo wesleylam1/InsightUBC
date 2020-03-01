@@ -10,6 +10,7 @@ const options = new Set(["COLUMNS", "ORDER"]);
 export default class OptionsProcessor {
     private columns: string[];
     private queryController: QueryController;
+    private applyKeys: string[];
 
     constructor(controller: QueryController) {
         this.columns = new Array<string>();
@@ -70,7 +71,7 @@ export default class OptionsProcessor {
         };
     }
 
-    public getColumnKeys(columns: string[]): any {
+    public getColumnKeysNoTRANSFORMATIONS(columns: string[]): any {
         this.columns = [];
         let invalidKeyFound: boolean = false;
         if (columns.length === 0) {
@@ -81,12 +82,12 @@ export default class OptionsProcessor {
                 throw new InsightError("COLUMNS values must be strings");
             }
             if (!this.containsKey(key)) {
-                this.queryController.checkIDValid(key);
-                let columnKey: string = key.split("_")[1];
-                this.columns.push(key);
-                if (!(this.queryController.checkValidKey(columnKey))) {
-                    invalidKeyFound = true;
-                }
+                    this.queryController.checkIDValid(key);
+                    let columnKey: string = key.split("_")[1];
+                    if (!(this.queryController.checkValidKey(columnKey))) {
+                        invalidKeyFound = true;
+                    }
+                    this.columns.push(key);
             }
         }
         if (invalidKeyFound) {
@@ -96,6 +97,21 @@ export default class OptionsProcessor {
             throw new InsightError("Empty COLUMNS");
         }
     }
+
+    public getColumnKeysWithTRANSFORMATION(columns: string[], applyKeys: string[], groupKeys: string[]) {
+        this.columns = [];
+        if (columns.length === 0) {
+            throw new InsightError("COLUMNS is empty");
+        }
+        for (let key of columns) {
+            if (!(this.checkArrayForKey(key, applyKeys) || this.checkArrayForKey(key, groupKeys))) {
+                throw new InsightError("All keys in COLUMNS must be in GROUP or APPLY when TRANSFORMATIONS present");
+            } else {
+                this.columns.push(key);
+            }
+        }
+    }
+
 
     public getColumnizeFunction(): (section: any) => any {
         return ((section: any) => {
@@ -107,5 +123,13 @@ export default class OptionsProcessor {
         });
     }
 
+    private checkArrayForKey(key: string, array: string[]): boolean {
+        for (let k of array) {
+            if (k === key) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
