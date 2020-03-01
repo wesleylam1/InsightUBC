@@ -1,0 +1,52 @@
+{
+    "title": "valid SUMpass",
+    "query": {
+        "WHERE": {
+            "AND": [
+                {
+                    "GT": {
+                        "courses_avg": 90
+                    }
+                },
+                {
+                    "IS": {
+                        "courses_dept": "cpsc"
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_id",
+                "courses_title",
+                "SUMpass"
+            ],
+            "ORDER": "courses_id"
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": [
+                "courses_id",
+                "courses_title"
+            ],
+            "APPLY": [
+                {
+                    "SUMpass": {
+                        "SUM": "courses_pass"
+                    }
+                }
+            ]
+        }
+    },
+    "isQueryValid": true,
+    "result":[
+        {"courses_id":"445","courses_title":"alg in bioin","SUMpass":32},
+        {"courses_id":"449","courses_title":"honours thesis","SUMpass":64},
+        {"courses_id":"490","courses_title":"student seminar","SUMpass":99},
+        {"courses_id":"501","courses_title":"thry of automata","SUMpass":48},
+        {"courses_id":"503","courses_title":"computl ling 1","SUMpass":12},
+        {"courses_id":"507","courses_title":"software eng","SUMpass":38},
+        {"courses_id":"522","courses_title":"artif intell 2","SUMpass":14},
+        {"courses_id":"527","courses_title":"comp comm protcl","SUMpass":36},
+        {"courses_id":"540","courses_title":"machine learn i","SUMpass":226},
+        {"courses_id":"589","courses_title":"m.sc major essay","SUMpass":2}]
+}

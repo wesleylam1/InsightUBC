@@ -1,0 +1,46 @@
+{
+    "title": "validCountString",
+    "query":{
+        "WHERE": {
+            "AND": [
+                {
+                    "GT": {
+                        "courses_avg": 85
+                    }
+                },
+                {
+                    "IS": {
+                        "courses_dept": "phil"
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "countinstructor"
+            ],
+            "ORDER": "courses_id"
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": [
+                "courses_dept",
+                "courses_id"
+            ],
+            "APPLY": [
+                {
+                    "countinstructor": {
+                        "COUNT": "courses_instructor"
+                    }
+                }
+            ]
+        }
+    },
+    "isQueryValid": true,
+    "result":[
+        {"courses_dept":"phil","courses_id":"120","countinstructor":3},
+        {"courses_dept":"phil","courses_id":"485","countinstructor":2},
+        {"courses_dept":"phil","courses_id":"487","countinstructor":2},
+        {"courses_dept":"phil","courses_id":"585","countinstructor":1}]
+}

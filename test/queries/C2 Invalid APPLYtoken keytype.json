@@ -1,0 +1,40 @@
+{
+    "title": "Invalid keytype for MAX",
+    "query": {
+        "WHERE": {
+            "AND": [
+                {
+                    "GT": {
+                        "courses_avg": 90
+                    }
+                },
+                {
+                    "IS": {
+                        "courses_dept": "cpsc"
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_id",
+                "maxid"
+            ],
+            "ORDER": "courses_id"
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": [
+                "courses_id"
+            ],
+            "APPLY": [
+                {
+                    "maxid": {
+                        "MAX": "courses_id"
+                    }
+                }
+            ]
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

@@ -1,0 +1,42 @@
+{
+    "title": "Invalid - columns must be in group or apply when transformation is present",
+    "query": {
+        "WHERE": {
+            "AND": [
+                {
+                    "GT": {
+                        "courses_avg": 85
+                    }
+                },
+                {
+                    "IS": {
+                        "courses_dept": "phil"
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id"
+            ],
+            "ORDER": "courses_id"
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": [
+                "courses_dept",
+                "courses_year",
+                "courses_title"
+            ],
+            "APPLY": [
+                {
+                    "countinstructor": {
+                        "COUNT": "courses_instructor"
+                    }
+                }
+            ]
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}
