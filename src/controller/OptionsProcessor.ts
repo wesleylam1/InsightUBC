@@ -117,7 +117,11 @@ export default class OptionsProcessor {
         return ((section: any) => {
             let columnizedResult: any = {};
             for (let columnKey of this.columns) {
-                columnizedResult[columnKey] = section[columnKey.split("_")[1]];
+                if (columnKey.includes("_")) {
+                    columnizedResult[columnKey] = section[columnKey.split("_")[1]];
+                } else {
+                    columnizedResult[columnKey] = section[columnKey];
+                }
             }
             return columnizedResult;
         });

@@ -816,8 +816,9 @@ describe("InsightFacade PerformQuery", () => {
             }
         });
     });
+/*
 
-    /*it("single query test", function () {
+    it("single query test", function () {
         const id: string = "courses";
         const expected: string[] = [id];
         return insightFacade.performQuery({
@@ -825,36 +826,35 @@ describe("InsightFacade PerformQuery", () => {
                     "AND": [
                         {
                             "IS": {
-                                "rooms_furniture": "*Tables*"
+                                "courses_dept": "biol"
                             }
                         },
                         {
-                            "GT": {
-                                "rooms_seats": 50
+                            "NOT": {
+                                "EQ": {
+                                    "courses_year": 1900
+                                }
                             }
                         }
                     ]
                 },
                 "OPTIONS": {
                     "COLUMNS": [
-                        "rooms_fullname",
-                        "sumSeats"
+                        "earliestYear",
+                        "courses_title",
+                        "courses_id"
                     ],
-                    "ORDER": {
-                        "dir": "DOWN",
-                        "keys": [
-                            "sumSeats"
-                        ]
-                    }
+                    "ORDER": "earliestYear"
                 },
                 "TRANSFORMATIONS": {
                     "GROUP": [
-                        "rooms_fullname"
+                        "courses_title",
+                        "courses_id"
                     ],
                     "APPLY": [
                         {
-                            "sumSeats": {
-                                "SUM": "rooms_seats"
+                            "earliestYear": {
+                                "MIN": "courses_year"
                             }
                         }
                     ]
@@ -867,7 +867,8 @@ describe("InsightFacade PerformQuery", () => {
             Log.trace(err);
             expect.fail(err, expected, "Should not have rejected");
         });
-    });*/
+    });
+*/
 
 });
 

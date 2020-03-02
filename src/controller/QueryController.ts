@@ -63,8 +63,13 @@ export default class QueryController {
             }
         }
         result = this.transformationProcessor.processGroup(query["TRANSFORMATIONS"]["GROUP"], result);
-
-        return result;
+        result = this.transformationProcessor.applyApplyRulestoGroups(result);
+        result = this.transformationProcessor.unwrapGroups(result);
+        let columnizedResult: any[] = [];
+        for (let object of result) {
+            columnizedResult.push(columnize(object));
+        }
+        return columnizedResult;
     }
 
     private getResultsNoTRANSFORMATIONS(query: any, condition: (section: any) => boolean ): any[] {
