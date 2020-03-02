@@ -1,0 +1,19 @@
+{
+    "title": "Invalid AVG is null",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "courses_avg": null
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_id",
+                "courses_avg"
+            ],
+            "ORDER": "courses_id"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

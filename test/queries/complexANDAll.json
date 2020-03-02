@@ -1,0 +1,101 @@
+{
+    "title": "Find courses fitting ALL requirements",
+    "query": {
+        "WHERE": {
+            "AND": [
+                {
+                    "IS": {
+                        "courses_dept": "biol"
+                    }
+                },
+                {
+                    "IS": {
+                        "courses_instructor": "*samuels*"
+                    }
+                },
+                {
+                    "GT": {
+                        "courses_avg": 80
+                    }
+                },
+                {
+                    "GT": {
+                        "courses_pass": 10
+                    }
+                },
+                {
+                    "LT": {
+                        "courses_fail": 10
+                    }
+                },
+                {
+                    "LT": {
+                        "courses_audit": 10
+                    }
+                },
+                {
+                    "LT": {
+                        "courses_year": 2016
+                    }
+                },
+                {
+                    "IS": {
+                        "courses_title": "*bio*"
+                    }
+                },
+                {
+                    "IS": {
+                        "courses_uuid": "*21*"
+                    }
+                },
+                {
+                    "IS": {
+                        "courses_id": "*4*"
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "courses_avg",
+                "courses_instructor",
+                "courses_title",
+                "courses_pass",
+                "courses_fail",
+                "courses_audit",
+                "courses_uuid",
+                "courses_year"
+            ],
+            "ORDER": "courses_dept"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        {
+            "courses_dept": "biol",
+            "courses_id": "447",
+            "courses_avg": 85.44,
+            "courses_instructor": "samuels, anne lacey;taylor, eric",
+            "courses_title": "meth bio rsch ii",
+            "courses_pass": 18,
+            "courses_fail": 0,
+            "courses_audit": 0,
+            "courses_uuid": "72218",
+            "courses_year": 2013
+        },
+        {
+            "courses_dept": "biol",
+            "courses_id": "447",
+            "courses_avg": 86.2,
+            "courses_instructor": "samuels, anne lacey;taylor, eric",
+            "courses_title": "meth bio rsch ii",
+            "courses_pass": 30,
+            "courses_fail": 0,
+            "courses_audit": 0,
+            "courses_uuid": "55217",
+            "courses_year": 2015
+        }
+    ]
+}

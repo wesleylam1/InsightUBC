@@ -1,0 +1,19 @@
+{
+    "title": "Invalid PASS is null",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "courses_pass": null
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_id",
+                "courses_avg"
+            ],
+            "ORDER": "courses_id"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

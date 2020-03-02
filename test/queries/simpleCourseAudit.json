@@ -1,0 +1,40 @@
+{
+    "title": "Find courses where AUDIT > 20",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "courses_audit": 20
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "courses_title",
+                "courses_avg"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        {
+            "courses_dept": "rhsc",
+            "courses_id": "501",
+            "courses_title": "eval src evidenc",
+            "courses_avg": 86.89
+        },
+        {
+            "courses_dept": "rhsc",
+            "courses_id": "501",
+            "courses_title": "eval src evidenc",
+            "courses_avg": 88.79
+        },
+        {
+            "courses_dept": "cpsc",
+            "courses_id": "540",
+            "courses_title": "machine learn i",
+            "courses_avg": 90.53
+        }
+    ]
+}

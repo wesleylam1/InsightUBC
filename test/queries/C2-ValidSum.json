@@ -1,0 +1,173 @@
+{
+    "title": "C2 - Valid SUM",
+    "query": {
+        "WHERE": {
+            "AND": [
+                {
+                    "IS": {
+                        "rooms_furniture": "*Tables*"
+                    }
+                },
+                {
+                    "GT": {
+                        "rooms_seats": 50
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "rooms_shortname",
+                "sumSeats"
+            ],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": [
+                    "sumSeats"
+                ]
+            }
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": [
+                "rooms_shortname"
+            ],
+            "APPLY": [
+                {
+                    "sumSeats": {
+                        "SUM": "rooms_seats"
+                    }
+                }
+            ]
+        }
+    },
+    "isQueryValid": true,
+    "isSorted": true,
+    "sortedBy": "sumSeats",
+    "isDown": true,
+    "result": [
+        {
+            "rooms_shortname": "ANGU",
+            "sumSeats": 1131
+        },
+        {
+            "rooms_shortname": "SRC",
+            "sumSeats": 897
+        },
+        {
+            "rooms_shortname": "BUCH",
+            "sumSeats": 844
+        },
+        {
+            "rooms_shortname": "LSC",
+            "sumSeats": 825
+        },
+        {
+            "rooms_shortname": "SWNG",
+            "sumSeats": 755
+        },
+        {
+            "rooms_shortname": "HEBB",
+            "sumSeats": 537
+        },
+        {
+            "rooms_shortname": "PHRM",
+            "sumSeats": 475
+        },
+        {
+            "rooms_shortname": "LSK",
+            "sumSeats": 463
+        },
+        {
+            "rooms_shortname": "MCLD",
+            "sumSeats": 463
+        },
+        {
+            "rooms_shortname": "WOOD",
+            "sumSeats": 448
+        },
+        {
+            "rooms_shortname": "OSBO",
+            "sumSeats": 442
+        },
+        {
+            "rooms_shortname": "DMP",
+            "sumSeats": 360
+        },
+        {
+            "rooms_shortname": "CHBE",
+            "sumSeats": 354
+        },
+        {
+            "rooms_shortname": "GEOG",
+            "sumSeats": 292
+        },
+        {
+            "rooms_shortname": "IBLC",
+            "sumSeats": 266
+        },
+        {
+            "rooms_shortname": "CEME",
+            "sumSeats": 162
+        },
+        {
+            "rooms_shortname": "FRDM",
+            "sumSeats": 160
+        },
+        {
+            "rooms_shortname": "FSC",
+            "sumSeats": 130
+        },
+        {
+            "rooms_shortname": "IONA",
+            "sumSeats": 100
+        },
+        {
+            "rooms_shortname": "ALRD",
+            "sumSeats": 94
+        },
+        {
+            "rooms_shortname": "ESB",
+            "sumSeats": 80
+        },
+        {
+            "rooms_shortname": "LASR",
+            "sumSeats": 80
+        },
+        {
+            "rooms_shortname": "BIOL",
+            "sumSeats": 76
+        },
+        {
+            "rooms_shortname": "MCML",
+            "sumSeats": 72
+        },
+        {
+            "rooms_shortname": "ORCH",
+            "sumSeats": 72
+        },
+        {
+            "rooms_shortname": "BRKX",
+            "sumSeats": 70
+        },
+        {
+            "rooms_shortname": "SPPH",
+            "sumSeats": 66
+        },
+        {
+            "rooms_shortname": "FORW",
+            "sumSeats": 63
+        },
+        {
+            "rooms_shortname": "MATH",
+            "sumSeats": 60
+        },
+        {
+            "rooms_shortname": "SCRF",
+            "sumSeats": 60
+        },
+        {
+            "rooms_shortname": "UCLL",
+            "sumSeats": 55
+        }
+    ]
+}

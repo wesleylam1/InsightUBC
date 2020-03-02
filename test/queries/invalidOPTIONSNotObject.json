@@ -1,0 +1,13 @@
+{
+    "title": "Invalid - OPTIONS is not an object",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_id": "501"
+            }
+        },
+        "OPTIONS": []
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

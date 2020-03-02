@@ -1,0 +1,19 @@
+{
+    "title": "Invalid MKEY",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_avg": 70
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_id",
+                "courses_avg"
+            ],
+            "ORDER": "courses_id"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}
