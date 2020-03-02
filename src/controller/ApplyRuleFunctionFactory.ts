@@ -50,7 +50,8 @@ export class ApplyRuleFunctionFactory {
         return ((group: IntermediaryGroup) => {
             let total: Decimal = new Decimal(0);
             for (let individual of group.groupContent) {
-                Decimal.add(total, new Decimal(individual[key]));
+                let val: number = individual[key.split("_")[1]];
+                Decimal.add(total, new Decimal(val));
             }
             let avg = total.toNumber() / group.groupContent.length;
             let res = Number(avg.toFixed(2));
