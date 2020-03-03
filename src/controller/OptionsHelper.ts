@@ -21,19 +21,42 @@ export default class OptionsHelper {
 
 
     public doOrdering(orderKey: any, results: any): any {
+        let dir = orderKey["dir"];
+        let keys = orderKey["keys"];
+        let dirKeys = ["UP", "DOWN"];
         if (!orderKey) {
             throw new InsightError("ORDER key cannot be null");
         }
-        if (!(typeof orderKey === "string" && orderKey !== null)) {
-            throw new InsightError("wrong type of key in ORDER");
+        if (typeof orderKey === "string") {
+            if (orderKey === null) {
+                throw new InsightError("wrong type of key in ORDER");
+            }
+            if (!(mField.has(orderKey.split("_")[1]) || sField.has(orderKey.split("_")[1]))) {
+                throw new InsightError("no/invalid keys in ORDER");
+            }
+            if (!(this.containsKey(orderKey))) {
+                throw new InsightError("ORDER key must be in columns");
+            }
+            results = results.sort(this.compareOrderUp(orderKey));
+        } else {
+             let comparator = Object.keys(orderKey);
+             if (comparator.length !== 2 || !comparator.includes("dir") || !comparator.includes("keys")) {
+                throw new InsightError("wrong type of keys in ORDER");
+                }
+             if (!dirKeys.includes(dir)) {
+                throw new InsightError("invalid direction");
+             }
+             for (let key of keys) {
+               if (!(this.containsKey(key))) {
+                  throw new InsightError("invalid keys ");
+             }
+}
+             if (dir === "DOWN") {
+                 results = results.sort(this.compareOrderDown(keys));
+             } else {
+                 results = results.sort(this.compareOrderUp(keys));
+             }
         }
-        if (!(mField.has(orderKey.split("_")[1]) || sField.has(orderKey.split("_")[1]))) {
-            throw new InsightError("no/invalid keys in ORDER");
-        }
-        if (!(this.containsKey(orderKey))) {
-            throw new InsightError("ORDER key must be in columns");
-        }
-        results = results.sort(this.compareForOrderFunc(orderKey));
         return results;
     }
 
@@ -47,12 +70,25 @@ export default class OptionsHelper {
         return hasKey;
     }
 
-    private compareForOrderFunc(orderKey: string): (a: any, b: any) => any {
+    private compareOrderUp(orderKey: string): (a: any, b: any) => any {
         return (a: any, b: any) => {
             if (a[orderKey] < b[orderKey]) {
                 return -1;
             }
             if (a[orderKey] > b[orderKey]) {
+                return 1;
+            } else {
+                return 0;
+            }
+        };
+    }
+
+    private compareOrderDown(orderKey: string): (a: any, b: any) => any {
+        return (a: any, b: any) => {
+            if (a[orderKey] > b[orderKey]) {
+                return -1;
+            }
+            if (a[orderKey] < b[orderKey]) {
                 return 1;
             } else {
                 return 0;
