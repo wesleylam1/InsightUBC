@@ -23,7 +23,7 @@ export class ApplyRuleFunctionFactory {
 
     public static getMAXFunction(key: string): (group: IntermediaryGroup) => number {
         return ((group: IntermediaryGroup) => {
-            let currMax: number = group.groupContent[0][key];
+            let currMax: number = group.groupContent[0][key.split("_")[1]];
             for (let individual of group.groupContent) {
                 if (individual[key] > currMax) {
                     currMax = individual[key];
@@ -64,7 +64,7 @@ export class ApplyRuleFunctionFactory {
         return ((group: IntermediaryGroup) => {
             let sum: number = 0;
             for (let individual of group.groupContent) {
-                sum += individual[key];
+                sum += individual[key.split("_")[1]];
             }
             return Number(sum.toFixed(2));
         });
@@ -75,9 +75,9 @@ export class ApplyRuleFunctionFactory {
             let alreadySeen: any = {};
             let count: number = 0;
             for (let individual of group.groupContent) {
-                if (!alreadySeen.hasOwnProperty(individual[key])) {
+                if (!alreadySeen.hasOwnProperty(individual[key.split("_")[1]])) {
                     count ++;
-                    alreadySeen[individual[key]] = 1;
+                    alreadySeen[individual[key.split("_")[1]]] = 1;
                 }
             }
             return count;

@@ -178,6 +178,11 @@ export default class TransformationProcessor {
     private processApplyRule(applyrule: any): ApplyRule {
         this.checkValidApplyRule(applyrule);
         let applyKey: string = Object.keys(applyrule)[0].toString();
+        let alreadySeenKeys = new Set<string>();
+        if (alreadySeenKeys.has(applyKey)) {
+            throw new InsightError("each applyKey must be unique");
+        }
+        alreadySeenKeys.add(applyKey);
         this.applyKeys.push(applyKey);
         let newApplyRule: ApplyRule = {
             aKey: applyKey,

@@ -120,7 +120,7 @@ export default class OptionsProcessor {
                 if (columnKey.includes("_")) {
                     columnizedResult[columnKey] = section[columnKey.split("_")[1]];
                 } else {
-                    columnizedResult[columnKey] = section[columnKey];
+                    columnizedResult[columnKey] = section[columnKey.split("_")[1]];
                 }
             }
             return columnizedResult;
