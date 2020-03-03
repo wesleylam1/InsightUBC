@@ -37,7 +37,7 @@ export default class OptionsHelper {
             if (!(this.containsKey(orderKey))) {
                 throw new InsightError("ORDER key must be in columns");
             }
-            results = results.sort(this.compareOrderUp(orderKey));
+            results = results.sort(this.compareOrderUp([orderKey]));
         } else {
              let comparator = Object.keys(orderKey);
              if (comparator.length !== 2 || !comparator.includes("dir") || !comparator.includes("keys")) {
@@ -70,29 +70,31 @@ export default class OptionsHelper {
         return hasKey;
     }
 
-    private compareOrderUp(orderKey: string): (a: any, b: any) => any {
+    private compareOrderUp(orderKey: string[]): (a: any, b: any) => any {
         return (a: any, b: any) => {
-            if (a[orderKey] < b[orderKey]) {
-                return -1;
+            for (let keys of orderKey) {
+                if (a[keys] < b[keys]) {
+                    return -1;
+                }
+                if (a[keys] > b[keys]) {
+                    return 1;
+                }
             }
-            if (a[orderKey] > b[orderKey]) {
-                return 1;
-            } else {
-                return 0;
-            }
+            return 0;
         };
     }
 
-    private compareOrderDown(orderKey: string): (a: any, b: any) => any {
+    private compareOrderDown(orderKey: string[]): (a: any, b: any) => any {
         return (a: any, b: any) => {
-            if (a[orderKey] > b[orderKey]) {
-                return -1;
+            for (let keys of orderKey) {
+                if (a[keys] > b[keys]) {
+                    return -1;
+                }
+                if (a[keys] < b[keys]) {
+                    return 1;
+                }
             }
-            if (a[orderKey] < b[orderKey]) {
-                return 1;
-            } else {
-                return 0;
-            }
+            return 0;
         };
     }
 
