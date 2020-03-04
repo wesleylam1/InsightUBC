@@ -819,7 +819,7 @@ describe("InsightFacade PerformQuery", () => {
 
 
 /*
-
+//
     it("single query test", function () {
         const id: string = "courses";
         const expected: string[] = [id];
