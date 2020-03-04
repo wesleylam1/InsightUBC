@@ -158,6 +158,9 @@ export default class TransformationProcessor {
         let apply: any  = transformations["APPLY"];
         this.checkValidApply(apply);
         for (let applyrule of transformations["APPLY"]) {
+            if (Object.keys(applyrule).length !== 1) {
+                throw new InsightError("applyRule cannot be an empty object");
+            }
             this.applyRules.push(this.processApplyRule(applyrule));
         }
         return this.applyKeys;

@@ -817,6 +817,7 @@ describe("InsightFacade PerformQuery", () => {
         });
     });
 
+
 /*
 
     it("single query test", function () {
@@ -827,38 +828,34 @@ describe("InsightFacade PerformQuery", () => {
                     "AND": [
                         {
                             "IS": {
-                                "courses_dept": "biol"
+                                "rooms_furniture": "*Tables*"
+                            }
+                        },
+                        {
+                            "GT": {
+                                "rooms_seats": 300
                             }
                         }
-
                     ]
                 },
                 "OPTIONS": {
                     "COLUMNS": [
-                        "earliestYear",
-                        "courses_title",
-                        "courses_id"
+                        "rooms_shortname"
+
                     ],
-                    "ORDER": "earliestYear"
+                    "ORDER": {
+                        "dir": "DOWN",
+                        "keys": [
+                            "rooms_shortname"
+                        ]
+                    }
                 },
                 "TRANSFORMATIONS": {
                     "GROUP": [
-                        "courses_title",
-                        "courses_id"
+                        "rooms_shortname"
                     ],
                     "APPLY": [
-                        {
-                            "earliestYear": {
-                                "MIN": "courses_year"
-                            }
-
-                        }, {
-                            "earliestYear": {
-                                "MIN": "courses_year"
-                            }
-
-                        }
-
+                        {}
                     ]
                 }
             }
@@ -869,6 +866,7 @@ describe("InsightFacade PerformQuery", () => {
             expect.fail(err, expected, "Should not have rejected");
         });
     });
+
 */
 
 
