@@ -191,7 +191,7 @@ export default class TransformationProcessor {
        if (!(typeof applyrule === "object" && applyrule !== null) || Array.isArray(applyrule)) {
             throw new InsightError("Invalid applyrule");
         }
-       if (JSON.stringify(applyrule) === "{}") {
+       if (Object.keys(applyrule).length !== 1) {
            throw new InsightError("applyrule cannot be empty");
        }
        if (Object.values(applyrule).length > 1) {
