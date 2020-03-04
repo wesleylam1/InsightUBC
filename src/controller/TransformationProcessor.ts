@@ -191,8 +191,11 @@ export default class TransformationProcessor {
        if (!(typeof applyrule === "object" && applyrule !== null) || Array.isArray(applyrule)) {
             throw new InsightError("Invalid applyrule");
         }
-       if (Object.values(applyrule).length > 1) {
+       if (Object.keys(applyrule).length > 1) {
            throw new InsightError("applyrule can only have 1 value");
+       }
+       if (Object.keys(applyrule).length === 0 || applyrule === {}) {
+           throw new InsightError("cannot have no values");
        }
        let applyKey = Object.keys(applyrule)[0];
        if (applyKey.includes("_")) {
