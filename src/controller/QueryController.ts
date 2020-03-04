@@ -108,6 +108,11 @@ export default class QueryController {
                 throw new InsightError("Invalid key in options");
             }
         }
+        for (let i of Object.keys(query)) {
+            if (!(i === "WHERE" || i === "TRANSFORMATIONS" || i === "OPTIONS")) {
+                throw new InsightError("Invalid key in query");
+            }
+        }
         return true;
     }
 

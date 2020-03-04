@@ -30,11 +30,6 @@ export default class TransformationProcessor {
         this.applyRules = [];
     }
 
-    public processTransformations(transformations: any): any {
-        this.checkValidTransformations(transformations);
-        return [];
-    }
-
     private checkValidTransformations(transformations: any): void {
         if (!transformations.hasOwnProperty("GROUP")) {
             throw new InsightError("TRANSFORMATIONS must have GROUP");
@@ -42,8 +37,10 @@ export default class TransformationProcessor {
         if (!transformations.hasOwnProperty("APPLY")) {
             throw new InsightError("TRANSFORMATIONS must have APPLY");
         }
-        if (!(Object.keys(transformations).length === 2)) {
-            throw new InsightError("Too many entries in transformations");
+        for (let i of Object.keys(transformations)) {
+            if (!(i === "GROUP" || i === "APPLY" )) {
+                throw new InsightError("Invalid key in TRANSFORMATIONS");
+            }
         }
     }
 
@@ -178,11 +175,9 @@ export default class TransformationProcessor {
     private processApplyRule(applyrule: any): ApplyRule {
         this.checkValidApplyRule(applyrule);
         let applyKey: string = Object.keys(applyrule)[0].toString();
-        let alreadySeenKeys = new Set<string>();
-        if (alreadySeenKeys.has(applyKey)) {
+        if (this.checkArrayForKey(applyKey, this.applyKeys)) {
             throw new InsightError("each applyKey must be unique");
         }
-        alreadySeenKeys.add(applyKey);
         this.applyKeys.push(applyKey);
         let newApplyRule: ApplyRule = {
             aKey: applyKey,
@@ -263,5 +258,14 @@ export default class TransformationProcessor {
             result.push(group.groupObject);
         }
         return result;
+    }
+
+    private checkArrayForKey(key: string, array: string[]): boolean {
+        for (let k of array) {
+            if (k === key) {
+                return true;
+            }
+        }
+        return false;
     }
 }

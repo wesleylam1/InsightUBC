@@ -51,7 +51,7 @@ export class ApplyRuleFunctionFactory {
             let total: Decimal = new Decimal(0);
             for (let individual of group.groupContent) {
                 let val: number = individual[key.split("_")[1]];
-                Decimal.add(total, new Decimal(val));
+                total = Decimal.add(total, new Decimal(val));
             }
             let avg = total.toNumber() / group.groupContent.length;
             let res = Number(avg.toFixed(2));

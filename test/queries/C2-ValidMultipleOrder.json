@@ -42,10 +42,10 @@
             ]
         }
     },
-    "isQueryValid": true,
     "isSorted": true,
     "isDown": true,
     "sortedBy": "rooms_seats",
+    "isQueryValid": true,
     "result": [
         {
             "rooms_shortname": "OSBO",

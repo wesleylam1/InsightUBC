@@ -27,6 +27,9 @@ export default class FilterProcessor {
                     return true;
                 };
             }
+            if (Object.keys(query).length !== 1) {
+                throw new InsightError("Too many keys in WHERE");
+            }
             let comparator: any = Object.keys(query)[0];
             if (comparator === "GT" || comparator === "LT" || comparator === "EQ") {
                 return this.processMathComparator(query[comparator], comparator);

@@ -15,23 +15,56 @@ export default class OptionsProcessor {
     constructor(controller: QueryController) {
         this.columns = new Array<string>();
         this.queryController = controller;
+        this.applyKeys = [];
     }
 
 
     public doOrdering(orderKey: any, results: any): any {
+        if (orderKey === null) {
+            throw new InsightError("wrong type of key in ORDER");
+        }
+        let dir = orderKey["dir"];
+        let keys = orderKey["keys"];
+        let dirKeys = ["UP", "DOWN"];
         if (!orderKey) {
             throw new InsightError("ORDER key cannot be null");
         }
-        if (!(typeof orderKey === "string" && orderKey !== null)) {
-            throw new InsightError("wrong type of key in ORDER");
+        if (typeof orderKey === "string") {
+            if (orderKey.includes("_")) {
+                if (!(mField.has(orderKey.split("_")[1]) || sField.has(orderKey.split("_")[1]))) {
+                    throw new InsightError("no/invalid keys in ORDER");
+                }
+            } else {
+                if (!this.checkArrayForKey(orderKey, this.columns)) {
+                    throw new InsightError("Orderkeys must be in group or apply");
+                }
+            }
+            if (!(this.containsKey(orderKey))) {
+                throw new InsightError("ORDER key must be in columns");
+            }
+            results = results.sort(this.compareOrderUp([orderKey]));
+        } else {
+            let comparator = Object.keys(orderKey);
+            if (comparator.length !== 2 || !comparator.includes("dir") || !comparator.includes("keys")) {
+                throw new InsightError("wrong type of keys in ORDER");
+            }
+            if (!dirKeys.includes(dir)) {
+                throw new InsightError("invalid direction");
+            }
+            if (keys.length === 0) {
+                throw new InsightError("Empty Order keys");
+            }
+            for (let key of keys) {
+                if (!(this.containsKey(key))) {
+                    throw new InsightError("invalid keys ");
+                }
+            }
+            if (dir === "DOWN") {
+                results = results.sort(this.compareOrderDown(keys));
+            } else {
+                results = results.sort(this.compareOrderUp(keys));
+            }
         }
-        if (!(this.queryController.checkValidKey(orderKey.split("_")[1]))) {
-            throw new InsightError("no/invalid keys in ORDER");
-        }
-        if (!(this.containsKey(orderKey))) {
-            throw new InsightError("ORDER key must be in columns");
-        }
-        results = results.sort(this.compareForOrderAscending(orderKey));
         return results;
     }
 
@@ -45,29 +78,31 @@ export default class OptionsProcessor {
         return hasKey;
     }
 
-    private compareForOrderAscending(orderKey: string): (a: any, b: any) => any {
+    private compareOrderUp(orderKey: string[]): (a: any, b: any) => any {
         return (a: any, b: any) => {
-            if (a[orderKey] < b[orderKey]) {
-                return -1;
+            for (let keys of orderKey) {
+                if (a[keys] < b[keys]) {
+                    return -1;
+                }
+                if (a[keys] > b[keys]) {
+                    return 1;
+                }
             }
-            if (a[orderKey] > b[orderKey]) {
-                return 1;
-            } else {
-                return 0;
-            }
+            return 0;
         };
     }
 
-    private compareForOrderDescending(orderKey: string): (a: any, b: any) => any {
+    private compareOrderDown(orderKey: string[]): (a: any, b: any) => any {
         return (a: any, b: any) => {
-            if (a[orderKey] > b[orderKey]) {
-                return -1;
+            for (let keys of orderKey) {
+                if (a[keys] > b[keys]) {
+                    return -1;
+                }
+                if (a[keys] < b[keys]) {
+                    return 1;
+                }
             }
-            if (a[orderKey] < b[orderKey]) {
-                return 1;
-            } else {
-                return 0;
-            }
+            return 0;
         };
     }
 
@@ -120,7 +155,7 @@ export default class OptionsProcessor {
                 if (columnKey.includes("_")) {
                     columnizedResult[columnKey] = section[columnKey.split("_")[1]];
                 } else {
-                    columnizedResult[columnKey] = section[columnKey.split("_")[1]];
+                    columnizedResult[columnKey] = section[columnKey];
                 }
             }
             return columnizedResult;

@@ -816,6 +816,7 @@ describe("InsightFacade PerformQuery", () => {
             }
         });
     });
+
 /*
 
     it("single query test", function () {
@@ -828,14 +829,8 @@ describe("InsightFacade PerformQuery", () => {
                             "IS": {
                                 "courses_dept": "biol"
                             }
-                        },
-                        {
-                            "NOT": {
-                                "EQ": {
-                                    "courses_year": 1900
-                                }
-                            }
                         }
+
                     ]
                 },
                 "OPTIONS": {
@@ -856,11 +851,17 @@ describe("InsightFacade PerformQuery", () => {
                             "earliestYear": {
                                 "MIN": "courses_year"
                             }
+
+                        }, {
+                            "earliestYear": {
+                                "MIN": "courses_year"
+                            }
+
                         }
+
                     ]
                 }
             }
-
         ).then((result: []) => {
             expect(result).to.deep.equal(expected);
         }).catch((err: any) => {
@@ -869,6 +870,7 @@ describe("InsightFacade PerformQuery", () => {
         });
     });
 */
+
 
 });
 
