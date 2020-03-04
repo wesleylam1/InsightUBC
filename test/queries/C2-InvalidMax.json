@@ -34,7 +34,7 @@
             "APPLY": [
                 {
                     "maxSeats":  {
-                        "MAX": 4
+                        "MAX": "eight"
                     }
                 }]
         }
