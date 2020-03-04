@@ -29,7 +29,7 @@
                     "earliestYear": {
                         "MIN": "courses_year"
                     },
-                    "earliestYear": {
+                    "earliestYar": {
                         "MIN": "courses_year"
                     }
                 }

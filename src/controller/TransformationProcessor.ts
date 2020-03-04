@@ -167,9 +167,6 @@ export default class TransformationProcessor {
         if (!Array.isArray(apply)) {
             throw new InsightError("APPLY must be an array");
         }
-        if (apply.length === 0) {
-            throw new InsightError("APPLY must be a non-empty array");
-        }
     }
 
     private processApplyRule(applyrule: any): ApplyRule {
@@ -191,7 +188,7 @@ export default class TransformationProcessor {
        if (!(typeof applyrule === "object" && applyrule !== null) || Array.isArray(applyrule)) {
             throw new InsightError("Invalid applyrule");
         }
-       if (Object.values(applyrule).length === 0 || applyrule === {}) {
+       if (Object.values(applyrule).length !== 0 || applyrule === {}) {
            throw new InsightError("applyrule cannot be empty");
        }
        if (Object.values(applyrule).length > 1) {
