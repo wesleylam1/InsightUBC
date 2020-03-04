@@ -1,11 +1,13 @@
-import {InsightError, NotFoundError, ResultTooLargeError} from "./IInsightFacade";
+import {InsightDatasetKind, InsightError, ResultTooLargeError} from "./IInsightFacade";
 import DatasetController from "./DatasetController";
-import Log from "../Util";
-import OptionsHelper from "./OptionsHelper";
-import ObjectArrayHelper from "./ObjectArrayHelper";
+import OptionsProcessor from "./OptionsProcessor";
+import FilterProcessor from "./FilterProcessor";
+import TransformationProcessor from "./TransformationProcessor";
 
-const mField = new Set(["avg", "pass", "audit", "fail", "year"]);
-const sField = new Set(["dept", "id", "instructor", "title", "uuid"]);
+const coursesMField = new Set(["avg", "pass", "audit", "fail", "year"]);
+const coursesSField = new Set(["dept", "id", "instructor", "title", "uuid"]);
+const roomsSField = new Set(["fullname", "shortname", "number", "name", "address", "type", "furniture", "href"]);
+const roomsMField = new Set(["lat", "lon", "seats"]);
 const Comparator = new Set(["LT", "GT", "EQ", "IS"]);
 const ComparatorALL = new Set(["LT", "GT", "EQ", "IS", "AND", "OR", "NOT"]);
 const options = new Set(["COLUMNS", "ORDER"]);
@@ -13,36 +15,35 @@ const options = new Set(["COLUMNS", "ORDER"]);
 export default class QueryController {
     private datasetController: DatasetController;
     private currentDatasetID: string;
+    private currentKind: InsightDatasetKind;
     private sections: any;
-    private optionsHelper: OptionsHelper;
-    private objectArrayHelper: ObjectArrayHelper;
+    private optionsProcessor: OptionsProcessor;
+    private filterProcessor: FilterProcessor;
+    private transformationProcessor: TransformationProcessor;
 
     public initialize(controller: DatasetController) {
+        this.currentKind = null;
         this.datasetController = controller;
         this.currentDatasetID = null;
         this.sections = null;
-        this.optionsHelper = new OptionsHelper();
-        this.optionsHelper.setController(this);
-        this.objectArrayHelper = new ObjectArrayHelper();
+        this.optionsProcessor = new OptionsProcessor(this);
+        this.filterProcessor = new FilterProcessor(this);
+        this.transformationProcessor = new TransformationProcessor(this);
     }
 
     public performQuery(query: any): Promise<any[]> {
         try {
-            this.optionsHelper.validQuery(query);
-            let condition: (section: any) => boolean = this.processFilter(query["WHERE"]);
+            this.initialize(this.datasetController);
+            this.validQuery(query);
+            let condition: (section: any) => boolean = this.filterProcessor.processFilter(query["WHERE"]);
             let result: any[] = [];
-            this.optionsHelper.getColumnKeys(query["OPTIONS"]["COLUMNS"]);
-            let columnize: (section: any) => any = this.optionsHelper.getColumnizeFunction();
-            for (let section of this.sections) {
-                if (condition(section)) {
-                    result.push(columnize(section));
-                    if (result.length > 5000) {
-                        throw new ResultTooLargeError("Result exceeded 5000 entries");
-                    }
-                }
+            if (query.hasOwnProperty("TRANSFORMATIONS")) {
+                 result = this.getResultsWithTRANSFORMATIONS(query, condition);
+            } else {
+                result = this.getResultsNoTRANSFORMATIONS(query, condition);
             }
             if (query["OPTIONS"].hasOwnProperty("ORDER")) {
-                result = this.optionsHelper.doOrdering(query["OPTIONS"]["ORDER"], result);
+                result = this.optionsProcessor.doOrdering(query["OPTIONS"]["ORDER"], result);
             }
             return Promise.resolve(result);
         } catch (err) {
@@ -50,208 +51,40 @@ export default class QueryController {
         }
     }
 
-    private processFilter(query: any): (section: any) => boolean {
-        try {
-            if (!(typeof query === "object" && query !== null) || Array.isArray(query)) {
-                throw new InsightError("WHERE must be an object");
+    private getResultsWithTRANSFORMATIONS(query: any, condition: (section: any) => boolean): any[] {
+        let result: any[] = [];
+        let applyKeys: string[] = this.transformationProcessor.getApplyKeys(query["TRANSFORMATIONS"]);
+        let groupKeys: string[] = this.transformationProcessor.getGroupKeys(query["TRANSFORMATIONS"]["GROUP"]);
+        this.optionsProcessor.getColumnKeysWithTRANSFORMATION(query["OPTIONS"]["COLUMNS"], applyKeys, groupKeys);
+        let columnize: (section: any) => any = this.optionsProcessor.getColumnizeFunction();
+        for (let section of this.sections) {
+            if (condition(section)) {
+                result.push(section);
             }
-            if (Object.keys(query).length === 0) {
-                return (sections: any) => {
-                    return true;
-                };
-            }
-            let comparator: any = Object.keys(query)[0];
-            if (comparator === "GT" || comparator === "LT" || comparator === "EQ") {
-                return this.processMathComparator(query[comparator], comparator);
-            }
-            if (comparator === "IS") {
-                return this.processStringComparator(query[comparator], comparator);
-            }
-            if (comparator === "NOT" || comparator === "AND" || comparator === "OR") {
-                return this.processLogicComparator(query, comparator);
-            } else {
-                throw new InsightError("WHERE can only have filters");
-            }
-        } catch (err) {
-            throw err;
         }
+        result = this.transformationProcessor.processGroup(query["TRANSFORMATIONS"]["GROUP"], result);
+        result = this.transformationProcessor.applyApplyRulestoGroups(result);
+        result = this.transformationProcessor.unwrapGroups(result);
+        let columnizedResult: any[] = [];
+        for (let object of result) {
+            columnizedResult.push(columnize(object));
+        }
+        return columnizedResult;
     }
 
-    private processStringComparator(query: any, comparator: string): (section: any) => boolean {
-        if (Object.values(query).length !== 1) {
-            throw new InsightError("wrong number of values in " + comparator);
-        }
-        let key: string = Object.keys(query)[0];
-        if (!this.getKeyandCheckIDValid(key)) {
-            throw new InsightError("Multiple Datasets not supported");
-        }
-        if (Object.keys(query).length !== 1) {
-            throw new InsightError("wrong number of keys in " + comparator);
-        }
-        if (!sField.has(key.split("_")[1])) {
-            throw new InsightError("used String Comparator with non sField");
-        }
-        let value: any = query[key];
-        if (typeof value !== "string") {
-            throw new InsightError("invalid value");
-        }
-        return ((section: any) => {
-            return this.compareString(key, value, comparator, section);
-        });
-    }
-
-    private compareString(key: string, value: string, comparator: string, section: any): boolean {
-        let sectionData: string = section[key.split("_")[1]];
-        if (comparator === "IS") {
-            let compareFunc: (str: string) => boolean = this.makeIsBoolean(value);
-            return compareFunc(sectionData);
-        }
-    }
-
-    private makeIsBoolean(val: string): (str: string) => boolean {
-        let input: string = "";
-        if (val.startsWith("*") && !val.endsWith("*")) {
-            input = this.getValidInputString(val.split("*")[1]);
-            return (str: string) => {
-                return str.endsWith(input);
-            };
-        }
-        if (val.startsWith("*") && val.endsWith("*")) {
-            input = this.getValidInputString(val.substring(1, (val.length - 1)));
-            return (str: string) => {
-                return str.includes(input);
-            };
-        }
-        if (!val.startsWith("*") && val.endsWith("*")) {
-            input = this.getValidInputString(val.substring(0, (val.length - 1)));
-            return (str: string) => {
-                return str.startsWith(input);
-            };
-        } else {
-            input = this.getValidInputString(val);
-            return (str: string) => {
-                return str === input;
-            };
-        }
-    }
-
-    private getValidInputString(val: string): string {
-        if (val.includes("*")) {
-            throw new InsightError("Asterisks can only be beginning or end of input string");
-        }
-        return val;
-    }
-
-    private processLogicComparator(query: any, comparator: string): (section: any) => boolean {
-        if (comparator === "OR") {
-            return this.processOR(query["OR"]);
-        }
-        if (comparator === "AND") {
-            return this.processAND(query["AND"]);
-        }
-        if (comparator === "NOT") {
-            return this.processNOT(query["NOT"]);
-        }
-    }
-
-    private processAND(query: any[]): (section: any) => boolean {
-        let conditions: Array<(section: any) => boolean>;
-        conditions = new Array<(section: any) => boolean>();
-        if (Object.keys(query).length === 0) {
-            throw new InsightError("AND must have at least 1 filter");
-        }
-        if (!Array.isArray(query)) {
-            throw new InsightError("AND must be an array");
-        }
-        for (let filter of query) {
-            conditions.push(this.processFilter(filter));
-        }
-        return ((section: any) => {
-            let noFalse: boolean = true;
-            for (let c of conditions) {
-                if (!(c(section))) {
-                    noFalse = false;
+    private getResultsNoTRANSFORMATIONS(query: any, condition: (section: any) => boolean ): any[] {
+        let result: any[] = [];
+        this.optionsProcessor.getColumnKeysNoTRANSFORMATIONS(query["OPTIONS"]["COLUMNS"]);
+        let columnize: (section: any) => any = this.optionsProcessor.getColumnizeFunction();
+        for (let section of this.sections) {
+            if (condition(section)) {
+                result.push(columnize(section));
+                if (result.length > 5000) {
+                    throw new ResultTooLargeError("Result exceeded 5000 entries");
                 }
             }
-            return noFalse;
-        });
-    }
-
-    private processNOT(query: any): (section: any) => boolean {
-        let condition: (section: any) => boolean;
-        if (query === {}) {
-            throw new InsightError("Not must have at least 1 filter");
         }
-        if (Object.keys(query)[0] === "NOT") {
-            return this.processFilter(query["NOT"]);
-        }
-        if (Object.keys.length !== 1) {
-            throw new InsightError("Not cannot have more than 1 filter");
-        }
-        condition = this.processFilter(query);
-        return ((section: any) => {
-            return !condition(section);
-        });
-    }
-
-    private processOR(query: any): (section: any) => boolean {
-        if (Object.keys(query).length === 0) {
-            throw new InsightError("OR must have at least 1 filter");
-        }
-        if (!Array.isArray(query)) {
-            throw new InsightError("OR must be an array");
-        }
-        let conditions: Array<(section: any) => boolean>;
-        conditions = new Array<(section: any) => boolean>();
-        for (let filter of query) {
-            conditions.push(this.processFilter(filter));
-        }
-        return ((section: any) => {
-            let anyTrue: boolean = false;
-            for (let c of conditions) {
-                if (c(section)) {
-                    anyTrue = true;
-                }
-            }
-            return anyTrue;
-        });
-    }
-
-    private processMathComparator(query: any, comparator: string): (section: any) => boolean {
-        if (Object.values(query).length !== 1) {
-            throw new InsightError("wrong number of values in " + comparator);
-        }
-        if (Object.keys(query).length !== 1) {
-            throw new InsightError("wrong number of keys in " + comparator);
-        }
-        let key: string = Object.keys(query)[0];
-        if (!this.getKeyandCheckIDValid(key)) {
-            throw new InsightError("Multiple Datasets not supported");
-        }
-        let keyWithoutID: string = key.split("_")[1];
-        if (!mField.has(keyWithoutID)) {
-            throw new InsightError("used Math Comparator with non mField");
-        }
-        let value: any = query[key];
-        if (typeof value !== "number") {
-            throw new InsightError("invalid value");
-        }
-        return ((section: any) => {
-            return this.compareMath(keyWithoutID, value, comparator, section);
-        });
-    }
-
-    private compareMath(key: any, value: number, comparator: string, section: any): boolean {
-        let sectionData: number = section[key];
-        if (comparator === "GT") {
-            return sectionData > value;
-        }
-        if (comparator === "LT") {
-            return sectionData < value;
-        }
-        if (comparator === "EQ") {
-            return sectionData === value;
-        }
+        return result;
     }
 
     public validQuery(query: any): boolean {
@@ -275,10 +108,15 @@ export default class QueryController {
                 throw new InsightError("Invalid key in options");
             }
         }
+        for (let i of Object.keys(query)) {
+            if (!(i === "WHERE" || i === "TRANSFORMATIONS" || i === "OPTIONS")) {
+                throw new InsightError("Invalid key in query");
+            }
+        }
         return true;
     }
 
-    public getKeyandCheckIDValid(key: string): string {
+    public checkIDValid(key: string): string {
         let idstring: string = key;
         idstring = idstring.split("_", 1)[0];
         if (this.currentDatasetID == null) {
@@ -290,10 +128,44 @@ export default class QueryController {
         try {
             if (this.sections == null) {
                 this.sections = this.datasetController.getDatasetCourses(idstring);
+                this.currentKind = this.datasetController.getDatasetKind(idstring);
             }
         } catch (err) {
             throw err;
         }
         return idstring;
+    }
+
+    public checkValidKey(key: string): boolean {
+        if (this.currentKind === InsightDatasetKind.Rooms) {
+            return roomsMField.has(key) || roomsSField.has(key);
+        }
+        if (this.currentKind === InsightDatasetKind.Courses) {
+            return coursesMField.has(key) || coursesSField.has(key);
+        } else {
+            return false;
+        }
+    }
+
+    public checkValidSKey(key: string): boolean {
+        if (this.currentKind === InsightDatasetKind.Rooms) {
+            return roomsSField.has(key);
+        }
+        if (this.currentKind === InsightDatasetKind.Courses) {
+            return coursesSField.has(key);
+        } else {
+            return false;
+        }
+    }
+
+    public checkValidMKey(key: string): boolean {
+        if (this.currentKind === InsightDatasetKind.Rooms) {
+            return roomsMField.has(key);
+        }
+        if (this.currentKind === InsightDatasetKind.Courses) {
+            return coursesMField.has(key);
+        } else {
+            return false;
+        }
     }
 }

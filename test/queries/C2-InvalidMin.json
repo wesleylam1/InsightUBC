@@ -34,7 +34,7 @@
             "APPLY": [
                 {
                     "maxSeats":  {
-                        "MIN": 4
+                        "MIN": "rooms_shortname"
                     }
                 }]
         }

@@ -23,7 +23,7 @@ export default class TestUtil {
     public static checkQueryResult(test: ITestQuery, response: any, done: any): void {
         try {
             if (test.isQueryValid) {
-                expect(response).to.deep.equal(test.result);
+                expect(response).to.equal(test.result);
             } else {
                 if (test.result === "ResultTooLargeError") {
                     expect(response).to.be.instanceOf(ResultTooLargeError);

@@ -80,6 +80,7 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
             expect.fail(err, expected, "Should not have rejected");
         });
     });
+    /*
 
     // test with empty dataset
     it("Should fail to add empty Dataset", function () {
@@ -743,7 +744,7 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         }).catch((err: any) => {
             expect.fail(err, expected, "Should not have rejected");
         });
-    });
+    });*/
 });
 
 
@@ -815,25 +816,59 @@ describe("InsightFacade PerformQuery", () => {
             }
         });
     });
-    /*it("single query test", function () {
+
+
+/*
+//
+    it("single query test", function () {
         const id: string = "courses";
         const expected: string[] = [id];
         return insightFacade.performQuery({
-            "WHERE": [],
-            "OPTIONS": {
-                "COLUMNS": [
-                    "courses_id",
-                    "courses_avg"
-                ],
-                "ORDER": "courses_id"
+                "WHERE": {
+                    "AND": [
+                        {
+                            "IS": {
+                                "rooms_furniture": "*Tables*"
+                            }
+                        },
+                        {
+                            "GT": {
+                                "rooms_seats": 300
+                            }
+                        }
+                    ]
+                },
+                "OPTIONS": {
+                    "COLUMNS": [
+                        "rooms_shortname"
+
+                    ],
+                    "ORDER": {
+                        "dir": "DOWN",
+                        "keys": [
+                            "rooms_shortname"
+                        ]
+                    }
+                },
+                "TRANSFORMATIONS": {
+                    "GROUP": [
+                        "rooms_shortname"
+                    ],
+                    "APPLY": [
+                        {}
+                    ]
+                }
             }
-        }).then((result: []) => {
+        ).then((result: []) => {
             expect(result).to.deep.equal(expected);
         }).catch((err: any) => {
             Log.trace(err);
             expect.fail(err, expected, "Should not have rejected");
         });
-    });*/
+    });
+
+*/
+
 
 });
 

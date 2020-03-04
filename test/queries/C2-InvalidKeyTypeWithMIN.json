@@ -1,0 +1,38 @@
+{
+    "title" : "MIn has non numericField",
+    "query": {
+        "WHERE": {
+            "AND": [
+                {
+                    "IS": {
+                        "courses_dept": "biol"
+                    }
+                }
+
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "earliestYear",
+                "courses_title",
+                "courses_id"
+            ],
+            "ORDER": "earliestYear"
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": [
+                "courses_title",
+                "courses_id"
+            ],
+            "APPLY": [
+                {
+                    "earliestYear": {
+                        "MIN": "courses_title"
+                    }
+                }
+            ]
+        }
+    },
+    "isQueryValid": false,
+    "result" : "InsightError"
+}
