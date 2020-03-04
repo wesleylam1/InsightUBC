@@ -1,0 +1,43 @@
+{
+    "title" : "two applykeys",
+    "query": {
+        "WHERE": {
+            "AND": [
+                {
+                    "IS": {
+                        "courses_dept": "biol"
+                    }
+                }
+
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "earliestYear",
+                "courses_title",
+                "courses_id"
+            ],
+            "ORDER": "earliestYear"
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": [
+                "courses_title",
+                "courses_id"
+            ],
+            "APPLY": [
+                {
+                    "earliestYear": {
+                        "MIN": "courses_year"
+                    },
+                    "earliestMear": {
+                        "MAX": "courses_year"
+                    }
+
+                }
+
+            ]
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}
