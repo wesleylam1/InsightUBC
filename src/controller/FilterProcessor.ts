@@ -80,6 +80,11 @@ export default class FilterProcessor {
 
     private makeIsBoolean(val: string): (str: string) => boolean {
         let input: string = "";
+        if (val === "*") {
+            return (str: string) => {
+                return true;
+            };
+        }
         if (val.startsWith("*") && !val.endsWith("*")) {
             input = this.getValidInputString(val.split("*")[1]);
             return (str: string) => {
@@ -132,6 +137,9 @@ export default class FilterProcessor {
         }
         if (!Array.isArray(query)) {
             throw new InsightError("AND must be an array");
+        }
+        if (query.length === 0) {
+            throw new InsightError("AND must not be empty");
         }
         for (let filter of query) {
             conditions.push(this.processFilter(filter));
