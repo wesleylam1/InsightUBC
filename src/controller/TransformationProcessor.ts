@@ -65,9 +65,10 @@ export default class TransformationProcessor {
     }
 
 
-    private formGroups(array: any[], keys: string[]): any[] {
+    /*private formGroups(array: any[], keys: string[]): any[] {
         let result: IntermediaryGroup[] = [];
         let current: IntermediaryGroup = {};
+        let groups: any = {};
         for (let i of array) {
             current = {};
             current = (this.getGroupForIndividual(i, result, keys));
@@ -80,7 +81,31 @@ export default class TransformationProcessor {
             }
         }
         return result;
+    }*/
+
+    private formGroups(array: any[], keys: string[]): any[] {
+        let result: IntermediaryGroup[] = [];
+        let current: IntermediaryGroup = {};
+        let groups: any = {};
+        for (let i of array) {
+            let name = this.makeGroupName(i, keys);
+            if (groups.hasOwnProperty(name)) {
+                groups[name].groupContent.push(i);
+            } else {
+                let group: IntermediaryGroup = {};
+                group.groupName = name;
+                group.groupContent = [];
+                group.groupContent.push(i);
+                group.groupObject = this.makeGroupObject(group, keys);
+                groups[name] = group;
+            }
+        }
+        for (let j of Object.keys(groups)) {
+            result.push(groups[j]);
+        }
+        return result;
     }
+
 
     private processIntoGroup(group: IntermediaryGroup, individual: any, keys: string[]) {
         if (group.groupName === null) {
@@ -243,14 +268,14 @@ export default class TransformationProcessor {
         }
     }
 
-    private groupDoesNotExistYet(groupName: string, result: IntermediaryGroup[]): boolean {
+   /* private groupDoesNotExistYet(groupName: string, result: IntermediaryGroup[]): boolean {
         for (let i of result) {
             if (groupName === i.groupName) {
                 return false;
             }
         }
         return true;
-    }
+    }*/
 
     public unwrapGroups(groups: IntermediaryGroup[]): any[] {
         let result: any[] = [];
