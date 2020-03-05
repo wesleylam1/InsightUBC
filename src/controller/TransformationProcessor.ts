@@ -106,7 +106,6 @@ export default class TransformationProcessor {
         return result;
     }
 
-
     private processIntoGroup(group: IntermediaryGroup, individual: any, keys: string[]) {
         if (group.groupName === null) {
             group.groupName = this.makeGroupName(individual, keys);
@@ -275,6 +274,7 @@ export default class TransformationProcessor {
             }
         }
         return true;
+
     }*/
 
     public unwrapGroups(groups: IntermediaryGroup[]): any[] {
