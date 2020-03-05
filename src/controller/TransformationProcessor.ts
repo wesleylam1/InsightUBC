@@ -65,9 +65,10 @@ export default class TransformationProcessor {
     }
 
 
-    private formGroups(array: any[], keys: string[]): any[] {
+    /*private formGroups(array: any[], keys: string[]): any[] {
         let result: IntermediaryGroup[] = [];
         let current: IntermediaryGroup = {};
+        let groups: any = {};
         for (let i of array) {
             current = {};
             current = (this.getGroupForIndividual(i, result, keys));
@@ -78,6 +79,29 @@ export default class TransformationProcessor {
             if (result.length > 5000) {
                 throw new ResultTooLargeError("Too many groups");
             }
+        }
+        return result;
+    }*/
+
+    private formGroups(array: any[], keys: string[]): any[] {
+        let result: IntermediaryGroup[] = [];
+        let current: IntermediaryGroup = {};
+        let groups: any = {};
+        for (let i of array) {
+            let name = this.makeGroupName(i, keys);
+            if (groups.hasOwnProperty(name)) {
+                groups[name].groupContent.push(i);
+            } else {
+                let group: IntermediaryGroup = {};
+                group.groupName = name;
+                group.groupContent = [];
+                group.groupContent.push(i);
+                group.groupObject = this.makeGroupObject(group, keys);
+                groups[name] = group;
+            }
+        }
+        for (let j of Object.keys(groups)) {
+            result.push(groups[j]);
         }
         return result;
     }
@@ -191,11 +215,11 @@ export default class TransformationProcessor {
        if (!(typeof applyrule === "object" && applyrule !== null) || Array.isArray(applyrule)) {
             throw new InsightError("Invalid applyrule");
         }
-       if (Object.values(applyrule).length === 0 || applyrule === {}) {
-           throw new InsightError("applyrule cannot be empty");
-       }
-       if (Object.values(applyrule).length > 1) {
+       if (Object.keys(applyrule).length > 1) {
            throw new InsightError("applyrule can only have 1 value");
+       }
+       if (Object.keys(applyrule).length === 0 || applyrule === {}) {
+           throw new InsightError("cannot have no values");
        }
        let applyKey = Object.keys(applyrule)[0];
        if (applyKey.includes("_")) {
@@ -243,14 +267,15 @@ export default class TransformationProcessor {
         }
     }
 
-    private groupDoesNotExistYet(groupName: string, result: IntermediaryGroup[]): boolean {
+   /* private groupDoesNotExistYet(groupName: string, result: IntermediaryGroup[]): boolean {
         for (let i of result) {
             if (groupName === i.groupName) {
                 return false;
             }
         }
         return true;
-    }
+
+    }*/
 
     public unwrapGroups(groups: IntermediaryGroup[]): any[] {
         let result: any[] = [];
