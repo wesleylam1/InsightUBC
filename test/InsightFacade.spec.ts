@@ -80,7 +80,7 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
             expect.fail(err, expected, "Should not have rejected");
         });
     });
-    /*
+
 
     // test with empty dataset
     it("Should fail to add empty Dataset", function () {
@@ -744,7 +744,7 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         }).catch((err: any) => {
             expect.fail(err, expected, "Should not have rejected");
         });
-    });*/
+    });
 });
 
 
