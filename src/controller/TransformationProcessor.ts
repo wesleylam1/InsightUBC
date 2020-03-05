@@ -99,6 +99,9 @@ export default class TransformationProcessor {
                 group.groupObject = this.makeGroupObject(group, keys);
                 groups[name] = group;
             }
+            if (Object.keys(groups).length > 5000) {
+                throw new ResultTooLargeError("too many groups");
+            }
         }
         for (let j of Object.keys(groups)) {
             result.push(groups[j]);
