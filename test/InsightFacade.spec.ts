@@ -818,44 +818,46 @@ describe("InsightFacade PerformQuery", () => {
     });
 
 
-/*
 //
-    it("single query test", function () {
+   /* it("single query test", function () {
         const id: string = "courses";
         const expected: string[] = [id];
-        return insightFacade.performQuery({
+        return insightFacade.performQuery( {
                 "WHERE": {
                     "AND": [
                         {
                             "IS": {
-                                "rooms_furniture": "*Tables*"
+                                "courses_dept": "biol"
                             }
                         },
                         {
-                            "GT": {
-                                "rooms_seats": 300
+                            "NOT": {
+                                "EQ": {
+                                    "courses_year": 1900
+                                }
                             }
                         }
                     ]
                 },
                 "OPTIONS": {
                     "COLUMNS": [
-                        "rooms_shortname"
-
+                        "earliestYear",
+                        "courses_title",
+                        "courses_id"
                     ],
-                    "ORDER": {
-                        "dir": "DOWN",
-                        "keys": [
-                            "rooms_shortname"
-                        ]
-                    }
+                    "ORDER": "earliestYear"
                 },
                 "TRANSFORMATIONS": {
                     "GROUP": [
-                        "rooms_shortname"
+                        "courses_title",
+                        "courses_id"
                     ],
                     "APPLY": [
-                        {}
+                        {
+                            "earliestYear": {
+                                "MIN": "courses_year"
+                            }
+                        }
                     ]
                 }
             }
