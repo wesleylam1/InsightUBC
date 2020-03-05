@@ -31,7 +31,10 @@ export default class OptionsProcessor {
         }
         if (typeof orderKey === "string") {
             if (orderKey.includes("_")) {
-                if (!(mField.has(orderKey.split("_")[1]) || sField.has(orderKey.split("_")[1]))) {
+ //               if (!(mField.has(orderKey.split("_")[1]) || sField.has(orderKey.split("_")[1]))) {
+                if (!(this.queryController.checkValidMKey(orderKey.split("_")[1]) ||
+                        this.queryController.checkValidSKey(orderKey.split("_")[1])
+                )) {
                     throw new InsightError("no/invalid keys in ORDER");
                 }
             } else {

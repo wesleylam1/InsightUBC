@@ -103,6 +103,9 @@ export default class QueryController {
         if (!Array.isArray(query["OPTIONS"]["COLUMNS"])) {
             throw new InsightError("COLUMNS must be an array");
         }
+        /*if (Object.keys(query).length === 0) {
+            throw new InsightError("query cannot be an empty object");
+        }*/
         for (let i of Object.keys(query["OPTIONS"])) {
             if (!options.has(i)) {
                 throw new InsightError("Invalid key in options");
