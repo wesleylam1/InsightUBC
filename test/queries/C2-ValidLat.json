@@ -1,0 +1,21 @@
+{
+    "title" : "valid lat test",
+    "query" : {
+        "WHERE" : {
+            "LT" : {
+                "rooms_lon" : -123.2565
+            }
+        },
+        "OPTIONS" : {
+            "COLUMNS" : [
+                "rooms_lon",
+                "rooms_shortname"
+            ],
+            "ORDER" :
+            "rooms_shortname"
+
+        }
+    },
+    "isQueryValid" : true,
+"result":[{"rooms_lon":-123.25741,"rooms_shortname":"ANSO"},{"rooms_lon":-123.25741,"rooms_shortname":"ANSO"},{"rooms_lon":-123.25741,"rooms_shortname":"ANSO"},{"rooms_lon":-123.25741,"rooms_shortname":"ANSO"},{"rooms_lon":-123.25655,"rooms_shortname":"AUDX"},{"rooms_lon":-123.25655,"rooms_shortname":"AUDX"},{"rooms_lon":-123.25692,"rooms_shortname":"UCLL"},{"rooms_lon":-123.25692,"rooms_shortname":"UCLL"},{"rooms_lon":-123.25692,"rooms_shortname":"UCLL"},{"rooms_lon":-123.25692,"rooms_shortname":"UCLL"}]
+}

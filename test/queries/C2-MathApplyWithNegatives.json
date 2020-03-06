@@ -1,0 +1,57 @@
+{
+    "title" : "all math apply Tokens with negative value for lon",
+    "query" : {
+        "WHERE": {
+            "LT": {
+                "rooms_lon": 0
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "rooms_lat",
+                "minLon",
+                "maxLon",
+                "avgLon",
+                "sumLon"
+
+            ],
+            "ORDER": "minLon"
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": [
+                "rooms_lat"
+            ],
+            "APPLY": [
+                {
+                    "minLon": {
+                        "MIN": "rooms_lon"
+                    }
+                },
+                {
+                    "maxLon": {
+                        "MAX": "rooms_lon"
+                    }
+                },
+                {
+                    "avgLon": {
+                        "AVG": "rooms_lon"
+                    }
+                },
+                {
+                    "sumLon": {
+                        "SUM": "rooms_lon"
+                    }
+                },
+                {
+                    "countLat": {
+                        "COUNT": "rooms_lat"
+                    }
+                }
+            ]
+        }
+    },
+    "isQueryValid" : true,
+ "result":[{"rooms_lat":49.26044,"minLon":-123.24886,"maxLon":-123.24886,"avgLon":-123.25,"sumLon":-1232.49},{"rooms_lat":49.26047,"minLon":-123.24467,"maxLon":-123.24467,"avgLon":-123.24,"sumLon":-369.73},{"rooms_lat":49.26048,"minLon":-123.24944,"maxLon":-123.24944,"avgLon":-123.25,"sumLon":-2588.24},{"rooms_lat":49.26114,"minLon":-123.25027,"maxLon":-123.25027,"avgLon":-123.25,"sumLon":-2341.76},{"rooms_lat":49.26125,"minLon":-123.24807,"maxLon":-123.24807,"avgLon":-123.25,"sumLon":-616.24},{"rooms_lat":49.26176,"minLon":-123.25179,"maxLon":-123.24935,"avgLon":-123.25,"sumLon":-1109.25},{"rooms_lat":49.26207,"minLon":-123.25314,"maxLon":-123.25314,"avgLon":-123.25,"sumLon":-123.25},{"rooms_lat":49.26228,"minLon":-123.25198,"maxLon":-123.24718,"avgLon":-123.25,"sumLon":-492.99},{"rooms_lat":49.26229,"minLon":-123.24342,"maxLon":-123.24342,"avgLon":-123.24,"sumLon":-1355.68},{"rooms_lat":49.26236,"minLon":-123.24494,"maxLon":-123.24494,"avgLon":-123.24,"sumLon":-369.73},{"rooms_lat":49.26273,"minLon":-123.24894,"maxLon":-123.24894,"avgLon":-123.25,"sumLon":-739.49},{"rooms_lat":49.26274,"minLon":-123.25224,"maxLon":-123.25224,"avgLon":-123.25,"sumLon":-369.76},{"rooms_lat":49.26293,"minLon":-123.25431,"maxLon":-123.25431,"avgLon":-123.25,"sumLon":-2711.59},{"rooms_lat":49.26372,"minLon":-123.25099,"maxLon":-123.25099,"avgLon":-123.25,"sumLon":-123.25},{"rooms_lat":49.26398,"minLon":-123.2531,"maxLon":-123.2531,"avgLon":-123.25,"sumLon":-2711.57},{"rooms_lat":49.264,"minLon":-123.2559,"maxLon":-123.2559,"avgLon":-123.26,"sumLon":-986.05},{"rooms_lat":49.26414,"minLon":-123.24959,"maxLon":-123.24959,"avgLon":-123.25,"sumLon":-739.5},{"rooms_lat":49.2642,"minLon":-123.24842,"maxLon":-123.24842,"avgLon":-123.25,"sumLon":-739.49},{"rooms_lat":49.2643,"minLon":-123.25505,"maxLon":-123.25505,"avgLon":-123.26,"sumLon":-862.79},{"rooms_lat":49.26478,"minLon":-123.24673,"maxLon":-123.24673,"avgLon":-123.25,"sumLon":-1971.95},{"rooms_lat":49.26479,"minLon":-123.25249,"maxLon":-123.25249,"avgLon":-123.25,"sumLon":-493.01},{"rooms_lat":49.26486,"minLon":-123.25364,"maxLon":-123.25364,"avgLon":-123.25,"sumLon":-3451.1},{"rooms_lat":49.26517,"minLon":-123.24937,"maxLon":-123.24937,"avgLon":-123.25,"sumLon":-246.5},{"rooms_lat":49.26541,"minLon":-123.24608,"maxLon":-123.24608,"avgLon":-123.25,"sumLon":-123.25},{"rooms_lat":49.26545,"minLon":-123.25533,"maxLon":-123.25533,"avgLon":-123.26,"sumLon":-493.02},{"rooms_lat":49.2659,"minLon":-123.25308,"maxLon":-123.25308,"avgLon":-123.25,"sumLon":-739.52},{"rooms_lat":49.26605,"minLon":-123.25623,"maxLon":-123.25623,"avgLon":-123.26,"sumLon":-986.05},{"rooms_lat":49.266089,"minLon":-123.254816,"maxLon":-123.254816,"avgLon":-123.25,"sumLon":-123.25},{"rooms_lat":49.2661,"minLon":-123.25165,"maxLon":-123.25165,"avgLon":-123.25,"sumLon":-493.01},{"rooms_lat":49.26627,"minLon":-123.25374,"maxLon":-123.25374,"avgLon":-123.25,"sumLon":-739.52},{"rooms_lat":49.2663,"minLon":-123.2466,"maxLon":-123.2466,"avgLon":-123.25,"sumLon":-246.49},{"rooms_lat":49.266463,"minLon":-123.255534,"maxLon":-123.255534,"avgLon":-123.26,"sumLon":-986.04},{"rooms_lat":49.2666,"minLon":-123.25655,"maxLon":-123.25655,"avgLon":-123.26,"sumLon":-246.51},{"rooms_lat":49.26766,"minLon":-123.2521,"maxLon":-123.2521,"avgLon":-123.25,"sumLon":-2218.54},{"rooms_lat":49.26767,"minLon":-123.25583,"maxLon":-123.25583,"avgLon":-123.26,"sumLon":-739.53},{"rooms_lat":49.26826,"minLon":-123.25468,"maxLon":-123.25468,"avgLon":-123.25,"sumLon":-7518.54},{"rooms_lat":49.2683,"minLon":-123.24894,"maxLon":-123.24894,"avgLon":-123.25,"sumLon":-369.75},{"rooms_lat":49.26862,"minLon":-123.25237,"maxLon":-123.25237,"avgLon":-123.25,"sumLon":-246.5},{"rooms_lat":49.26867,"minLon":-123.25692,"maxLon":-123.25692,"avgLon":-123.26,"sumLon":-493.03},{"rooms_lat":49.26958,"minLon":-123.25741,"maxLon":-123.25741,"avgLon":-123.26,"sumLon":-493.03},{"rooms_lat":49.2699,"minLon":-123.25318,"maxLon":-123.25318,"avgLon":-123.25,"sumLon":-616.27},{"rooms_lat":49.27106,"minLon":-123.25042,"maxLon":-123.25042,"avgLon":-123.25,"sumLon":-246.5}]
+
+
+}

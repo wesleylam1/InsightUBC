@@ -65,24 +65,6 @@ export default class TransformationProcessor {
     }
 
 
-    /*private formGroups(array: any[], keys: string[]): any[] {
-        let result: IntermediaryGroup[] = [];
-        let current: IntermediaryGroup = {};
-        let groups: any = {};
-        for (let i of array) {
-            current = {};
-            current = (this.getGroupForIndividual(i, result, keys));
-            this.processIntoGroup(current, i, keys);
-            if (this.groupDoesNotExistYet(current.groupName, result)) {
-            result.push(current);
-        }
-            if (result.length > 5000) {
-                throw new ResultTooLargeError("Too many groups");
-            }
-        }
-        return result;
-    }*/
-
     private formGroups(array: any[], keys: string[]): any[] {
         let result: IntermediaryGroup[] = [];
         let current: IntermediaryGroup = {};
@@ -202,6 +184,9 @@ export default class TransformationProcessor {
     private processApplyRule(applyrule: any): ApplyRule {
         this.checkValidApplyRule(applyrule);
         let applyKey: string = Object.keys(applyrule)[0].toString();
+        if (applyKey === "") {
+            throw new InsightError("ApplyKey cannot be an empty string");
+        }
         if (this.checkArrayForKey(applyKey, this.applyKeys)) {
             throw new InsightError("each applyKey must be unique");
         }
@@ -225,7 +210,7 @@ export default class TransformationProcessor {
            throw new InsightError("cannot have no values");
        }
        let applyKey = Object.keys(applyrule)[0];
-       if (applyKey.includes("_")) {
+       if (applyKey.includes("_") ) {
            throw new InsightError("Invalid applyKey");
        }
        if (Object.keys(applyrule[applyKey]).length !== 1) {

@@ -5,6 +5,7 @@ export class Room {
     public shortname: string;
     public number: string;
     public address: string;
+    public name: string;
     public lat: number;
     public lon: number;
     public seats: number;
@@ -45,6 +46,7 @@ export function makeRoom(parsedRoom: any, node: any, geoLocation: any): Room {
         room.type = parsedRoom.childNodes[7].childNodes[0].value.trim();
         room.furniture = parsedRoom.childNodes[5].childNodes[0].value.trim();
         room.href = parsedRoom.childNodes[9].childNodes[1].attrs[0].value;
+        room.name = room.shortname + "_" + room.number;
     } catch (error) {
         throw new InsightError(error);
     }

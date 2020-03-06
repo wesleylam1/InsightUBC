@@ -1,0 +1,32 @@
+{
+    "title" :  "invalid applykey empty string",
+    "query" : {
+        "WHERE" : {
+            "LT" : {
+                "rooms_lon" : 0
+            }
+        },
+        "OPTIONS" : {
+            "COLUMNS" : [
+                "rooms_lon"
+
+            ],
+            "ORDER" :
+            "rooms_lon"
+
+        },
+        "TRANSFORMATIONS" : {
+            "GROUP": [
+                "rooms_lon"
+            ],
+            "APPLY" : [ {
+                "" : {
+                    "MIN" : "rooms_lat"
+                }
+            }
+            ]
+        }
+    },
+    "isQueryValid": false,
+    "result" : "InsightError"
+}
