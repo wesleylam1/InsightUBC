@@ -3,6 +3,7 @@ import DatasetController from "./DatasetController";
 import OptionsProcessor from "./OptionsProcessor";
 import FilterProcessor from "./FilterProcessor";
 import TransformationProcessor from "./TransformationProcessor";
+import Log from "../Util";
 
 const coursesMField = new Set(["avg", "pass", "audit", "fail", "year"]);
 const coursesSField = new Set(["dept", "id", "instructor", "title", "uuid"]);
@@ -132,6 +133,7 @@ export default class QueryController {
             if (this.sections == null) {
                 this.sections = this.datasetController.getDatasetCourses(idstring);
                 this.currentKind = this.datasetController.getDatasetKind(idstring);
+                Log.trace(this.sections);
             }
         } catch (err) {
             throw err;

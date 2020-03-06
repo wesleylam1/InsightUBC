@@ -817,7 +817,6 @@ describe("InsightFacade PerformQuery", () => {
         });
     });
 
-
 /*
 
    it("single query test", function () {
@@ -826,17 +825,52 @@ describe("InsightFacade PerformQuery", () => {
         return insightFacade.performQuery( {
                 "WHERE": {
                     "IS": {
-                        "courses_instructor": ""
+                        "rooms_name": "*"
                     }
                 },
                 "OPTIONS": {
                     "COLUMNS": [
-                        "courses_dept",
-                        "courses_avg"
+
+                        "rooms_href",
+                        "rooms_name"
                     ],
-                    "ORDER": "courses_avg"
+                    "ORDER": "rooms_href"
+                },
+                "TRANSFORMATIONS": {
+                    "GROUP": [
+                        "rooms_name",
+                        "rooms_href"
+                    ],
+                    "APPLY": [
+                        {
+                            "minLon": {
+                                "MIN": "rooms_lon"
+                            }
+                        },
+                        {
+                            "maxLon": {
+                                "MAX": "rooms_lon"
+                            }
+                        },
+                        {
+                            "avgLon": {
+                                "AVG": "rooms_lon"
+                            }
+                        },
+                        {
+                            "sumLon": {
+                                "SUM": "rooms_lon"
+                            }
+                        },
+                        {
+                            "countLat": {
+                                "COUNT": "rooms_lat"
+                            }
+                        }
+                    ]
                 }
             }
+
         ).then((result: []) => {
             expect(result).to.deep.equal(expected);
         }).catch((err: any) => {
@@ -844,6 +878,7 @@ describe("InsightFacade PerformQuery", () => {
             expect.fail(err, expected, "Should not have rejected");
         });
     });
+
 */
 
 
