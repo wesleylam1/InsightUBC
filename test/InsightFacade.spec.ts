@@ -82,7 +82,7 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
     });
 
 
-    // test with empty dataset
+   /* // test with empty dataset
     it("Should fail to add empty Dataset", function () {
         const id: string = "coursesEmpty";
         const expected: string[] = [id];
@@ -744,7 +744,7 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
         }).catch((err: any) => {
             expect.fail(err, expected, "Should not have rejected");
         });
-    });
+    });*/
 });
 
 
@@ -818,47 +818,23 @@ describe("InsightFacade PerformQuery", () => {
     });
 
 
-////
-   /* it("single query test", function () {
+/*
+
+   it("single query test", function () {
         const id: string = "courses";
         const expected: string[] = [id];
         return insightFacade.performQuery( {
                 "WHERE": {
-                    "AND": [
-                        {
-                            "IS": {
-                                "courses_dept": "biol"
-                            }
-                        },
-                        {
-                            "NOT": {
-                                "EQ": {
-                                    "courses_year": 1900
-                                }
-                            }
-                        }
-                    ]
+                    "IS": {
+                        "courses_instructor": ""
+                    }
                 },
                 "OPTIONS": {
                     "COLUMNS": [
-                        "earliestYear",
-                        "courses_title",
-                        "courses_id"
+                        "courses_dept",
+                        "courses_avg"
                     ],
-                    "ORDER": "earliestYear"
-                },
-                "TRANSFORMATIONS": {
-                    "GROUP": [
-                        "courses_title",
-                        "courses_id"
-                    ],
-                    "APPLY": [
-                        {
-                            "earliestYear": {
-                                "MIN": "courses_year"
-                            }
-                        }
-                    ]
+                    "ORDER": "courses_avg"
                 }
             }
         ).then((result: []) => {
@@ -868,7 +844,6 @@ describe("InsightFacade PerformQuery", () => {
             expect.fail(err, expected, "Should not have rejected");
         });
     });
-
 */
 
 

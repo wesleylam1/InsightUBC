@@ -3,8 +3,7 @@ import DatasetController from "./DatasetController";
 import Log from "../Util";
 import QueryController from "./QueryController";
 
-const mField = new Set (["avg", "pass", "audit", "fail", "year"]);
-const sField = new Set (["dept", "id", "instructor", "title", "uuid"]);
+
 const options = new Set(["COLUMNS", "ORDER"]);
 
 export default class OptionsProcessor {

@@ -80,7 +80,7 @@ export default class QueryController {
             if (condition(section)) {
                 result.push(columnize(section));
                 if (result.length > 5000) {
-                    throw new ResultTooLargeError("Result exceeded 5000 entries");
+                    throw new ResultTooLargeError("ResultTooLarge");
                 }
             }
         }
