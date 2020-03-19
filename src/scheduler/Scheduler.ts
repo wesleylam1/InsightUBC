@@ -23,21 +23,25 @@ export default class Scheduler implements IScheduler {
         this.roomsXtime = {};
         this.courseXtime = {};
         this.alreadyScheduledSections = {};
+        let loopDone: boolean = false;
         let result: Array<[SchedRoom, SchedSection, TimeSlot]> = [];
         for (let room of orderedRooms) {
-            this.roomsXtime[room.rooms_name] = 14;
-            while (this.roomsXtime > 0) {
+            let name: string = room.rooms_shortname + room.rooms_number;
+            this.roomsXtime[name] = 14;
+            while (this.roomsXtime[name] > 0 && !loopDone ) {
+                loopDone = false;
                 for (let i in orderedSections) {
                     let section: SchedSection = orderedSections[i];
-                    let timeIndex = this.roomsXtime[room.rooms_name];
+                    let timeIndex = this.roomsXtime[name];
                     let timeslot: TimeSlot = Scheduler.timeSlots[timeIndex];
                     if (this.canSchedule(room, section, timeslot)) {
                         delete orderedSections[i];
                         result.push([room, section, timeslot]);
-                        this.roomsXtime[room.rooms_name] -= 1;
+                        this.roomsXtime[name] -= 1;
                         this.courseXtime[section.courses_id].add(timeslot);
                     }
                 }
+                loopDone = true;
             }
         }
         return result;
