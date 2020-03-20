@@ -14,18 +14,15 @@ class Scheduler {
         let result = [];
         for (let room of orderedRooms) {
             let name = room.rooms_shortname + room.rooms_number;
-            this.roomsXtime[name] = 14;
-            while (this.roomsXtime[name] > 0 && !loopDone) {
-                loopDone = false;
+            loopDone = false;
+            this.roomsXtime[name] = new Set();
+            while (!loopDone) {
                 for (let i in orderedSections) {
                     let section = orderedSections[i];
-                    let timeIndex = this.roomsXtime[name];
-                    let timeslot = Scheduler.timeSlots[timeIndex];
-                    if (this.canSchedule(room, section, timeslot)) {
+                    if (this.canSchedule(room, section)) {
                         delete orderedSections[i];
-                        result.push([room, section, timeslot]);
-                        this.roomsXtime[name] -= 1;
-                        this.courseXtime[section.courses_id].add(timeslot);
+                        result.push([room, section, this.currTime]);
+                        this.courseXtime[section.courses_id].add(this.currTime);
                     }
                 }
                 loopDone = true;
@@ -33,15 +30,23 @@ class Scheduler {
         }
         return result;
     }
-    canSchedule(room, section, timeslot) {
-        return (this.doesSectionFitInRoom(section, room) && this.checkCourseTimes(section, timeslot));
+    canSchedule(room, section) {
+        return (this.doesSectionFitInRoom(section, room) && this.checkCourseTimes(section));
     }
-    checkCourseTimes(section, timeslot) {
+    checkCourseTimes(section) {
         if (this.courseXtime.hasOwnProperty(section.courses_id)) {
-            return !this.courseXtime[section.courses_id].has(timeslot);
+            for (let time of Scheduler.timeSlots) {
+                if (!this.courseXtime[section.courses_id].has(time)) {
+                    this.currTime = time;
+                    this.courseXtime[section.courses_id].add(time);
+                    return true;
+                }
+            }
+            return false;
         }
         else {
             this.courseXtime[section.courses_id] = new Set();
+            this.courseXtime[section.courses_id].add(Scheduler.timeSlots[0]);
             return true;
         }
     }

@@ -27,18 +27,15 @@ export default class Scheduler implements IScheduler {
         let result: Array<[SchedRoom, SchedSection, TimeSlot]> = [];
         for (let room of orderedRooms) {
             let name: string = room.rooms_shortname + room.rooms_number;
-            this.roomsXtime[name] = 14;
-            while (this.roomsXtime[name] > 0 && !loopDone ) {
-                loopDone = false;
+            loopDone = false;
+            this.roomsXtime[name] = new Set<TimeSlot>();
+            while (!loopDone ) {
                 for (let i in orderedSections) {
                     let section: SchedSection = orderedSections[i];
-                    let timeIndex = this.roomsXtime[name];
-                    let timeslot: TimeSlot = Scheduler.timeSlots[timeIndex];
-                    if (this.canSchedule(room, section, timeslot)) {
+                    if (this.canSchedule(room, section)) {
                         delete orderedSections[i];
-                        result.push([room, section, timeslot]);
-                        this.roomsXtime[name] -= 1;
-                        this.courseXtime[section.courses_id].add(timeslot);
+                        result.push([room, section, this.currTime]);
+                        this.courseXtime[section.courses_id].add(this.currTime);
                     }
                 }
                 loopDone = true;
@@ -47,15 +44,23 @@ export default class Scheduler implements IScheduler {
         return result;
     }
 
-    private canSchedule(room: SchedRoom, section: SchedSection, timeslot: TimeSlot): boolean {
-        return (this.doesSectionFitInRoom(section, room) && this.checkCourseTimes(section, timeslot));
+    private canSchedule(room: SchedRoom, section: SchedSection): boolean {
+        return (this.doesSectionFitInRoom(section, room) && this.checkCourseTimes(section));
     }
 
-    private checkCourseTimes(section: SchedSection, timeslot: TimeSlot): boolean {
+    private checkCourseTimes(section: SchedSection): boolean {
         if (this.courseXtime.hasOwnProperty(section.courses_id)) {
-            return !this.courseXtime[section.courses_id].has(timeslot);
+            for (let time of Scheduler.timeSlots) {
+                if (!this.courseXtime[section.courses_id].has(time)) {
+                    this.currTime = time;
+                    this.courseXtime[section.courses_id].add(time);
+                    return true;
+                }
+            }
+            return false;
         } else {
             this.courseXtime[section.courses_id] = new Set<TimeSlot>() ;
+            this.courseXtime[section.courses_id].add(Scheduler.timeSlots[0]);
             return true;
         }
 
