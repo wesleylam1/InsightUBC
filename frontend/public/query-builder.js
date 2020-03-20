@@ -5,9 +5,10 @@
  *
  * @returns query object adhering to the query EBNF
  */
-CampusExplorer.buildQuery = function() {
+
+CampusExplorer.buildQuery = function () {
     let query = {};
     // TODO: implement!
-    console.log("CampusExplorer.buildQuery not implemented yet.");
+    // console.log("CampusExplorer.buildQuery not implemented yet.");
     return query;
 };
