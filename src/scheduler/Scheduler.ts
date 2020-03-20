@@ -129,6 +129,4 @@ export default class Scheduler implements IScheduler {
         });
         return sections.sort(compareFunc);
     }
-
-
 }

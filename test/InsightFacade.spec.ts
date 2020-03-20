@@ -80,9 +80,9 @@ describe("InsightFacade Add/Remove/List Dataset", function () {
             expect.fail(err, expected, "Should not have rejected");
         });
     });
-    /*
 
-    // test with empty dataset
+
+   /* // test with empty dataset
     it("Should fail to add empty Dataset", function () {
         const id: string = "coursesEmpty";
         const expected: string[] = [id];
@@ -817,48 +817,60 @@ describe("InsightFacade PerformQuery", () => {
         });
     });
 
-
 /*
-//
-    it("single query test", function () {
+
+   it("single query test", function () {
         const id: string = "courses";
         const expected: string[] = [id];
-        return insightFacade.performQuery({
+        return insightFacade.performQuery( {
                 "WHERE": {
-                    "AND": [
-                        {
-                            "IS": {
-                                "rooms_furniture": "*Tables*"
-                            }
-                        },
-                        {
-                            "GT": {
-                                "rooms_seats": 300
-                            }
-                        }
-                    ]
+                    "IS": {
+                        "rooms_name": "*"
+                    }
                 },
                 "OPTIONS": {
                     "COLUMNS": [
-                        "rooms_shortname"
 
+                        "rooms_href",
+                        "rooms_name"
                     ],
-                    "ORDER": {
-                        "dir": "DOWN",
-                        "keys": [
-                            "rooms_shortname"
-                        ]
-                    }
+                    "ORDER": "rooms_href"
                 },
                 "TRANSFORMATIONS": {
                     "GROUP": [
-                        "rooms_shortname"
+                        "rooms_name",
+                        "rooms_href"
                     ],
                     "APPLY": [
-                        {}
+                        {
+                            "minLon": {
+                                "MIN": "rooms_lon"
+                            }
+                        },
+                        {
+                            "maxLon": {
+                                "MAX": "rooms_lon"
+                            }
+                        },
+                        {
+                            "avgLon": {
+                                "AVG": "rooms_lon"
+                            }
+                        },
+                        {
+                            "sumLon": {
+                                "SUM": "rooms_lon"
+                            }
+                        },
+                        {
+                            "countLat": {
+                                "COUNT": "rooms_lat"
+                            }
+                        }
                     ]
                 }
             }
+
         ).then((result: []) => {
             expect(result).to.deep.equal(expected);
         }).catch((err: any) => {

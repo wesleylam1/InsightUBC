@@ -1,0 +1,21 @@
+{
+    "title" : "ValidLon ",
+    "query" : {
+        "WHERE" : {
+            "GT" : {
+                "rooms_lat" : 49.269
+            }
+        },
+        "OPTIONS" : {
+            "COLUMNS" : [
+                "rooms_lat",
+                "rooms_shortname"
+            ],
+            "ORDER" :
+            "rooms_shortname"
+
+        }
+    },
+    "isQueryValid" : true,
+ "result":[{"rooms_lat":49.2699,"rooms_shortname":"ALRD"},{"rooms_lat":49.2699,"rooms_shortname":"ALRD"},{"rooms_lat":49.2699,"rooms_shortname":"ALRD"},{"rooms_lat":49.2699,"rooms_shortname":"ALRD"},{"rooms_lat":49.2699,"rooms_shortname":"ALRD"},{"rooms_lat":49.26958,"rooms_shortname":"ANSO"},{"rooms_lat":49.26958,"rooms_shortname":"ANSO"},{"rooms_lat":49.26958,"rooms_shortname":"ANSO"},{"rooms_lat":49.26958,"rooms_shortname":"ANSO"},{"rooms_lat":49.27106,"rooms_shortname":"IONA"},{"rooms_lat":49.27106,"rooms_shortname":"IONA"}]
+}

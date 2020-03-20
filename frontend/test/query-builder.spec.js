@@ -1,3 +1,4 @@
+
 describe("buildQuery test suite", function () {
 
     let queryFixtures = TTT.getQueryFixtures();

@@ -3,8 +3,7 @@ import DatasetController from "./DatasetController";
 import Log from "../Util";
 import QueryController from "./QueryController";
 
-const mField = new Set (["avg", "pass", "audit", "fail", "year"]);
-const sField = new Set (["dept", "id", "instructor", "title", "uuid"]);
+
 const options = new Set(["COLUMNS", "ORDER"]);
 
 export default class OptionsProcessor {
@@ -31,7 +30,10 @@ export default class OptionsProcessor {
         }
         if (typeof orderKey === "string") {
             if (orderKey.includes("_")) {
-                if (!(mField.has(orderKey.split("_")[1]) || sField.has(orderKey.split("_")[1]))) {
+ //               if (!(mField.has(orderKey.split("_")[1]) || sField.has(orderKey.split("_")[1]))) {
+                if (!(this.queryController.checkValidMKey(orderKey.split("_")[1]) ||
+                        this.queryController.checkValidSKey(orderKey.split("_")[1])
+                )) {
                     throw new InsightError("no/invalid keys in ORDER");
                 }
             } else {

@@ -5,13 +5,13 @@ export class Room {
     public shortname: string;
     public number: string;
     public address: string;
+    public name: string;
     public lat: number;
     public lon: number;
     public seats: number;
     public type: string;
     public furniture: string;
     public href: string;
-    public name: string;
 
     constructor() {
         this.fullname = null;
