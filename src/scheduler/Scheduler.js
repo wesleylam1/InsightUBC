@@ -10,28 +10,25 @@ class Scheduler {
         this.roomsXtime = {};
         this.courseXtime = {};
         this.alreadyScheduledSections = {};
-        let loopDone = false;
         let result = [];
         for (let room of orderedRooms) {
             let name = room.rooms_shortname + room.rooms_number;
-            loopDone = false;
-            this.roomsXtime[name] = new Set();
-            while (!loopDone) {
-                for (let i in orderedSections) {
-                    let section = orderedSections[i];
-                    if (this.canSchedule(room, section)) {
-                        delete orderedSections[i];
-                        result.push([room, section, this.currTime]);
-                        this.courseXtime[section.courses_id].add(this.currTime);
-                    }
+            this.roomsXtime[name] = 15;
+            for (let i in orderedSections) {
+                let section = orderedSections[i];
+                if (this.canSchedule(room, section)) {
+                    delete orderedSections[i];
+                    result.push([room, section, this.currTime]);
+                    this.courseXtime[section.courses_id].add(this.currTime);
+                    this.roomsXtime[name]--;
                 }
-                loopDone = true;
             }
         }
         return result;
     }
     canSchedule(room, section) {
-        return (this.doesSectionFitInRoom(section, room) && this.checkCourseTimes(section));
+        return (this.doesSectionFitInRoom(section, room) && this.checkCourseTimes(section) &&
+            (this.roomsXtime[room.rooms_shortname + room.rooms_number] > 0));
     }
     checkCourseTimes(section) {
         if (this.courseXtime.hasOwnProperty(section.courses_id)) {
@@ -62,7 +59,7 @@ class Scheduler {
         let lat2 = destRoom.rooms_lat;
         let lon1 = sourceRoom.rooms_lon;
         let lon2 = destRoom.rooms_lon;
-        let R = 6371000;
+        let R = 6371;
         let dLat = this.deg2rad(lat2 - lat1);
         let dLon = this.deg2rad(lon2 - lon1);
         let a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +

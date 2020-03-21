@@ -23,30 +23,28 @@ export default class Scheduler implements IScheduler {
         this.roomsXtime = {};
         this.courseXtime = {};
         this.alreadyScheduledSections = {};
-        let loopDone: boolean = false;
         let result: Array<[SchedRoom, SchedSection, TimeSlot]> = [];
         for (let room of orderedRooms) {
             let name: string = room.rooms_shortname + room.rooms_number;
-            loopDone = false;
-            this.roomsXtime[name] = new Set<TimeSlot>();
-            while (!loopDone ) {
-                for (let i in orderedSections) {
-                    let section: SchedSection = orderedSections[i];
-                    if (this.canSchedule(room, section)) {
-                        delete orderedSections[i];
-                        result.push([room, section, this.currTime]);
-                        this.courseXtime[section.courses_id].add(this.currTime);
+            this.roomsXtime[name] = 15;
+            for (let i in orderedSections) {
+                let section: SchedSection = orderedSections[i];
+                if (this.canSchedule(room, section)) {
+                    delete orderedSections[i];
+                    result.push([room, section, this.currTime]);
+                    this.courseXtime[section.courses_id].add(this.currTime);
+                    this.roomsXtime[name] --;
                     }
                 }
-                loopDone = true;
-            }
         }
         return result;
     }
 
     private canSchedule(room: SchedRoom, section: SchedSection): boolean {
-        return (this.doesSectionFitInRoom(section, room) && this.checkCourseTimes(section));
+        return (this.doesSectionFitInRoom(section, room) && this.checkCourseTimes(section) &&
+            (this.roomsXtime[room.rooms_shortname + room.rooms_number] > 0 ));
     }
+
 
     private checkCourseTimes(section: SchedSection): boolean {
         if (this.courseXtime.hasOwnProperty(section.courses_id)) {
@@ -81,7 +79,7 @@ export default class Scheduler implements IScheduler {
         let lat2 = destRoom.rooms_lat;
         let lon1 = sourceRoom.rooms_lon;
         let lon2 = destRoom.rooms_lon;
-        let R = 6371000; // Radius of the earth in km
+        let R = 6371; // Radius of the earth in km
         let dLat = this.deg2rad(lat2 - lat1);  // deg2rad below
         let dLon = this.deg2rad(lon2 - lon1);
         let a =
