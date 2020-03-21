@@ -7,6 +7,10 @@
 import fs = require("fs");
 import restify = require("restify");
 import Log from "../Util";
+import InsightFacade from "../controller/InsightFacade";
+import {InsightDataset, InsightDatasetKind, InsightError, NotFoundError} from "../controller/IInsightFacade";
+import {expect} from "chai";
+import {resolve} from "dns";
 
 /**
  * This configures the REST endpoints for the server.
@@ -15,6 +19,7 @@ export default class Server {
 
     private port: number;
     private rest: restify.Server;
+    private static insightFacade: InsightFacade = new InsightFacade();
 
     constructor(port: number) {
         Log.info("Server::<init>( " + port + " )");
@@ -65,6 +70,11 @@ export default class Server {
                 // http://localhost:4321/echo/hello
                 that.rest.get("/echo/:msg", Server.echo);
 
+                that.rest.put("/dataset/:id/:kind", Server.putter);
+                that.rest.del("/dataset/:id", Server.deleter);
+                that.rest.post("/query", Server.poster);
+                that.rest.get("/datasets", Server.getter);
+
                 // NOTE: your endpoints should go here
 
                 // This must be the last endpoint!
@@ -87,6 +97,56 @@ export default class Server {
                 reject(err);
             }
         });
+    }
+
+    private static putter(req: restify.Request, res: restify.Response, next: restify.Next) {
+        let id = req.params.id;
+        let kind = req.params.kind;
+        let content = req.body.toString("base64");
+        Server.insightFacade.addDataset(id, content, kind)
+            .then((response: string[]) => {
+                res.json(200, {result: response});
+            })
+            .catch((err) => {
+                res.json(400, {error: "AddDataset rejected"});
+            });
+        return next;
+    }
+
+    private static deleter(req: restify.Request, res: restify.Response, next: restify.Next) {
+        let id = req.params.id;
+        Server.insightFacade.removeDataset(id)
+            .then((response: string) => {
+                res.json(200, {result: response});
+            })
+            .catch((err) => {
+                if (err instanceof NotFoundError) {
+                    res.json(404, {error: "RemoveDataset rejected with NotFoundError"});
+                } else {
+                    res.json(400, {error: "RemoveDataset rejected with InsightError"});
+                }
+        });
+        return next();
+    }
+
+    private static poster(req: restify.Request, res: restify.Response, next: restify.Next) {
+        let query = req.params;
+        Server.insightFacade.performQuery(query)
+            .then((response: any[]) => {
+                res.json(200, {result: response});
+            })
+            .catch((err) => {
+                res.json(400, {error: "PerformQuery rejected"});
+            });
+        return next();
+    }
+
+    private static getter(req: restify.Request, res: restify.Response, next: restify.Next) {
+        Server.insightFacade.listDatasets()
+            .then((response: InsightDataset[]) => {
+                res.json(200, {result: response});
+        });
+        return next();
     }
 
     // The next two methods handle the echo service.
