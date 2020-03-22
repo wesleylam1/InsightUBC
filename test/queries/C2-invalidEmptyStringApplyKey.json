@@ -1,0 +1,61 @@
+{
+    "title": "Invalid empty string applyKey",
+    "query": {
+        "WHERE": {
+            "AND": [
+                {
+                    "IS": {
+                        "rooms_href": "**"
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "rooms_lat",
+                "rooms_lon"
+            ],
+            "ORDER": {
+                "dir": "DOWN",
+                "keys": [
+                    "rooms_lat"
+                ]
+            }
+        },
+        "TRANSFORMATIONS": {
+            "GROUP": [
+                "rooms_lat",
+                "rooms_lon"
+            ],
+            "APPLY": [
+                {
+                    "": {
+                        "MAX": "rooms_lon"
+                    }
+                },
+                {
+                    "minLat": {
+                        "MIN": "rooms_lat"
+                    }
+                },
+                {
+                    "avgSeats": {
+                        "AVG": "rooms_seats"
+                    }
+                },
+                {
+                    "sumSeats": {
+                        "SUM": "rooms_seats"
+                    }
+                },
+                {
+                    "countSeats": {
+                        "COUNT": "rooms_seats"
+                    }
+                }
+            ]
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

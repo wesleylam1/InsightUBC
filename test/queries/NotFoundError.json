@@ -15,5 +15,5 @@
         }
     },
     "isQueryValid": false,
-    "result": "NotFoundError"
+    "result": []
 }

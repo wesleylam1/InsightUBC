@@ -1,0 +1,23 @@
+{
+    "title": "Invalid OPTIONS",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_id": "501"
+            }
+        },
+        "OPTIONS": {
+            "INVALID": [
+                "invalid",
+                "also invalid"
+            ],
+            "COLUMNS": [
+                "courses_id",
+                "courses_avg"
+            ],
+            "ORDER": "courses_id"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

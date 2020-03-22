@@ -1,0 +1,19 @@
+{
+    "title": "InvalidAudit",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "courses_audit": "hello"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_audit"
+            ],
+            "ORDER": "courses_audit"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

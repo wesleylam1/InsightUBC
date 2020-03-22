@@ -1,0 +1,57 @@
+{
+    "title": "Find courses where instructor = Xin Li",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_instructor": "li, xin"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "courses_avg"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        {
+            "courses_dept": "apbi",
+            "courses_id": "426",
+            "courses_avg": 64.6
+        },
+        {
+            "courses_dept": "apbi",
+            "courses_id": "440",
+            "courses_avg": 72.6
+        },
+        {
+            "courses_dept": "biol",
+            "courses_id": "421",
+            "courses_avg": 74.07
+        },
+        {
+            "courses_dept": "biol",
+            "courses_id": "440",
+            "courses_avg": 76.88
+        },
+        {
+            "courses_dept": "biol",
+            "courses_id": "421",
+            "courses_avg": 77.75
+        },
+        {
+            "courses_dept": "biol",
+            "courses_id": "440",
+            "courses_avg": 78.93
+        },
+        {
+            "courses_dept": "biol",
+            "courses_id": "421",
+            "courses_avg": 79.13
+        }
+    ]
+}
+

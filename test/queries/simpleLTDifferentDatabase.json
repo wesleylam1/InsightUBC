@@ -1,0 +1,48 @@
+{
+    "title": "SELECT dept, avg WHERE avg < 5",
+    "query": {
+        "WHERE": {
+            "LT": {
+                "coursescopy_avg": 5
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "coursescopy_dept",
+                "coursescopy_avg"
+            ],
+            "ORDER": "coursescopy_avg"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        {
+            "coursescopy_dept": "lfs",
+            "coursescopy_avg": 0
+        },
+        {
+            "coursescopy_dept": "lfs",
+            "coursescopy_avg": 0
+        },
+        {
+            "coursescopy_dept": "frst",
+            "coursescopy_avg": 0
+        },
+        {
+            "coursescopy_dept": "wood",
+            "coursescopy_avg": 1
+        },
+        {
+            "coursescopy_dept": "busi",
+            "coursescopy_avg": 4
+        },
+        {
+            "coursescopy_dept": "busi",
+            "coursescopy_avg": 4
+        },
+        {
+            "coursescopy_dept": "frst",
+            "coursescopy_avg": 4.5
+        }
+    ]
+}

@@ -24,7 +24,6 @@
         }
     },
     "isQueryValid": true,
-    "result": {
         "result": [
             {
                 "courses_dept": "cpsc",
@@ -5396,4 +5395,3 @@
             }
         ]
     }
-}

@@ -1,0 +1,17 @@
+{
+    "title": "Grades over 100 return nothing",
+    "query": {
+        "WHERE": {
+            "GT": {
+                "courses_avg": 1000
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept"
+            ]
+        }
+    },
+    "isQueryValid": true,
+    "result": []
+}

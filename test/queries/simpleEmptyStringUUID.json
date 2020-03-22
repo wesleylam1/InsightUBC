@@ -1,0 +1,19 @@
+{
+    "title": "Searches with empty string in UUID",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_uuid": ""
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_avg"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": true,
+    "result": []
+}

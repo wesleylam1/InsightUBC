@@ -1,11 +1,8 @@
 import Log from "../Util";
-import {IInsightFacade, InsightDataset, InsightDatasetKind, ResultTooLargeError} from "./IInsightFacade";
-import performQueryHelper from "./performQueryHelper";
-import {InsightError, NotFoundError} from "./IInsightFacade";
-import * as JSZip from "jszip";
-import {InsightDatasetProcessor} from "./InsightDatasetProcessor";
-import {JSZipObject} from "jszip";
-import * as fs from "fs";
+import {IInsightFacade, InsightDataset, InsightDatasetKind} from "./IInsightFacade";
+import DatasetController from "./DatasetController";
+import QueryController from "./QueryController";
+
 
 /**
  * This is the main programmatic entry point for the project.
@@ -13,74 +10,30 @@ import * as fs from "fs";
  *
  */
 export default class InsightFacade implements IInsightFacade {
-    public processor = new InsightDatasetProcessor();
+    private DatasetController: DatasetController;
+    private QueryController: QueryController;
 
     constructor() {
         Log.trace("InsightFacadeImpl::init()");
-        this.processor = new InsightDatasetProcessor();
+        this.DatasetController = new DatasetController();
+        this.DatasetController.readFromDisk();
+        this.QueryController = new QueryController();
+        this.QueryController.initialize(this.DatasetController);
     }
 
     public addDataset(id: string, content: string, kind: InsightDatasetKind): Promise<string[]> {
-            let processor = this.processor;
-            return new Promise((resolve, reject) => {
-                if (kind === InsightDatasetKind.Rooms) {
-                    return reject(new InsightError("Rooms kind is invalid"));
-                }
-                this.processor.setCurrentKind(kind);
-                processor.validateID(id).then((result) => {
-                    processor.readZip(result, content).then((finalResult: string[]) => {
-                        // Log.trace("then");
-                        return resolve(finalResult);
-
-                    }).catch((err: any) => {
-                        return reject(err);
-                    });
-                }).catch((err: any) => {
-                    return reject(err);
-                });
-            });
+        return this.DatasetController.addDataset(id, content, kind);
     }
 
     public removeDataset(id: string): Promise<string> {
-        return new Promise<string>((resolve, reject) => {
-            return this.processor.removeDataset(id).then((result: string) => {
-                return resolve(result);
-            }).catch((err: any) => {
-                return reject(err);
-            });
-        });
+        return this.DatasetController.removeDataset(id);
     }
 
     public performQuery(query: any): Promise<any[]> {
-            try {
-                let isEmpty = performQueryHelper.isEmpty(query);
-                if (!isEmpty) {
-                    return performQueryHelper.validQuery(query).then(function (result: any) {
-                        return Promise.resolve(result);
-                    });
-                } else {
-                    return Promise.reject("Invalid Query");
-                }
-
-            } catch (err) {
-                if (err === "NotFoundError") {
-                    return Promise.reject(new NotFoundError("Query Not Found"));
-                } else if (err === "ResultTooLargeError") {
-                    return Promise.reject(new ResultTooLargeError("Over 5000 results"));
-                } else {
-                    return Promise.reject(new InsightError("Insight Error Found"));
-                }
-        }   return Promise.reject(new InsightError("Insight Error"));
-     }
-
-    public listDatasets(): Promise<InsightDataset[]> {
-        return new Promise((resolve, reject) => {
-            return this.processor.listDatasets().then((result: InsightDataset[]) => {
-               return resolve(result);
-           }).catch((err: any) => {
-               return reject(err);
-           });
-        });
+        return this.QueryController.performQuery(query);
     }
 
+    public listDatasets(): Promise<InsightDataset[]> {
+        return this.DatasetController.listDatasets();
+    }
 }

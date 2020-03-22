@@ -1,0 +1,81 @@
+{
+    "title": "Find courses in BIOL with avg > 80 taught by Samuels AND not taught by Nomme and with course ID 535",
+    "query": {
+        "WHERE": {
+            "AND": [
+                {
+                    "IS": {
+                        "courses_dept": "b*"
+                    }
+                },
+                {
+                    "IS": {
+                        "courses_instructor": "*samuels*"
+                    }
+                },
+                {
+                    "GT": {
+                        "courses_avg": 60
+                    }
+                },
+                {
+                    "NOT": {
+                        "AND": [
+                            {
+                                "IS": {
+                                    "courses_instructor": "*nomme*"
+                                }
+                            },
+                            {
+                                "IS": {
+                                    "courses_id": "535"
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_id",
+                "courses_instructor",
+                "courses_dept"
+            ],
+            "ORDER": "courses_dept"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        {
+            "courses_id": "535",
+            "courses_instructor": "birol, gulnur;rosenberg, ellen;samuels, anne lacey",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_id": "535",
+            "courses_instructor": "chowrira, gangamma;samuels, anne lacey",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_id": "447",
+            "courses_instructor": "samuels, anne lacey;taylor, eric",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_id": "447",
+            "courses_instructor": "samuels, anne lacey;taylor, eric",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_id": "447",
+            "courses_instructor": "moerman, donald;samuels, anne lacey",
+            "courses_dept": "biol"
+        },
+        {
+            "courses_id": "210",
+            "courses_instructor": "ellis, shona margaret;graham, sean;samuels, anne lacey",
+            "courses_dept": "biol"
+        }
+    ]
+}

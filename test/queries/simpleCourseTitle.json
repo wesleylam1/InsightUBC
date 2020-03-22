@@ -1,0 +1,46 @@
+{
+    "title": "Find courses with title counterpoint",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_title": "counterpoint"
+            }
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_dept",
+                "courses_id",
+                "courses_title",
+                "courses_avg"
+            ],
+            "ORDER": "courses_avg"
+        }
+    },
+    "isQueryValid": true,
+    "result": [
+        {
+            "courses_dept": "musc",
+            "courses_id": "414",
+            "courses_title": "counterpoint",
+            "courses_avg": 74.88
+        },
+        {
+            "courses_dept": "musc",
+            "courses_id": "414",
+            "courses_title": "counterpoint",
+            "courses_avg": 74.88
+        },
+        {
+            "courses_dept": "musc",
+            "courses_id": "414",
+            "courses_title": "counterpoint",
+            "courses_avg": 77.4
+        },
+        {
+            "courses_dept": "musc",
+            "courses_id": "414",
+            "courses_title": "counterpoint",
+            "courses_avg": 77.4
+        }
+    ]
+}

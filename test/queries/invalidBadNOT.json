@@ -1,0 +1,34 @@
+{
+    "title": "Should fail NOT without another filter",
+    "query": {
+        "WHERE": {
+            "AND": [
+                {
+                    "NOT": {
+                        "courses_avg": 70
+                    }
+                },
+                {
+                    "IS": {
+                        "courses_instructor": "*samuels*"
+                    }
+                },
+                {
+                    "GT": {
+                        "courses_avg": 80
+                    }
+                }
+            ]
+        },
+        "OPTIONS": {
+            "COLUMNS": [
+                "courses_id",
+                "courses_instructor",
+                "courses_dept"
+            ],
+            "ORDER": "courses_dept"
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}

@@ -1,0 +1,12 @@
+{
+    "title": "Invalid no options specified",
+    "query": {
+        "WHERE": {
+            "IS": {
+                "courses_instructor": "*samuels*"
+            }
+        }
+    },
+    "isQueryValid": false,
+    "result": "InsightError"
+}
