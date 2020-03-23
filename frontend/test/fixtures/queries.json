@@ -1,4 +1,42 @@
 {
 
-    "query1":{"WHERE": {"IS": {"courses_dept": "cpsc"} }, "OPTIONS": {"COLUMNS": ["courses_dept", "courses_id"], "ORDER": "courses_id"} }
+    "query1":{"WHERE": {"IS": {"courses_dept": "cpsc"} }, "OPTIONS": {"COLUMNS": ["courses_dept", "courses_id"], "ORDER": "courses_id"},
+        "Apply": {
+            "WHERE": {
+                "AND": [
+                    {
+                        "IS": {
+                            "courses_dept": "biol"
+                        }
+                    }
+
+                ]
+            },
+            "OPTIONS": {
+                "COLUMNS": [
+                    "earliestYear",
+                    "courses_title",
+                    "courses_id"
+                ],
+                "ORDER": "earliestYear"
+            },
+            "TRANSFORMATIONS": {
+                "GROUP": [
+                    "courses_title",
+                    "courses_id"
+                ],
+                "APPLY": [
+                    {
+                        "earliestYear": {
+                            "MIN": "courses_year"
+                        },
+                        "earliestYar": {
+                            "MIN": "courses_year"
+                        }
+                    }
+                ]
+            }
+        }
+
+    }
 }

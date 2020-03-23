@@ -2,6 +2,9 @@ module.exports = function (config) {
     config.set({
         basePath: "",
         frameworks: ["mocha", "chai", "fixture"],
+        plugins: [
+            'karma-mocha', 'karma-chai', 'karma-fixture', 'json_fixtures', 'html2js'
+        ],
         files: [
             {
                 pattern: "./frontend/test/fixtures/**/*.json",
