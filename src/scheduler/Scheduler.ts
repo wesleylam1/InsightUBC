@@ -7,12 +7,10 @@ export default class Scheduler implements IScheduler {
         // TODO Implement this
         const result: Array<[SchedRoom, SchedSection, TimeSlot]> = new Array<[SchedRoom, SchedSection, TimeSlot]>();
         sections.sort((a: SchedSection, b: SchedSection) => {
-            return (a.courses_audit + a.courses_fail + a.courses_pass) -
-                (b.courses_audit + b.courses_pass + b.courses_fail);
+            return (b.courses_audit + b.courses_fail + b.courses_pass) -
+                (a.courses_audit + a.courses_pass + a.courses_fail);
         });
-        sections.reverse();
         let midPoint: number[] = findMidpoint(rooms);
-        findDistanceFromMidPoint(rooms, midPoint);
         rooms.sort((a: SchedRoom, b: SchedRoom) => {
             return a.rooms_seats - b.rooms_seats;
         });
@@ -25,8 +23,7 @@ export default class Scheduler implements IScheduler {
             const scheduledRooms: SchedRoom[] = [];
             for (let section of sections) {
                 const viableRooms: SchedRoom[] = [];
-                if (!scheduledSections.includes(section.courses_dept + section.courses_id)
-                    && !scheduledCourses.includes(section)) {
+                if (checkSection(scheduledSections, section, scheduledCourses)) {
                     for (let room of rooms) {
                         if (checkRoom(scheduledRooms, section, room)) {
                             viableRooms.push(room);
@@ -36,7 +33,7 @@ export default class Scheduler implements IScheduler {
                         continue;
                     }
                     let closestRoom: SchedRoom = viableRooms.reduce((min: SchedRoom, room: SchedRoom) =>
-                        min.rooms_distance < room.rooms_distance ? min : room);
+                        findDistance(min, midPoint) < findDistance(room, midPoint) ? min : room);
                     result.push([closestRoom, section, time]);
                     scheduledSections.push(section.courses_dept + section.courses_id);
                     scheduledCourses.push(section);
@@ -49,7 +46,7 @@ export default class Scheduler implements IScheduler {
 }
 
 // Original code from C3 spec https://www.movable-type.co.uk/scripts/latlong.html
-export function findDistance(room: SchedRoom, midPoint: number[]) {
+function findDistance(room: SchedRoom, midPoint: number[]) {
     let R = 6371e3; // metres
     let φ1 = toRadians(room.rooms_lat);
     let φ2 = toRadians(midPoint[0]);
@@ -68,7 +65,7 @@ export function findDistance(room: SchedRoom, midPoint: number[]) {
     return R * c;
 }
 
-export function findMidpoint(rooms: SchedRoom[]): number[] {
+function findMidpoint(rooms: SchedRoom[]): number[] {
     let sumLat: number = 0;
     let sumLon: number = 0;
     let n: number = rooms.length;
@@ -79,16 +76,13 @@ export function findMidpoint(rooms: SchedRoom[]): number[] {
     return [(sumLat / n), (sumLon / n)];
 }
 
-export function findDistanceFromMidPoint(rooms: SchedRoom[], midPoint: number[]) {
-    for (let room of rooms) {
-        room.rooms_distance = findDistance(room, midPoint);
-    }
-}
-
-export function checkRoom(schedRooms: SchedRoom[], section: SchedSection, room: SchedRoom): boolean {
+function checkRoom(schedRooms: SchedRoom[], section: SchedSection, room: SchedRoom): boolean {
     let a = !schedRooms.includes(room);
     let b = (section.courses_pass + section.courses_fail + section.courses_audit) <= room.rooms_seats;
     return a && b ;
 }
 
-
+function checkSection(scheduledSections: string[], section: SchedSection, scheduledCourses: SchedSection[]) {
+    return !scheduledSections.includes(section.courses_dept + section.courses_id)
+        && !scheduledCourses.includes(section);
+}

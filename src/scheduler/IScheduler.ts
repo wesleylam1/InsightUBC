@@ -23,7 +23,6 @@ export interface SchedRoom {
     rooms_type?: string;
     rooms_furniture?: string;
     rooms_href?: string;
-    rooms_distance?: number;
 }
 
 export type TimeSlot =
