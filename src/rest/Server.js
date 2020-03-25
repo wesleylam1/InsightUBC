@@ -3,6 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs");
 const restify = require("restify");
 const Util_1 = require("../Util");
+const InsightFacade_1 = require("../controller/InsightFacade");
+const IInsightFacade_1 = require("../controller/IInsightFacade");
 class Server {
     constructor(port) {
         Util_1.default.info("Server::<init>( " + port + " )");
@@ -32,6 +34,10 @@ class Server {
                     return next();
                 });
                 that.rest.get("/echo/:msg", Server.echo);
+                that.rest.put("/dataset/:id/:kind", Server.putter);
+                that.rest.del("/dataset/:id", Server.deleter);
+                that.rest.post("/query", Server.poster);
+                that.rest.get("/datasets", Server.getter);
                 that.rest.get("/.*", Server.getStatic);
                 that.rest.listen(that.port, function () {
                     Util_1.default.info("Server::start() - restify listening: " + that.rest.url);
@@ -47,6 +53,53 @@ class Server {
                 reject(err);
             }
         });
+    }
+    static putter(req, res, next) {
+        let id = req.params.id;
+        let kind = req.params.kind;
+        let content = req.body.toString("base64");
+        Server.insightFacade.addDataset(id, content, kind)
+            .then((response) => {
+            res.json(200, { result: response });
+        })
+            .catch((err) => {
+            res.json(400, { error: "AddDataset rejected" });
+        });
+        return next;
+    }
+    static deleter(req, res, next) {
+        let id = req.params.id;
+        Server.insightFacade.removeDataset(id)
+            .then((response) => {
+            res.json(200, { result: response });
+        })
+            .catch((err) => {
+            if (err instanceof IInsightFacade_1.NotFoundError) {
+                res.json(404, { error: "RemoveDataset rejected with NotFoundError" });
+            }
+            else {
+                res.json(400, { error: "RemoveDataset rejected with InsightError" });
+            }
+        });
+        return next();
+    }
+    static poster(req, res, next) {
+        let query = req.params;
+        Server.insightFacade.performQuery(query)
+            .then((response) => {
+            res.json(200, { result: response });
+        })
+            .catch((err) => {
+            res.json(400, { error: "PerformQuery rejected" });
+        });
+        return next();
+    }
+    static getter(req, res, next) {
+        Server.insightFacade.listDatasets()
+            .then((response) => {
+            res.json(200, { result: response });
+        });
+        return next();
     }
     static echo(req, res, next) {
         Util_1.default.trace("Server::echo(..) - params: " + JSON.stringify(req.params));
@@ -89,4 +142,5 @@ class Server {
     }
 }
 exports.default = Server;
+Server.insightFacade = new InsightFacade_1.default();
 //# sourceMappingURL=Server.js.map
