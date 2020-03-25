@@ -1,3 +1,9 @@
-{
-    "query1": "simple query IS comparison for department with two columns and old order syntax"
+ {
+    "query1": "simple query IS comparison for department with two columns and old order syntax",
+     "query2": "Apply with 2 Apply keys",
+     "query3": "invalid column",
+     "query4": "ALL",
+     "query5": "Any",
+     "query6": "none",
+     "query7": "multiple order, Order Down"
 }
