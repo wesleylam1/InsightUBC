@@ -41,7 +41,7 @@ export default class Scheduler implements IScheduler {
         let orderedSections = this.prioritizeSections(sections);
         let result: Array<[SchedRoom, SchedSection, TimeSlot]> = [];
         let filledTimeSlots: number = 0;
-        for (let i = 0; i < orderedRooms.length; i++) {
+        roomsLoop : for (let i = 0; i < orderedRooms.length; i++) {
             filledTimeSlots = 0;
             this.currRoom = orderedRooms[i];
             sectionsLoop: for (let j in orderedSections) {
@@ -62,6 +62,9 @@ export default class Scheduler implements IScheduler {
                     }
                     if (filledTimeSlots === 15) {
                         break sectionsLoop;
+                    }
+                    if (orderedSections.length === 0) {
+                        break roomsLoop;
                     }
                 }
             }
@@ -171,10 +174,22 @@ export default class Scheduler implements IScheduler {
                              rooms: SchedRoom[], roomsused: SchedRoom[]):
         Array<[SchedRoom, SchedSection, TimeSlot]> {
         let optimizedResult: Array<[SchedRoom, SchedSection, TimeSlot]> = [];
-        let meanlat = this.getMeanLat(roomsused);
-        let meanlon = this.getMeanLon(roomsused);
+        let centrePseudoRoom: SchedRoom = this.getCentreRoom(roomsused);
+
 
         return optimizedResult;
     }
 
+    private getCentreRoom(rooms: SchedRoom[]): SchedRoom {
+        let meanlat = this.getMeanLat(rooms);
+        let meanlon = this.getMeanLon(rooms);
+        let result: SchedRoom = {
+            rooms_shortname: "_____",
+        rooms_number: "-1",
+        rooms_seats: -1,
+        rooms_lat: meanlat,
+        rooms_lon: meanlon
+        };
+        return result;
+    }
 }

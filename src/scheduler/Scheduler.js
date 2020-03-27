@@ -24,7 +24,7 @@ class Scheduler {
         let orderedSections = this.prioritizeSections(sections);
         let result = [];
         let filledTimeSlots = 0;
-        for (let i = 0; i < orderedRooms.length; i++) {
+        roomsLoop: for (let i = 0; i < orderedRooms.length; i++) {
             filledTimeSlots = 0;
             this.currRoom = orderedRooms[i];
             sectionsLoop: for (let j in orderedSections) {
@@ -45,6 +45,9 @@ class Scheduler {
                     }
                     if (filledTimeSlots === 15) {
                         break sectionsLoop;
+                    }
+                    if (orderedSections.length === 0) {
+                        break roomsLoop;
                     }
                 }
             }
@@ -141,9 +144,20 @@ class Scheduler {
     }
     optimizeDistance(results, rooms, roomsused) {
         let optimizedResult = [];
-        let meanlat = this.getMeanLat(roomsused);
-        let meanlon = this.getMeanLon(roomsused);
+        let centrePseudoRoom = this.getCentreRoom(roomsused);
         return optimizedResult;
+    }
+    getCentreRoom(rooms) {
+        let meanlat = this.getMeanLat(rooms);
+        let meanlon = this.getMeanLon(rooms);
+        let result = {
+            rooms_shortname: "_____",
+            rooms_number: "-1",
+            rooms_seats: -1,
+            rooms_lat: meanlat,
+            rooms_lon: meanlon
+        };
+        return result;
     }
 }
 exports.default = Scheduler;
