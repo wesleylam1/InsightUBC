@@ -10,6 +10,7 @@ src/**/*.js
 src/**/*.map
 test/*.js
 test/*.map
+test/IScheduler.ts
 .DS_Store
 .env
 /data/

@@ -10,65 +10,72 @@ export default class Scheduler implements IScheduler {
     "TR  0800-0930" , "TR  0930-1100" , "TR  1100-1230" ,
     "TR  1230-1400" , "TR  1400-1530" , "TR  1530-1700"];
 
-    private roomsXtime: any;
+    private roomsXtime: boolean[][];
     private courseXtime: any;
     private currSection: SchedSection;
     private currRoom: SchedRoom;
     private currTime: TimeSlot;
     private alreadyScheduledSections: any = {};
+    private coursesInTS: Array<Set<string>>;
+    private roomsUsed: Set<SchedRoom>;
+
+    private initialize(sections: SchedSection[], rooms: SchedRoom[]): void {
+        this.coursesInTS = new Array<Set<string>>(15);
+        for (let i = 0; i < 15; i++) {
+            this.coursesInTS[i] = new Set<string>();
+        }
+        this.roomsXtime = [];
+        this.roomsUsed = new Set<SchedRoom>();
+        for (let i = 0; i < rooms.length ; i++) {
+            this.roomsXtime[i] = [];
+            for (let j = 0; j < 15; j++) {
+                this.roomsXtime[i][j] = false;
+            }
+        }
+    }
 
     public schedule(sections: SchedSection[], rooms: SchedRoom[]): Array<[SchedRoom, SchedSection, TimeSlot]> {
-        let orderedRooms = this.prioritizeRooms(rooms);
+        this.initialize(sections, rooms);
+        let orderedRooms = this.prioritizeRoomsBySize(rooms);
         let orderedSections = this.prioritizeSections(sections);
-        this.roomsXtime = {};
-        this.courseXtime = {};
-        this.alreadyScheduledSections = {};
         let result: Array<[SchedRoom, SchedSection, TimeSlot]> = [];
-        for (let room of orderedRooms) {
-            let name: string = room.rooms_shortname + room.rooms_number;
-            this.roomsXtime[name] = 15;
-            for (let i in orderedSections) {
-                let section: SchedSection = orderedSections[i];
-                if (this.canSchedule(room, section)) {
-                    delete orderedSections[i];
-                    result.push([room, section, this.currTime]);
-                    this.courseXtime[section.courses_id].add(this.currTime);
-                    this.roomsXtime[name] --;
+        let filledTimeSlots: number = 0;
+        for (let i = 0; i < orderedRooms.length; i++) {
+            filledTimeSlots = 0;
+            this.currRoom = orderedRooms[i];
+            sectionsLoop: for (let j in orderedSections) {
+                this.currSection = orderedSections[j];
+                if (this.getSectionSize(this.currSection) > this.currRoom.rooms_seats) {
+                    continue;
+                }
+                for (let t = 0; t < 15; t++) {
+                    if (this.timeslotWorks(this.currSection, t, i)) {
+                        result.push([this.currRoom, this.currSection, Scheduler.timeSlots[t]]);
+                        delete orderedSections[j];
+                        this.roomsXtime[i][t] = true;
+                        filledTimeSlots++;
+                        this.roomsUsed.add(this.currRoom);
+                        this.coursesInTS[t].add(this.currSection.courses_id);
+                        break;
+                    }
+                    if (filledTimeSlots === 15) {
+                        break sectionsLoop;
                     }
                 }
+
+
+            }
         }
         return result;
-    }
 
-    private canSchedule(room: SchedRoom, section: SchedSection): boolean {
-        return (this.doesSectionFitInRoom(section, room) && this.checkCourseTimes(section) &&
-            (this.roomsXtime[room.rooms_shortname + room.rooms_number] > 0 ));
-    }
-
-
-    private checkCourseTimes(section: SchedSection): boolean {
-        if (this.courseXtime.hasOwnProperty(section.courses_id)) {
-            for (let time of Scheduler.timeSlots) {
-                if (!this.courseXtime[section.courses_id].has(time)) {
-                    this.currTime = time;
-                    this.courseXtime[section.courses_id].add(time);
-                    return true;
-                }
-            }
-            return false;
-        } else {
-            this.courseXtime[section.courses_id] = new Set<TimeSlot>() ;
-            this.courseXtime[section.courses_id].add(Scheduler.timeSlots[0]);
-            return true;
-        }
 
     }
 
-
-    private doesSectionFitInRoom(section: SchedSection, room: SchedRoom): boolean {
-        let size: number = this.getSectionSize(section);
-        return size <= room.rooms_seats;
+    // returns true if room is not yet booked in given timeslot and no other section is taught in that timeslot
+    private timeslotWorks(section: SchedSection, timeslot: number, roomIndex: number): boolean {
+        return (!this.coursesInTS[timeslot].has(section.courses_id) && !this.roomsXtime[roomIndex][timeslot]);
     }
+
 
     private getSectionSize(section: SchedSection) {
         return section.courses_audit + section.courses_fail + section.courses_pass;
@@ -95,10 +102,24 @@ export default class Scheduler implements IScheduler {
         return deg * (Math.PI / 180);
     }
 
-    private prioritizeRooms(rooms: SchedRoom[]): SchedRoom[] {
+    private prioritizeRoomsByDistance(rooms: SchedRoom[]): SchedRoom[] {
         let source: SchedRoom = rooms[0];
         let sortFunc: (a: any, b: any) => any = this.getSortFunction(source);
         return rooms.sort(sortFunc);
+    }
+
+    private prioritizeRoomsBySize(rooms: SchedRoom[]): SchedRoom[] {
+        let compareFunc = ((a: SchedRoom, b: SchedRoom) => {
+            if (a.rooms_seats > b.rooms_seats) {
+                return 1;
+            }
+            if (a.rooms_seats < b.rooms_seats) {
+                return -1;
+            } else {
+                return 0;
+            }
+        });
+        return rooms.sort(compareFunc);
     }
 
     private getSortFunction(sourceRoom: SchedRoom): (a: any, b: any) => any {
@@ -117,10 +138,10 @@ export default class Scheduler implements IScheduler {
     private prioritizeSections(sections: SchedSection[]): SchedSection[] {
         let compareFunc = ((a: SchedSection, b: SchedSection) => {
             if (this.getSectionSize(a) > this.getSectionSize(b)) {
-                return -1;
+                return 1;
             }
             if (this.getSectionSize(a) < this.getSectionSize(b)) {
-                return 1;
+                return -1;
             } else {
                 return 0;
             }
