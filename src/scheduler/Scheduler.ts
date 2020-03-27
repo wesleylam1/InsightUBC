@@ -11,13 +11,11 @@ export default class Scheduler implements IScheduler {
     "TR  1230-1400" , "TR  1400-1530" , "TR  1530-1700"];
 
     private roomsXtime: boolean[][];
-    private courseXtime: any;
     private currSection: SchedSection;
     private currRoom: SchedRoom;
-    private currTime: TimeSlot;
-    private alreadyScheduledSections: any = {};
     private coursesInTS: Array<Set<string>>;
     private roomsUsed: Set<SchedRoom>;
+    private roomsXsection: SchedSection[][];
 
     private initialize(sections: SchedSection[], rooms: SchedRoom[]): void {
         this.coursesInTS = new Array<Set<string>>(15);
@@ -25,11 +23,14 @@ export default class Scheduler implements IScheduler {
             this.coursesInTS[i] = new Set<string>();
         }
         this.roomsXtime = [];
+        this.roomsXsection = [];
         this.roomsUsed = new Set<SchedRoom>();
         for (let i = 0; i < rooms.length ; i++) {
             this.roomsXtime[i] = [];
+            this.roomsXsection[i] = [];
             for (let j = 0; j < 15; j++) {
                 this.roomsXtime[i][j] = false;
+                this.roomsXsection[i][j] = null;
             }
         }
     }
@@ -52,8 +53,9 @@ export default class Scheduler implements IScheduler {
                     if (this.timeslotWorks(this.currSection, t, i)) {
                         result.push([this.currRoom, this.currSection, Scheduler.timeSlots[t]]);
                         delete orderedSections[j];
-                        this.roomsXtime[i][t] = true;
                         filledTimeSlots++;
+                        this.roomsXtime[i][t] = true;
+                        this.roomsXsection[i][t] = this.currSection;
                         this.roomsUsed.add(this.currRoom);
                         this.coursesInTS[t].add(this.currSection.courses_id);
                         break;
@@ -62,13 +64,11 @@ export default class Scheduler implements IScheduler {
                         break sectionsLoop;
                     }
                 }
-
-
             }
         }
+        let roomsUsedArray: SchedRoom[] = Array.from(this.roomsUsed);
+        result = this.optimizeDistance(result, rooms, roomsUsedArray);
         return result;
-
-
     }
 
     // returns true if room is not yet booked in given timeslot and no other section is taught in that timeslot
@@ -148,4 +148,33 @@ export default class Scheduler implements IScheduler {
         });
         return sections.sort(compareFunc);
     }
+
+    private getMeanLat(rooms: SchedRoom[]): number {
+        let res = 0;
+        for (let room of rooms) {
+            res += room.rooms_lat;
+        }
+        res = res / rooms.length;
+        return res;
+    }
+
+    private getMeanLon(rooms: SchedRoom[]): number {
+        let res = 0;
+        for (let room of rooms) {
+            res += room.rooms_lon;
+        }
+        res = res / rooms.length;
+        return res;
+    }
+
+    private optimizeDistance(results: Array<[SchedRoom, SchedSection, TimeSlot]>,
+                             rooms: SchedRoom[], roomsused: SchedRoom[]):
+        Array<[SchedRoom, SchedSection, TimeSlot]> {
+        let optimizedResult: Array<[SchedRoom, SchedSection, TimeSlot]> = [];
+        let meanlat = this.getMeanLat(roomsused);
+        let meanlon = this.getMeanLon(roomsused);
+
+        return optimizedResult;
+    }
+
 }

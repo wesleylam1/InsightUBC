@@ -1,20 +1,20 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class Scheduler {
-    constructor() {
-        this.alreadyScheduledSections = {};
-    }
     initialize(sections, rooms) {
         this.coursesInTS = new Array(15);
         for (let i = 0; i < 15; i++) {
             this.coursesInTS[i] = new Set();
         }
         this.roomsXtime = [];
+        this.roomsXsection = [];
         this.roomsUsed = new Set();
         for (let i = 0; i < rooms.length; i++) {
             this.roomsXtime[i] = [];
+            this.roomsXsection[i] = [];
             for (let j = 0; j < 15; j++) {
                 this.roomsXtime[i][j] = false;
+                this.roomsXsection[i][j] = null;
             }
         }
     }
@@ -36,8 +36,9 @@ class Scheduler {
                     if (this.timeslotWorks(this.currSection, t, i)) {
                         result.push([this.currRoom, this.currSection, Scheduler.timeSlots[t]]);
                         delete orderedSections[j];
-                        this.roomsXtime[i][t] = true;
                         filledTimeSlots++;
+                        this.roomsXtime[i][t] = true;
+                        this.roomsXsection[i][t] = this.currSection;
                         this.roomsUsed.add(this.currRoom);
                         this.coursesInTS[t].add(this.currSection.courses_id);
                         break;
@@ -48,6 +49,8 @@ class Scheduler {
                 }
             }
         }
+        let roomsUsedArray = Array.from(this.roomsUsed);
+        result = this.optimizeDistance(result, rooms, roomsUsedArray);
         return result;
     }
     timeslotWorks(section, timeslot, roomIndex) {
@@ -119,6 +122,28 @@ class Scheduler {
             }
         });
         return sections.sort(compareFunc);
+    }
+    getMeanLat(rooms) {
+        let res = 0;
+        for (let room of rooms) {
+            res += room.rooms_lat;
+        }
+        res = res / rooms.length;
+        return res;
+    }
+    getMeanLon(rooms) {
+        let res = 0;
+        for (let room of rooms) {
+            res += room.rooms_lon;
+        }
+        res = res / rooms.length;
+        return res;
+    }
+    optimizeDistance(results, rooms, roomsused) {
+        let optimizedResult = [];
+        let meanlat = this.getMeanLat(roomsused);
+        let meanlon = this.getMeanLon(roomsused);
+        return optimizedResult;
     }
 }
 exports.default = Scheduler;
