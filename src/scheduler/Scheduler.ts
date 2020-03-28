@@ -185,8 +185,8 @@ export default class Scheduler implements IScheduler {
         let sortedUnusedRooms: SchedRoom[] =
             this.prioritizeRoomsByDistanceFromSource(unusedRooms, centrePseudoRoom).reverse();
         let sortedUsedRooms: SchedRoom[] = this.prioritizeRoomsByDistanceFromSource(roomsUsed, centrePseudoRoom);
-        for (let i = 0; i < Math.floor(sortedUsedRooms.length / 2); i++) {
-            let usedRoom: SchedRoom = sortedUsedRooms[i];
+        for (let i of roomsUsed) {
+            let usedRoom: SchedRoom = i;
             let usedRoomkey = usedRoom.rooms_shortname + usedRoom.rooms_number;
             let switchedRooms: Set<string> = new Set<string>();
             roomsLoop: for (let j of unusedRooms) {

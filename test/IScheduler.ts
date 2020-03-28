@@ -4,6 +4,7 @@ import {expect} from "chai";
 import Scheduler from "../src/scheduler/Scheduler";
 /*
 
+
 let sections = [
     {
         "courses_dept": "cpsc",
@@ -206,11 +207,56 @@ it("basic schedule test", function () {
 
 });
 
+let farRooms = [
+    {
+        "rooms_shortname": "AERL",
+        "rooms_number": "120",
+        "rooms_seats": 144,
+        "rooms_lat": 49.26372,
+        "rooms_lon": -123.25099
+    },
+    {
+        "rooms_shortname": "ALRD",
+        "rooms_number": "105",
+        "rooms_seats": 94,
+        "rooms_lat": 49.4699,
+        "rooms_lon": -123.25318
+    },
+    {
+        "rooms_shortname": "ALFRD",
+        "rooms_number": "105",
+        "rooms_seats": 94,
+        "rooms_lat": 49.2399,
+        "rooms_lon": -123.25318
+    },
+    {
+        "rooms_shortname": "ALERD",
+        "rooms_number": "105",
+        "rooms_seats": 94,
+        "rooms_lat": 49.2499,
+        "rooms_lon": -123.25318
+    },
+    {
+        "rooms_shortname": "ANGU",
+        "rooms_number": "098",
+        "rooms_seats": 260,
+        "rooms_lat": 49.26486,
+        "rooms_lon": -123.25364
+    }
+
+];
+
 it("Test for too many sections for one room", function () {
     let scheduler: Scheduler = new Scheduler();
     scheduler.schedule(sections16, rooms);
 
 });
 
+it("Tests for first room very far from others", function() {
+    let scheduler: Scheduler = new Scheduler();
+    scheduler.schedule(sections16, farRooms);
+});
+
 
 */
+
