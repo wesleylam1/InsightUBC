@@ -3,67 +3,67 @@ Object.defineProperty(exports, "__esModule", { value: true });
 class Scheduler {
     initialize(sections, rooms) {
         this.coursesInTS = new Array(15);
+        this.alreadyScheduledSections = new Set();
+        this.roomsDictionary = {};
         for (let i = 0; i < 15; i++) {
             this.coursesInTS[i] = new Set();
         }
         this.maxClassInRoom = {};
-        this.roomsXtime = [];
-        this.roomsXsection = [];
+        this.roomsXtimeXsection = {};
         this.roomsUsed = [];
-        for (let i = 0; i < rooms.length; i++) {
-            this.roomsXtime[i] = [];
-            this.roomsXsection[i] = [];
+        for (let i of rooms) {
+            this.roomsXtimeXsection[i.rooms_shortname + i.rooms_number] = new Array(15);
+            this.roomsDictionary[i.rooms_shortname + i.rooms_number] = i;
             for (let j = 0; j < 15; j++) {
-                this.roomsXtime[i][j] = false;
-                this.roomsXsection[i][j] = null;
+                this.roomsXtimeXsection[i.rooms_shortname + i.rooms_number][j] = false;
             }
         }
     }
     schedule(sections, rooms) {
         this.initialize(sections, rooms);
         let orderedRooms = this.prioritizeRoomsBySize(rooms);
+        let unusedRooms = [];
         let orderedSections = this.prioritizeSections(sections);
         let result = [];
         let filledTimeSlots = 0;
-        roomsLoop: for (let i = 0; i < orderedRooms.length; i++) {
+        for (let i of orderedRooms) {
             filledTimeSlots = 0;
-            let currRoom = orderedRooms[i];
+            let currRoom = i;
             this.maxClassInRoom[currRoom.rooms_shortname + currRoom.rooms_number] = 0;
-            sectionsLoop: for (let j in orderedSections) {
-                let currSection = orderedSections[j];
-                if (this.getSectionSize(this.currSection) > currRoom.rooms_seats) {
-                    continue;
-                }
-                for (let t = 0; t < 15; t++) {
-                    if (this.timeslotWorks(currSection, t, i)) {
-                        delete orderedSections[j];
-                        filledTimeSlots++;
-                        this.roomsXtime[i][t] = orderedSections[j];
-                        this.roomsXsection[i][t] = currSection;
-                        this.roomsUsed.push(currRoom);
-                        this.coursesInTS[t].add(currSection.courses_id);
-                        if (this.getSectionSize(orderedSections[j]) >
-                            this.maxClassInRoom[currRoom.rooms_shortname + currRoom.rooms_number]) {
-                            this.maxClassInRoom[currRoom.rooms_shortname + currRoom.rooms_number]
-                                = this.getSectionSize(currSection);
+            sectionsLoop: for (let j of orderedSections) {
+                let currSection = j;
+                if (!this.alreadyScheduledSections.has(currSection.courses_id + currSection.courses_uuid)) {
+                    if (this.getSectionSize(currSection) > currRoom.rooms_seats) {
+                        continue;
+                    }
+                    for (let t = 0; t < 15; t++) {
+                        let key = currRoom.rooms_shortname + currRoom.rooms_number;
+                        if (this.timeslotWorks(currSection, t, key)) {
+                            filledTimeSlots++;
+                            this.alreadyScheduledSections.add(currSection.courses_id + currSection.courses_uuid);
+                            this.roomsXtimeXsection[key][t] = currSection;
+                            this.roomsUsed.push(currRoom);
+                            this.coursesInTS[t].add(currSection.courses_id);
+                            if (this.getSectionSize(currSection) > this.maxClassInRoom[key]) {
+                                this.maxClassInRoom[key] = this.getSectionSize(currSection);
+                            }
+                            break;
                         }
-                        break;
-                    }
-                    if (filledTimeSlots === 15) {
-                        delete orderedRooms[i];
-                        break sectionsLoop;
-                    }
-                    if (orderedSections.length === 0) {
-                        break roomsLoop;
+                        if (filledTimeSlots === 15) {
+                            break sectionsLoop;
+                        }
                     }
                 }
             }
+            if (filledTimeSlots === 0) {
+                unusedRooms.push(currRoom);
+            }
         }
-        result = this.optimizeDistance(result, orderedRooms, this.roomsUsed);
+        result = this.optimizeDistance(result, unusedRooms, this.roomsUsed);
         return result;
     }
-    timeslotWorks(section, timeslot, roomIndex) {
-        return (!this.coursesInTS[timeslot].has(section.courses_id) && !this.roomsXtime[roomIndex][timeslot]);
+    timeslotWorks(section, timeslot, key) {
+        return (!this.coursesInTS[timeslot].has(section.courses_id) && !this.roomsXtimeXsection[key][timeslot]);
     }
     getSectionSize(section) {
         return section.courses_audit + section.courses_fail + section.courses_pass;
@@ -106,10 +106,10 @@ class Scheduler {
     }
     getSortFunction(sourceRoom) {
         return ((a, b) => {
-            if (this.getDistance(sourceRoom, a) < this.getDistance(sourceRoom, b)) {
+            if (this.getDistance(sourceRoom, a) > this.getDistance(sourceRoom, b)) {
                 return 1;
             }
-            if (this.getDistance(sourceRoom, a) > this.getDistance(sourceRoom, b)) {
+            if (this.getDistance(sourceRoom, a) < this.getDistance(sourceRoom, b)) {
                 return -1;
             }
             else {
@@ -147,12 +147,25 @@ class Scheduler {
         res = res / rooms.length;
         return res;
     }
-    optimizeDistance(results, unusedRooms, roomsused) {
+    optimizeDistance(results, unusedRooms, roomsUsed) {
         let optimizedResult = [];
-        let centrePseudoRoom = this.getCentreRoom(roomsused);
-        let sortedUnusedRooms = this.prioritizeRoomsByDistanceFromSource(unusedRooms, centrePseudoRoom);
-        let sortedResult = this.prioritizeTuplesByDistance(results, centrePseudoRoom);
-        let length = sortedResult.length;
+        let centrePseudoRoom = this.getCentreRoom(roomsUsed);
+        let sortedUnusedRooms = this.prioritizeRoomsByDistanceFromSource(unusedRooms, centrePseudoRoom).reverse();
+        let sortedUsedRooms = this.prioritizeRoomsByDistanceFromSource(roomsUsed, centrePseudoRoom);
+        for (let i = 0; i < Math.floor(sortedUsedRooms.length / 2); i++) {
+            let usedRoom = sortedUsedRooms[i];
+            let usedRoomkey = usedRoom.rooms_shortname + usedRoom.rooms_number;
+            let maxSecSize = this.maxClassInRoom[usedRoomkey];
+            roomsLoop: for (let j of unusedRooms) {
+                let unusedRoom = j;
+                let unusedRoomKey = unusedRoom.rooms_shortname + unusedRoom.rooms_number;
+                if (this.maxClassInRoom[usedRoomkey] <= unusedRoom.rooms_seats &&
+                    (this.getDistance(centrePseudoRoom, unusedRoom) < this.getDistance(centrePseudoRoom, usedRoom))) {
+                    this.roomSwitch(usedRoom, unusedRoom);
+                    break roomsLoop;
+                }
+            }
+        }
         return optimizedResult;
     }
     getCentreRoom(rooms) {
@@ -163,19 +176,13 @@ class Scheduler {
         };
         return result;
     }
-    prioritizeTuplesByDistance(results, source) {
-        let compareFunc = ((a, b) => {
-            if (this.getDistance(source, a[0]) < this.getDistance(source, b[0])) {
-                return -1;
-            }
-            if (this.getDistance(source, a[0]) > this.getDistance(source, b[0])) {
-                return 1;
-            }
-            else {
-                return 0;
-            }
-        });
-        return results.sort(compareFunc);
+    roomSwitch(usedRoom, unusedRoom) {
+        let usedRoomKey = usedRoom.rooms_shortname + usedRoom.rooms_number;
+        let unusedRoomKey = unusedRoom.rooms_shortname + unusedRoom.rooms_number;
+        for (let t = 0; t < 15; t++) {
+            this.roomsXtimeXsection[unusedRoomKey][t] = this.roomsXtimeXsection[usedRoomKey][t];
+            this.roomsXtimeXsection[usedRoomKey][t] = false;
+        }
     }
 }
 exports.default = Scheduler;
