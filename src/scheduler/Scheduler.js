@@ -6,9 +6,10 @@ class Scheduler {
         for (let i = 0; i < 15; i++) {
             this.coursesInTS[i] = new Set();
         }
+        this.maxClassInRoom = {};
         this.roomsXtime = [];
         this.roomsXsection = [];
-        this.roomsUsed = new Set();
+        this.roomsUsed = [];
         for (let i = 0; i < rooms.length; i++) {
             this.roomsXtime[i] = [];
             this.roomsXsection[i] = [];
@@ -26,24 +27,30 @@ class Scheduler {
         let filledTimeSlots = 0;
         roomsLoop: for (let i = 0; i < orderedRooms.length; i++) {
             filledTimeSlots = 0;
-            this.currRoom = orderedRooms[i];
+            let currRoom = orderedRooms[i];
+            this.maxClassInRoom[currRoom.rooms_shortname + currRoom.rooms_number] = 0;
             sectionsLoop: for (let j in orderedSections) {
-                this.currSection = orderedSections[j];
-                if (this.getSectionSize(this.currSection) > this.currRoom.rooms_seats) {
+                let currSection = orderedSections[j];
+                if (this.getSectionSize(this.currSection) > currRoom.rooms_seats) {
                     continue;
                 }
                 for (let t = 0; t < 15; t++) {
-                    if (this.timeslotWorks(this.currSection, t, i)) {
-                        result.push([this.currRoom, this.currSection, Scheduler.timeSlots[t]]);
+                    if (this.timeslotWorks(currSection, t, i)) {
                         delete orderedSections[j];
                         filledTimeSlots++;
-                        this.roomsXtime[i][t] = true;
-                        this.roomsXsection[i][t] = this.currSection;
-                        this.roomsUsed.add(this.currRoom);
-                        this.coursesInTS[t].add(this.currSection.courses_id);
+                        this.roomsXtime[i][t] = orderedSections[j];
+                        this.roomsXsection[i][t] = currSection;
+                        this.roomsUsed.push(currRoom);
+                        this.coursesInTS[t].add(currSection.courses_id);
+                        if (this.getSectionSize(orderedSections[j]) >
+                            this.maxClassInRoom[currRoom.rooms_shortname + currRoom.rooms_number]) {
+                            this.maxClassInRoom[currRoom.rooms_shortname + currRoom.rooms_number]
+                                = this.getSectionSize(currSection);
+                        }
                         break;
                     }
                     if (filledTimeSlots === 15) {
+                        delete orderedRooms[i];
                         break sectionsLoop;
                     }
                     if (orderedSections.length === 0) {
@@ -52,8 +59,7 @@ class Scheduler {
                 }
             }
         }
-        let roomsUsedArray = Array.from(this.roomsUsed);
-        result = this.optimizeDistance(result, rooms, roomsUsedArray);
+        result = this.optimizeDistance(result, orderedRooms, this.roomsUsed);
         return result;
     }
     timeslotWorks(section, timeslot, roomIndex) {
@@ -80,8 +86,7 @@ class Scheduler {
     deg2rad(deg) {
         return deg * (Math.PI / 180);
     }
-    prioritizeRoomsByDistance(rooms) {
-        let source = rooms[0];
+    prioritizeRoomsByDistanceFromSource(rooms, source) {
         let sortFunc = this.getSortFunction(source);
         return rooms.sort(sortFunc);
     }
@@ -102,10 +107,10 @@ class Scheduler {
     getSortFunction(sourceRoom) {
         return ((a, b) => {
             if (this.getDistance(sourceRoom, a) < this.getDistance(sourceRoom, b)) {
-                return -1;
+                return 1;
             }
             if (this.getDistance(sourceRoom, a) > this.getDistance(sourceRoom, b)) {
-                return 1;
+                return -1;
             }
             else {
                 return 0;
@@ -142,22 +147,35 @@ class Scheduler {
         res = res / rooms.length;
         return res;
     }
-    optimizeDistance(results, rooms, roomsused) {
+    optimizeDistance(results, unusedRooms, roomsused) {
         let optimizedResult = [];
         let centrePseudoRoom = this.getCentreRoom(roomsused);
+        let sortedUnusedRooms = this.prioritizeRoomsByDistanceFromSource(unusedRooms, centrePseudoRoom);
+        let sortedResult = this.prioritizeTuplesByDistance(results, centrePseudoRoom);
+        let length = sortedResult.length;
         return optimizedResult;
     }
     getCentreRoom(rooms) {
         let meanlat = this.getMeanLat(rooms);
         let meanlon = this.getMeanLon(rooms);
         let result = {
-            rooms_shortname: "_____",
-            rooms_number: "-1",
-            rooms_seats: -1,
-            rooms_lat: meanlat,
-            rooms_lon: meanlon
+            rooms_shortname: "_____", rooms_number: "-1", rooms_seats: -1, rooms_lat: meanlat, rooms_lon: meanlon
         };
         return result;
+    }
+    prioritizeTuplesByDistance(results, source) {
+        let compareFunc = ((a, b) => {
+            if (this.getDistance(source, a[0]) < this.getDistance(source, b[0])) {
+                return -1;
+            }
+            if (this.getDistance(source, a[0]) > this.getDistance(source, b[0])) {
+                return 1;
+            }
+            else {
+                return 0;
+            }
+        });
+        return results.sort(compareFunc);
     }
 }
 exports.default = Scheduler;
