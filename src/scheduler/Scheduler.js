@@ -10,7 +10,7 @@ class Scheduler {
         }
         this.maxClassInRoom = {};
         this.roomsXtimeXsection = {};
-        this.roomsUsed = [];
+        this.roomsUsed = new Set();
         for (let i of rooms) {
             this.roomsXtimeXsection[i.rooms_shortname + i.rooms_number] = new Array(15);
             this.roomsDictionary[i.rooms_shortname + i.rooms_number] = i;
@@ -42,7 +42,7 @@ class Scheduler {
                             filledTimeSlots++;
                             this.alreadyScheduledSections.add(currSection.courses_id + currSection.courses_uuid);
                             this.roomsXtimeXsection[key][t] = currSection;
-                            this.roomsUsed.push(currRoom);
+                            this.roomsUsed.add(currRoom);
                             this.coursesInTS[t].add(currSection.courses_id);
                             if (this.getSectionSize(currSection) > this.maxClassInRoom[key]) {
                                 this.maxClassInRoom[key] = this.getSectionSize(currSection);
@@ -59,7 +59,7 @@ class Scheduler {
                 unusedRooms.push(currRoom);
             }
         }
-        result = this.optimizeDistance(result, unusedRooms, this.roomsUsed);
+        result = this.optimizeDistance(result, unusedRooms, Array.from(this.roomsUsed));
         return result;
     }
     timeslotWorks(section, timeslot, key) {
@@ -160,9 +160,12 @@ class Scheduler {
                 let unusedRoom = j;
                 let unusedRoomKey = unusedRoom.rooms_shortname + unusedRoom.rooms_number;
                 if (!switchedRooms.has(unusedRoomKey)) {
-                    if (this.canRoomsBeSwitched(usedRoomkey, unusedRoom, centrePseudoRoom, usedRoom)) {
-                        this.roomSwitch(usedRoom, unusedRoom);
-                        switchedRooms.add(unusedRoomKey);
+                    if (this.canRoomsBeSwitched(usedRoomkey, unusedRoom)) {
+                        if ((this.getDistance(centrePseudoRoom, unusedRoom) <
+                            this.getDistance(centrePseudoRoom, usedRoom))) {
+                            this.roomSwitch(usedRoom, unusedRoom);
+                            switchedRooms.add(unusedRoomKey);
+                        }
                         break roomsLoop;
                     }
                 }
@@ -171,10 +174,8 @@ class Scheduler {
         optimizedResult = this.makeTupleFromMatrix();
         return optimizedResult;
     }
-    canRoomsBeSwitched(usedRoomkey, unusedRoom, centrePseudoRoom, usedRoom) {
-        return this.maxClassInRoom[usedRoomkey] <= unusedRoom.rooms_seats &&
-            (this.getDistance(centrePseudoRoom, unusedRoom) <
-                this.getDistance(centrePseudoRoom, usedRoom));
+    canRoomsBeSwitched(usedRoomkey, unusedRoom) {
+        return this.maxClassInRoom[usedRoomkey] <= unusedRoom.rooms_seats;
     }
     getCentreRoom(rooms) {
         let meanlat = this.getMeanLat(rooms);
