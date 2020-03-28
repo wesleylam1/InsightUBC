@@ -2,7 +2,6 @@
 import {InsightDatasetKind} from "../src/controller/IInsightFacade";
 import {expect} from "chai";
 import Scheduler from "../src/scheduler/Scheduler";
-
 /*
 
 let sections = [
@@ -212,5 +211,6 @@ it("Test for too many sections for one room", function () {
     scheduler.schedule(sections16, rooms);
 
 });
+
 
 */

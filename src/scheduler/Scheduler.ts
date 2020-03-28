@@ -188,18 +188,28 @@ export default class Scheduler implements IScheduler {
         for (let i = 0; i < Math.floor(sortedUsedRooms.length / 2); i++) {
             let usedRoom: SchedRoom = sortedUsedRooms[i];
             let usedRoomkey = usedRoom.rooms_shortname + usedRoom.rooms_number;
-            let maxSecSize: number = this.maxClassInRoom[usedRoomkey];
+            let switchedRooms: Set<string> = new Set<string>();
             roomsLoop: for (let j of unusedRooms) {
                 let unusedRoom: SchedRoom = j;
                 let unusedRoomKey = unusedRoom.rooms_shortname + unusedRoom.rooms_number;
-                if (this.maxClassInRoom[usedRoomkey] <= unusedRoom.rooms_seats &&
-                    (this.getDistance(centrePseudoRoom, unusedRoom) < this.getDistance(centrePseudoRoom, usedRoom))) {
-                    this.roomSwitch(usedRoom, unusedRoom);
-                    break roomsLoop;
+                if (!switchedRooms.has(unusedRoomKey)) {
+                    if (this.canRoomsBeSwitched(usedRoomkey, unusedRoom, centrePseudoRoom, usedRoom)) {
+                        this.roomSwitch(usedRoom, unusedRoom);
+                        switchedRooms.add(unusedRoomKey);
+                        break roomsLoop;
+                    }
                 }
             }
         }
+        optimizedResult = this.makeTupleFromMatrix();
         return optimizedResult;
+    }
+
+    private canRoomsBeSwitched(usedRoomkey: string, unusedRoom: SchedRoom,
+                               centrePseudoRoom: SchedRoom, usedRoom: SchedRoom) {
+        return this.maxClassInRoom[usedRoomkey] <= unusedRoom.rooms_seats &&
+            (this.getDistance(centrePseudoRoom, unusedRoom) <
+                this.getDistance(centrePseudoRoom, usedRoom));
     }
 
     private getCentreRoom(rooms: SchedRoom[]): SchedRoom {
@@ -219,4 +229,21 @@ export default class Scheduler implements IScheduler {
             this.roomsXtimeXsection[usedRoomKey][t] = false;
         }
     }
+
+    private makeTupleFromMatrix(): Array<[SchedRoom, SchedSection, TimeSlot]> {
+        let result: Array<[SchedRoom, SchedSection, TimeSlot]> = [];
+        let section: SchedSection;
+        let room: SchedRoom;
+        for (let roomkey in this.roomsXtimeXsection) {
+            for (let t = 0; t < 15; t++) {
+                if (this.roomsXtimeXsection[roomkey][t]) {
+                    section = this.roomsXtimeXsection[roomkey][t];
+                    room = this.roomsDictionary[roomkey];
+                    result.push([room, section, Scheduler.timeSlots[t]]);
+                }
+            }
+        }
+        return result;
+    }
+
 }
