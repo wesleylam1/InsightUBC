@@ -152,8 +152,8 @@ class Scheduler {
         let centrePseudoRoom = this.getCentreRoom(roomsUsed);
         let sortedUnusedRooms = this.prioritizeRoomsByDistanceFromSource(unusedRooms, centrePseudoRoom).reverse();
         let sortedUsedRooms = this.prioritizeRoomsByDistanceFromSource(roomsUsed, centrePseudoRoom);
-        for (let i = 0; i < Math.floor(sortedUsedRooms.length / 2); i++) {
-            let usedRoom = sortedUsedRooms[i];
+        for (let i of roomsUsed) {
+            let usedRoom = i;
             let usedRoomkey = usedRoom.rooms_shortname + usedRoom.rooms_number;
             let switchedRooms = new Set();
             roomsLoop: for (let j of unusedRooms) {
@@ -165,6 +165,7 @@ class Scheduler {
                             this.getDistance(centrePseudoRoom, usedRoom))) {
                             this.roomSwitch(usedRoom, unusedRoom);
                             switchedRooms.add(unusedRoomKey);
+                            this.updatePseudoRoom(centrePseudoRoom, roomsUsed.length, usedRoom, unusedRoom);
                         }
                         break roomsLoop;
                     }
@@ -207,6 +208,18 @@ class Scheduler {
             }
         }
         return result;
+    }
+    updatePseudoRoom(centrePseudoRoom, lengthOfList, usedRoom, unusedRoom) {
+        let meanLon = centrePseudoRoom.rooms_lon;
+        let meanLat = centrePseudoRoom.rooms_lat;
+        meanLon = meanLon * lengthOfList;
+        meanLon = meanLon - usedRoom.rooms_lon + unusedRoom.rooms_lon;
+        meanLon = meanLon / lengthOfList;
+        meanLat = meanLat * lengthOfList;
+        meanLat = meanLat - usedRoom.rooms_lat + unusedRoom.rooms_lat;
+        meanLat = meanLat / lengthOfList;
+        centrePseudoRoom.rooms_lat = meanLat;
+        centrePseudoRoom.rooms_lon = meanLon;
     }
 }
 exports.default = Scheduler;
