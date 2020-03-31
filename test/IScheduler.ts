@@ -2,8 +2,8 @@
 import {InsightDatasetKind} from "../src/controller/IInsightFacade";
 import {expect} from "chai";
 import Scheduler from "../src/scheduler/Scheduler";
-/*
 
+/*
 
 let sections = [
     {
@@ -256,7 +256,6 @@ it("Tests for first room very far from others", function() {
     let scheduler: Scheduler = new Scheduler();
     scheduler.schedule(sections16, farRooms);
 });
-
 
 */
 

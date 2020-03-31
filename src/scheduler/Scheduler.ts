@@ -4,11 +4,11 @@ import {IScheduler, SchedRoom, SchedSection, TimeSlot} from "./IScheduler";
 export default class Scheduler implements IScheduler {
 
     private static timeSlots: TimeSlot[] =
-        ["MWF 0800-0900" , "MWF 0900-1000" , "MWF 1000-1100" ,
-    "MWF 1100-1200" , "MWF 1200-1300" , "MWF 1300-1400" ,
-    "MWF 1400-1500" , "MWF 1500-1600" , "MWF 1600-1700" ,
-    "TR  0800-0930" , "TR  0930-1100" , "TR  1100-1230" ,
-    "TR  1230-1400" , "TR  1400-1530" , "TR  1530-1700"];
+        ["MWF 0800-0900", "MWF 0900-1000", "MWF 1000-1100",
+            "MWF 1100-1200", "MWF 1200-1300", "MWF 1300-1400",
+            "MWF 1400-1500", "MWF 1500-1600", "MWF 1600-1700",
+            "TR  0800-0930", "TR  0930-1100", "TR  1100-1230",
+            "TR  1230-1400", "TR  1400-1530", "TR  1530-1700"];
 
     private roomsXtimeXsection: any;
     private currSection: SchedSection;
@@ -42,7 +42,7 @@ export default class Scheduler implements IScheduler {
     public schedule(sections: SchedSection[], rooms: SchedRoom[]): Array<[SchedRoom, SchedSection, TimeSlot]> {
         this.initialize(sections, rooms);
         let orderedRooms = this.prioritizeRoomsBySize(rooms);
-        let  unusedRooms: SchedRoom[] = [];
+        let unusedRooms: SchedRoom[] = [];
         let orderedSections = this.prioritizeSections(sections);
         let result: Array<[SchedRoom, SchedSection, TimeSlot]> = [];
         let filledTimeSlots: number = 0;
@@ -72,11 +72,11 @@ export default class Scheduler implements IScheduler {
                         if (filledTimeSlots === 15) {
                             break sectionsLoop;
                         }
-                        }
                     }
                 }
+            }
             if (filledTimeSlots === 0) {
-                    unusedRooms.push(currRoom);
+                unusedRooms.push(currRoom);
             }
         }
         result = this.optimizeDistance(result, unusedRooms, Array.from(this.roomsUsed));
@@ -198,12 +198,13 @@ export default class Scheduler implements IScheduler {
                             this.getDistance(centrePseudoRoom, usedRoom))) {
                             this.roomSwitch(usedRoom, unusedRoom);
                             switchedRooms.add(unusedRoomKey);
+                            this.updatePseudoRoom(centrePseudoRoom, roomsUsed.length, usedRoom, unusedRoom);
                         }
                         break roomsLoop;
-                        }
                     }
                 }
             }
+        }
         optimizedResult = this.makeTupleFromMatrix();
         return optimizedResult;
     }
@@ -216,7 +217,7 @@ export default class Scheduler implements IScheduler {
         let meanlat = this.getMeanLat(rooms);
         let meanlon = this.getMeanLon(rooms);
         let result: SchedRoom = {
-            rooms_shortname: "_____",  rooms_number: "-1",  rooms_seats: -1, rooms_lat: meanlat, rooms_lon: meanlon
+            rooms_shortname: "_____", rooms_number: "-1", rooms_seats: -1, rooms_lat: meanlat, rooms_lon: meanlon
         };
         return result;
     }
@@ -244,6 +245,20 @@ export default class Scheduler implements IScheduler {
             }
         }
         return result;
+    }
+
+    private updatePseudoRoom(centrePseudoRoom: SchedRoom, lengthOfList: number, usedRoom: SchedRoom,
+                             unusedRoom: SchedRoom): void {
+        let meanLon = centrePseudoRoom.rooms_lon;
+        let meanLat = centrePseudoRoom.rooms_lat;
+        meanLon = meanLon * lengthOfList;
+        meanLon = meanLon - usedRoom.rooms_lon + unusedRoom.rooms_lon;
+        meanLon = meanLon / lengthOfList;
+        meanLat = meanLat * lengthOfList;
+        meanLat = meanLat - usedRoom.rooms_lat + unusedRoom.rooms_lat;
+        meanLat = meanLat / lengthOfList;
+        centrePseudoRoom.rooms_lat = meanLat;
+        centrePseudoRoom.rooms_lon = meanLon;
     }
 
 }
